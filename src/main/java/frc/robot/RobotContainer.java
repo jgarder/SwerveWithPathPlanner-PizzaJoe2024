@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.MovePickupToPosition;
 import frc.robot.commands.RunIntake;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.DeliveryLifter;
 import frc.robot.subsystems.PickupArm;
 import frc.robot.subsystems.PickupSpinner;
 
@@ -22,7 +23,7 @@ public class RobotContainer {
   //
   private final PickupArm pickuparm = new PickupArm();
   private final PickupSpinner pickupSpinner = new PickupSpinner();
-
+  private final DeliveryLifter deliveryLifter = new DeliveryLifter();
   private double MaxSpeed = 6; // 6 meters per second desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
@@ -51,20 +52,22 @@ public class RobotContainer {
             .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ).ignoringDisable(true));
 
-    joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    joystick.b().whileTrue(drivetrain
-        .applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+    //stuff below should be tested when drivetrain is complete    
+    //joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+    //joystick.b().whileTrue(drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
 
+    //joystick.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
+    //joystick.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
+    
     // reset the field-centric heading on left bumper press
-    joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
+    joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
     // if (Utils.isSimulation()) {
     //   drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
     // }
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    joystick.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
-    joystick.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
+
 
     joystick.x().onTrue(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner));// (pickuparm.runonce(() -> {pickuparm.setSetpointFloorPickup();}));
     //joystick.y().whileTrue(new InstantCommand(()->{pickuparm.setSetpointFloorPickup();},pickuparm).andThen(()->{pickupSpinner.RunPickup();}).repeatedly()).onFalse(new InstantCommand(()->{pickuparm.setSetpointVerticle();}).andThen(()->{pickupSpinner.HoldAutoLoaded();})); //.until(()->{pickupSpinner.m_forwardLimit.isPressed();})
@@ -75,6 +78,10 @@ public class RobotContainer {
     .andThen(new MovePickupToPosition(Constants.PickupHead.PickupVertical, pickuparm, pickupSpinner))
     .andThen(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner))
     );
+    //left trigger will bring joe into the speaker position
+    joystick.leftTrigger().onTrue(new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter));
+    //left bumper will bring joe into the amp position 
+    joystick.leftBumper().onTrue(new InstantCommand(()->{deliveryLifter.setSetpointAmp();},deliveryLifter));
   }
 
   public RobotContainer() {

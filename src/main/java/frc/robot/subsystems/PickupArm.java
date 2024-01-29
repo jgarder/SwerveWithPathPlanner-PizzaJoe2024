@@ -196,13 +196,14 @@ public class PickupArm extends PIDSubsystem{
         AmpReady,
         TrapReady,
       }
+       double setpointTolerance = 2.5;
       public boolean atSetpoint() {
         if (m_enabled) {
 
           //return m_controller.atSetpoint();
           double setpointGoal = getSetpoint();
-          double tolerance = 5;
-          if (CurrentLiftEncoderValue >= setpointGoal-tolerance && CurrentLiftEncoderValue <= setpointGoal+tolerance) {
+         
+          if (CurrentLiftEncoderValue >= setpointGoal-setpointTolerance && CurrentLiftEncoderValue <= setpointGoal+setpointTolerance) {
             return true;
           } else {
             return false; 

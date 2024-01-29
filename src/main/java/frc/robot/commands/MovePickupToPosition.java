@@ -30,10 +30,10 @@ public class MovePickupToPosition extends Command{
    
   }
 
-  double PickupTimeoutSeoncds = 5.0;
+  double TimeoutSeconds = 5.0;
   @Override
   public boolean isFinished() {
-    if(m_Timer.get() > PickupTimeoutSeoncds){
+    if(m_Timer.get() > TimeoutSeconds){
         return true;
     } 
     if (m_pickuparm.atSetpoint()) {
