@@ -20,7 +20,7 @@ public class Constants {
         public static final double kD_Spinner = 0.005;
 
         public static final int PickUpLifterCanBusID = 7;
-        public static final int PickUpSpinnerCanBusID = 16;
+        public static final int PickUpSpinnerCanBusID = 15;//16;
 
         public static final double spinnerspeed = .5;
         public static final double liftspeed = .5;

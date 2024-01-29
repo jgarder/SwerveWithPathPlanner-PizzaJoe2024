@@ -38,6 +38,9 @@ public class PickupSpinner extends PIDSubsystem{
         //set the idle mode to brake so it doesnt move when we dont want it to, or coast if we want it to coast after "stopping"
         Motor_Controller.setIdleMode(IdleMode.kBrake);
         
+        //motor is inverted in our situation. negative is sucking in, positive is shooting out. 
+        Motor_Controller.setInverted(true);
+
         //set the ramp rate to controll sudden input changes (smooth input
         Motor_Controller.setClosedLoopRampRate(.05);
         Motor_Controller.setOpenLoopRampRate(.05);//small ramp rate becuase this will reverse instantly. 
@@ -82,7 +85,7 @@ public class PickupSpinner extends PIDSubsystem{
     }
 
     public void RunPickup() {
-        int reduction = 10;
+        int reduction = 15;
         //if our limit switch is turned on And there is no note in the pickup, then we can run the pickup motor.. 
         if (SmartDashboard.getBoolean("Forward Limit Enabled", true)) 
         {
@@ -111,6 +114,16 @@ public class PickupSpinner extends PIDSubsystem{
         double position = Motor_Encoder.getPosition();
         Motor_Encoder.setPosition(position);
         setSetpoint(position-windback);
+    
+        enable();
+    }
+      double releaseDistance = 30;
+    public void ReleaseNote(){
+        disable();
+        //pickupState = pickupState.ZERO;
+        double position = Motor_Encoder.getPosition();
+        Motor_Encoder.setPosition(position);
+        setSetpoint(position+releaseDistance);
         enable();
     }
 
