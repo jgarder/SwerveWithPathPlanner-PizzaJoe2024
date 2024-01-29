@@ -30,9 +30,8 @@ public class PickupArm extends PIDSubsystem{
         //even though the default should be 0, lets tell the PID to goto 0 which is our starting position.
         Motor_Encoder.setPosition(Constants.PickupHead.minValue_Lifter);
         setSetpoint(0);
-        
-        //should the motor controller be inverted?
-        Motor_Controller.setInverted(true);
+        //should the motor controller be inverted? 0 is folded in and 44 (or max) is folded out.
+        Motor_Controller.setInverted(false);
 
         //Enable the soft limits and set the values
         Motor_Controller.enableSoftLimit(SoftLimitDirection.kForward, true);
@@ -41,11 +40,11 @@ public class PickupArm extends PIDSubsystem{
         Motor_Controller.setSoftLimit(SoftLimitDirection.kReverse, (float)Constants.PickupHead.minValue_Lifter);
 
         //set the idle mode to brake so it doesnt move when we dont want it to, or coast if we want it to coast after "stopping"
-        Motor_Controller.setIdleMode(IdleMode.kBrake);
+        Motor_Controller.setIdleMode(IdleMode.kCoast);
         
         //set the ramp rate to controll sudden input changes (smooth input
-        Motor_Controller.setClosedLoopRampRate(.05);
-        Motor_Controller.setOpenLoopRampRate(.05);//small ramp rate becuase this will reverse instantly. 
+        Motor_Controller.setClosedLoopRampRate(.25);
+        Motor_Controller.setOpenLoopRampRate(.25);//small ramp rate becuase this will reverse instantly. 
         
         //current limit to keep motors safe from Fire (over current)
         Motor_Controller.setSmartCurrentLimit(Constants.NeoBrushless.neo1650safelimitAmps);
@@ -154,22 +153,22 @@ public class PickupArm extends PIDSubsystem{
       }
     public void setSetpointVerticle() {
         enable();
-        setSetpoint(Constants.PickupHead.lifterverticalPosition);
+        setSetpoint(Constants.PickupHead.PickupVertical);
         pickupState = pickupState.Vertical;
     }
     public void setSetpointFloorPickup() {
         enable();
-        setSetpoint(Constants.PickupHead.lifterPickupPosition);
+        setSetpoint(Constants.PickupHead.PickupFloorPickup);
         pickupState = pickupState.FloorPickup;
     }
     public void setSetpointSourcePickup() {
         enable();
-        setSetpoint(Constants.PickupHead.lifterSourcePickupPosition);
+        setSetpoint(Constants.PickupHead.PickupSourcePickup);
         pickupState = pickupState.SourcePickup;
     }
         public void setSetpointPassingPickup() {
         enable();
-        setSetpoint(Constants.PickupHead.lifterPassingPosition);
+        setSetpoint(Constants.PickupHead.PickupPassing);
         pickupState = pickupState.passToHead;
     }
     double windback = 3.0;
@@ -196,5 +195,20 @@ public class PickupArm extends PIDSubsystem{
         SpeakerReady,
         AmpReady,
         TrapReady,
+      }
+      public boolean atSetpoint() {
+        if (m_enabled) {
+
+          //return m_controller.atSetpoint();
+          double setpointGoal = getSetpoint();
+          double tolerance = 5;
+          if (CurrentLiftEncoderValue >= setpointGoal-tolerance && CurrentLiftEncoderValue <= setpointGoal+tolerance) {
+            return true;
+          } else {
+            return false; 
+          }
+        } else {
+          return false; 
+        }
       }
 }

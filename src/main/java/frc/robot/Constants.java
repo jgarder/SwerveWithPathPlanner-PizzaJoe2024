@@ -19,7 +19,7 @@ public class Constants {
         public static final double kI_Spinner = 0.0001;
         public static final double kD_Spinner = 0.005;
 
-        public static final int PickUpLifterCanBusID = 7;
+        public static final int PickUpLifterCanBusID = 8;//7;
         public static final int PickUpSpinnerCanBusID = 15;//16;
 
         public static final double spinnerspeed = .5;
@@ -28,13 +28,13 @@ public class Constants {
         public static final double spinnerSlewRate = 0.1;
         public static final double lifterSlewRate = 0.1;
 
-        public static final double lifterPickupPosition = 10;
-        public static final double lifterSourcePickupPosition = 2;
-        public static final double lifterverticalPosition = 5;
-        public static final double lifterPassingPosition = 0;
-
+        public static final double PickupZero = 0;
+        public static final double PickupFloorPickup = 44;
+        public static final double PickupSourcePickup = 13;
+        public static final double PickupVertical = 16;
+        public static final double PickupPassing = 5;
         //soft limits min/max values
-        public static final double maxValue_Lifter = 15;
+        public static final double maxValue_Lifter = 44;
         public static final double minValue_Lifter = 0;
         public static final float maxValue_Spinner = 0;
         public static final float minValue_Spinner = 0;

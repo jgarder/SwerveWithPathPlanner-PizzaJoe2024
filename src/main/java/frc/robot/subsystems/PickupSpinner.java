@@ -22,6 +22,8 @@ public class PickupSpinner extends PIDSubsystem{
     public double MotorTemp = 0;
     public double TempCForOverTemp = 37;
 
+    boolean NoteInPickup = false;
+
     private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.PickupHead.PickUpSpinnerCanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
     public SparkLimitSwitch m_forwardLimit = Motor_Controller.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
@@ -75,10 +77,14 @@ public class PickupSpinner extends PIDSubsystem{
       //m_shooterMotor.setVoltage(output + m_shooterFeedforward.calculate(setpoint));
     }
     
-    boolean NoteInPickup = false;
-    public boolean NoteInPickup()
+    public boolean setIsnoteInPickup(boolean isnoteinpickup)
     {
-      return false;
+      NoteInPickup = isnoteinpickup;
+      return NoteInPickup;
+    }
+    public boolean IsNoteInPickup()
+    {
+      return NoteInPickup;
     }
     public void SetSpeed(double thisspeed) {
         Motor_Controller.set(thisspeed);
@@ -100,7 +106,7 @@ public class PickupSpinner extends PIDSubsystem{
                     NoteInPickup = true;
                     //trying to run pickup but the limit switch is enabled and there is a note in the pickup so dont run the head. 
                 }
-                            return;   
+                return;   
             }   
       
         }
