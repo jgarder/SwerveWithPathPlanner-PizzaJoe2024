@@ -131,6 +131,7 @@ public class PickupSpinner extends PIDSubsystem{
         Motor_Encoder.setPosition(position);
         setSetpoint(position+releaseDistance);
         enable();
+        setIsnoteInPickup(false);
     }
 
     public void getEncoderData()

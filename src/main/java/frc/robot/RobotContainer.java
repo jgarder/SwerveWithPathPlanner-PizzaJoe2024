@@ -10,11 +10,14 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.MovePickupToPosition;
 import frc.robot.commands.RunIntake;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.CANdleSystem;
 import frc.robot.subsystems.DeliveryLifter;
+import frc.robot.subsystems.DeliveryShooter;
 import frc.robot.subsystems.PickupArm;
 import frc.robot.subsystems.PickupSpinner;
 
@@ -24,6 +27,8 @@ public class RobotContainer {
   private final PickupArm pickuparm = new PickupArm();
   private final PickupSpinner pickupSpinner = new PickupSpinner();
   private final DeliveryLifter deliveryLifter = new DeliveryLifter();
+  private final DeliveryShooter deliveryShooter = new DeliveryShooter();
+
   private double MaxSpeed = 6; // 6 meters per second desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
@@ -43,6 +48,7 @@ public class RobotContainer {
   private Command runAuto = drivetrain.getAutoPath("Tests");
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
+  private final CANdleSystem m_candleSubsystem = new CANdleSystem();
 
   private void configureBindings() {
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
@@ -75,13 +81,17 @@ public class RobotContainer {
     new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm, pickupSpinner)
     .andThen(new InstantCommand(()->{pickupSpinner.setIsnoteInPickup(false);},pickupSpinner))
     .andThen(new RunIntake(pickupSpinner))
-    .andThen(new MovePickupToPosition(Constants.PickupHead.PickupVertical, pickuparm, pickupSpinner))
+    .andThen(new InstantCommand(()->{m_candleSubsystem.GreenLights();},m_candleSubsystem))
+    .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm, pickupSpinner))
     .andThen(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner))
+    .andThen(new InstantCommand(()->{m_candleSubsystem.RedLights();},m_candleSubsystem))
     );
     //left trigger will bring joe into the speaker position
     joystick.leftTrigger().onTrue(new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter));
     //left bumper will bring joe into the amp position 
     joystick.leftBumper().onTrue(new InstantCommand(()->{deliveryLifter.setSetpointAmp();},deliveryLifter));
+    joystick.pov(0).onTrue(new InstantCommand(() -> {m_candleSubsystem.GreenLights();}));
+    joystick.pov(180).onTrue(new InstantCommand(() -> {m_candleSubsystem.RainbowRoadLights();}));
   }
 
   public RobotContainer() {

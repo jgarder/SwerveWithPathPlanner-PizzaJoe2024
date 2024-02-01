@@ -1,6 +1,17 @@
 package frc.robot;
 
 public class Constants {
+
+    public static final int CANdleID = 11;
+
+    public static boolean isWithinPercentage(double numberA, double numberB, double range)
+    {
+        double percentage = 0;
+        percentage = (numberB - numberA) * 100 / numberA;
+
+        return Math.abs(percentage) <= range;
+    }
+
     public static class NeoBrushless
     {
       public static int neo550safelimitAmps = 35;//Pickup rollers and delivery index motor
@@ -11,8 +22,8 @@ public class Constants {
     {
         //PID Constants for PICKUP Lifter
         public static final double kP_lifter = 0.0250; 
-        public static final double kI_lifter = 0.0001;
-        public static final double kD_lifter = 0.005;
+        public static final double kI_lifter = 0.00001;
+        public static final double kD_lifter = 0.003;
 
         //PID Constants for PICKUP Spinner
         public static final double kP_Spinner = 0.0250; 
@@ -32,7 +43,7 @@ public class Constants {
         public static final double PickupFloorPickup = 44;
         public static final double PickupSourcePickup = 13;
         public static final double PickupVertical = 16;
-        public static final double PickupPassing = 5;
+        public static final double PickupPassing = 7;
         //soft limits min/max values
         public static final double maxValue_Lifter = 44;
         public static final double minValue_Lifter = 0;
@@ -43,9 +54,7 @@ public class Constants {
     public static class DeliveryHead
     {
 
-      public static final double kP_lifter = 0.0250;
-      public static final double kI_lifter = 0.0001;
-      public static final double kD_lifter = 0.005;
+
       
       public static final int LifterCanBusID = 10;
 

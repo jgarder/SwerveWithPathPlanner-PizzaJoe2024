@@ -40,11 +40,11 @@ public class PickupArm extends PIDSubsystem{
         Motor_Controller.setSoftLimit(SoftLimitDirection.kReverse, (float)Constants.PickupHead.minValue_Lifter);
 
         //set the idle mode to brake so it doesnt move when we dont want it to, or coast if we want it to coast after "stopping"
-        Motor_Controller.setIdleMode(IdleMode.kCoast);
+        Motor_Controller.setIdleMode(IdleMode.kBrake);
         
         //set the ramp rate to controll sudden input changes (smooth input
-        Motor_Controller.setClosedLoopRampRate(.25);
-        Motor_Controller.setOpenLoopRampRate(.25);//small ramp rate becuase this will reverse instantly. 
+        Motor_Controller.setClosedLoopRampRate(.05);
+        Motor_Controller.setOpenLoopRampRate(.05);//small ramp rate becuase this will reverse instantly. 
         
         //current limit to keep motors safe from Fire (over current)
         Motor_Controller.setSmartCurrentLimit(Constants.NeoBrushless.neo1650safelimitAmps);
@@ -115,7 +115,7 @@ public class PickupArm extends PIDSubsystem{
 
     public void SetSpeed(double thisspeed) {
         Motor_Controller.set(thisspeed);
-      }
+    }
     
       private void retractSlowly() {
         int reduction = 10;
@@ -196,14 +196,14 @@ public class PickupArm extends PIDSubsystem{
         AmpReady,
         TrapReady,
       }
-       double setpointTolerance = 2.5;
+       double setpointTolerance = 2.0;
       public boolean atSetpoint() {
         if (m_enabled) {
 
           //return m_controller.atSetpoint();
           double setpointGoal = getSetpoint();
          
-          if (CurrentLiftEncoderValue >= setpointGoal-setpointTolerance && CurrentLiftEncoderValue <= setpointGoal+setpointTolerance) {
+          if (Constants.isWithinPercentage(CurrentLiftEncoderValue, setpointGoal, setpointTolerance)) {
             return true;
           } else {
             return false; 

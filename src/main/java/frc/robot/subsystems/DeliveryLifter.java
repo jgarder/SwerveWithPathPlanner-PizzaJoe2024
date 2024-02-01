@@ -27,7 +27,13 @@ public class DeliveryLifter extends SubsystemBase {
     public double TempCForOverTemp = 37;
     double kMaxOutput = 1; 
     double kMinOutput = -1;
-    double kFF = 0.0;
+
+    double kP_lifter = 0.0250;
+    double kI_lifter = 0.0000;
+    double kD_lifter = 0.000;
+
+    double kFF = 0.0003;
+    double kIz = 0;
     private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.DeliveryHead.LifterCanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
     private final SparkPIDController MotorControllerPid = Motor_Controller.getPIDController();
@@ -37,9 +43,9 @@ public class DeliveryLifter extends SubsystemBase {
         //even though the default should be 0, lets tell the PID to goto 0 which is our starting position.
 
         Motor_Encoder.setPosition(Constants.DeliveryHead.minValue_Lifter);
-        MotorControllerPid.setP(Constants.DeliveryHead.kP_lifter);
-        MotorControllerPid.setI(Constants.DeliveryHead.kI_lifter);
-        MotorControllerPid.setD(Constants.DeliveryHead.kD_lifter);
+        MotorControllerPid.setP(kP_lifter);
+        MotorControllerPid.setI(kI_lifter);
+        MotorControllerPid.setD(kD_lifter);
         MotorControllerPid.setFF(kFF);
         MotorControllerPid.setOutputRange(kMinOutput, kMaxOutput);
         MotorControllerPid.setReference(0.0, CANSparkBase.ControlType.kPosition);
@@ -54,11 +60,11 @@ public class DeliveryLifter extends SubsystemBase {
         Motor_Controller.setSoftLimit(SoftLimitDirection.kReverse, (float)Constants.DeliveryHead.minValue_Lifter);
 
         //set the idle mode to brake so it doesnt move when we dont want it to, or coast if we want it to coast after "stopping"
-        Motor_Controller.setIdleMode(IdleMode.kCoast);
+        Motor_Controller.setIdleMode(IdleMode.kBrake);
         
         //set the ramp rate to controll sudden input changes (smooth input
-        Motor_Controller.setClosedLoopRampRate(.25);
-        Motor_Controller.setOpenLoopRampRate(.25);//small ramp rate becuase this will reverse instantly. 
+        Motor_Controller.setClosedLoopRampRate(.05);
+        Motor_Controller.setOpenLoopRampRate(.05);//small ramp rate becuase this will reverse instantly. 
         
         //current limit to keep motors safe from Fire (over current)
         Motor_Controller.setSmartCurrentLimit(Constants.NeoBrushless.neo1650safelimitAmps);
@@ -66,13 +72,18 @@ public class DeliveryLifter extends SubsystemBase {
         //limit everything on this motor controller to 500ms except the status 0 frame which is 10ms and does faults and applied output. 
         Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);  //Default Rate: 20ms ,Motor Velocity,Motor Temperature,Motor VoltageMotor Current
         Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);  //Default Rate: 20ms ,Motor Position
-        Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500); //Default Rate: 50ms ,Analog Sensor Voltage ,Analog Sensor Velocity ,Analog Sensor Position
-        Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500); //Default Rate: 20ms, Alternate Encoder Velocity,Alternate Encoder Position
+        Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 250); //Default Rate: 50ms ,Analog Sensor Voltage ,Analog Sensor Velocity ,Analog Sensor Position
+        Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 250); //Default Rate: 20ms, Alternate Encoder Velocity,Alternate Encoder Position
         Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Position,Duty Cycle Absolute Encoder Absolute Angle
         Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Velocity,Duty Cycle Absolute Encoder Frequency
            
         
-
+        // display PID coefficients on SmartDashboard
+        SmartDashboard.putNumber("P Gain", kP_lifter);
+        SmartDashboard.putNumber("I Gain", kI_lifter);
+        SmartDashboard.putNumber("D Gain", kD_lifter);
+        SmartDashboard.putNumber("I Zone", kIz);
+        SmartDashboard.putNumber("Feed Forward", kFF);
 
     }
 
@@ -113,6 +124,25 @@ public class DeliveryLifter extends SubsystemBase {
       //INSIDE GET ENCODER DATA WE UPDATE OUR CurrentLiftEncoderValue! this is how the PID WORKS!!!!
       getEncoderData();
       //super.periodic();// This is a PidSubsystem, we have orridden the periodic method to get encoder data... So we need to call the super periodic method to get the PID stuff to work.
+      // read PID coefficients from SmartDashboard
+    double p = SmartDashboard.getNumber("P Gain", 0);
+    double i = SmartDashboard.getNumber("I Gain", 0);
+    double d = SmartDashboard.getNumber("D Gain", 0);
+    double iz = SmartDashboard.getNumber("I Zone", 0);
+    double ff = SmartDashboard.getNumber("Feed Forward", 0);
+    double max = SmartDashboard.getNumber("Max Output", 0);
+    double min = SmartDashboard.getNumber("Min Output", 0);
+    double maxV = SmartDashboard.getNumber("Max Velocity", 0);
+    double minV = SmartDashboard.getNumber("Min Velocity", 0);
+    double maxA = SmartDashboard.getNumber("Max Acceleration", 0);
+    double allE = SmartDashboard.getNumber("Allowed Closed Loop Error", 0);
+      
+      if((p != kP_lifter)) { MotorControllerPid.setP(p); kP_lifter = p; }
+    if((i != kI_lifter)) { MotorControllerPid.setI(i); kI_lifter = i; }
+    if((d != kD_lifter)) { MotorControllerPid.setD(d); kD_lifter = d; }
+    if((iz != kIz)) { MotorControllerPid.setIZone(iz); kIz = iz; }
+    if((ff != kFF)) { MotorControllerPid.setFF(ff); kFF = ff; }
+    
     }
 
     public void SetSpeed(double thisspeed) {

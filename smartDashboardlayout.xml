@@ -1,5 +1,93 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Motor_Encoder LowS Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="687" y="654"/>
+	</widget>
+	<widget field="Motor_Encoder LowS PID Encoder Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="316" y="700"/>
+	</widget>
+	<widget field="Motor Controller LowS Motor Temp" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="352" y="210"/>
+	</widget>
+	<widget field="Motor Controller LowS Amps" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="609" y="211"/>
+	</widget>
+	<widget field="Motor_Encoder UpS Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="694" y="630"/>
+	</widget>
+	<widget field="Motor_Encoder UpS PID Encoder Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="321" y="677"/>
+	</widget>
+	<widget field="Motor Controller UpS Motor Temp" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="356" y="186"/>
+	</widget>
+	<widget field="Motor Controller UpS Amps" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="611" y="185"/>
+		<height>20</height>
+	</widget>
+	<widget field="Current velocity UpS" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="714" y="597"/>
+	</widget>
+	<widget field="Setpoint RPM UpS" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="702" y="568"/>
+	</widget>
+	<widget field="Min Output UpS" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="442" y="654"/>
+	</widget>
+	<widget field="Max Output UpS" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="305" y="655"/>
+	</widget>
+	<widget field="Feed Forward UpS" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="477" y="608"/>
+	</widget>
+	<widget field="I Zone UpS" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="506" y="587"/>
+	</widget>
+	<widget field="D Gain UpS" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="502" y="565"/>
+	</widget>
+	<widget field="I Gain UpS" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="502" y="543"/>
+	</widget>
+	<widget field="P Gain UpS" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="496" y="523"/>
+	</widget>
+	<widget field="Feed Forward" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="577"/>
+	</widget>
+	<widget field="I Zone" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="556"/>
+	</widget>
+	<widget field="D Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="535"/>
+	</widget>
+	<widget field="I Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="514"/>
+	</widget>
+	<widget field="P Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="493"/>
+	</widget>
+	<widget field="Motor_Controller 3 setpoint " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="472"/>
+	</widget>
+	<widget field="Motor_Controller 3 PID output" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="451"/>
+	</widget>
+	<widget field="Motor_Encoder 3 Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="430"/>
+	</widget>
+	<widget field="Motor_Encoder 3 PID Encoder Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="409"/>
+	</widget>
+	<widget field="Motor Controller 3 Motor Temp" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="369" y="159"/>
+	</widget>
+	<widget field="Motor Controller 3 Amps" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="336"/>
+	</widget>
+	<widget field="Motor_Controller 1 PID output" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="273"/>
+	</widget>
 	<widget field="Forward Limit Triggered" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
 		<location x="6" y="369"/>
 	</widget>
@@ -19,13 +107,13 @@
 		<location x="0" y="231"/>
 	</widget>
 	<widget field="Motor Controller 2 Motor Temp" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="210"/>
+		<location x="368" y="133"/>
 	</widget>
 	<widget field="Motor Controller 2 Amps" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="189"/>
 	</widget>
 	<widget field="Motor Controller 1 Motor Temp" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="168"/>
+		<location x="365" y="108"/>
 	</widget>
 	<widget field="Motor_Encoder 1 SetPoint" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="147"/>
