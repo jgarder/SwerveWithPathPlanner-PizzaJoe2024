@@ -18,6 +18,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CANdleSystem;
 import frc.robot.subsystems.DeliveryLifter;
 import frc.robot.subsystems.DeliveryShooter;
+import frc.robot.subsystems.DeliveryTilt;
 import frc.robot.subsystems.PickupArm;
 import frc.robot.subsystems.PickupSpinner;
 
@@ -27,8 +28,13 @@ public class RobotContainer {
   private final PickupArm pickuparm = new PickupArm();
   private final PickupSpinner pickupSpinner = new PickupSpinner();
   private final DeliveryLifter deliveryLifter = new DeliveryLifter();
+  private final DeliveryTilt deliveryTilt = new DeliveryTilt();
   private final DeliveryShooter deliveryShooter = new DeliveryShooter();
+  //
 
+
+
+  //
   private double MaxSpeed = 6; // 6 meters per second desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
@@ -92,6 +98,12 @@ public class RobotContainer {
     joystick.leftBumper().onTrue(new InstantCommand(()->{deliveryLifter.setSetpointAmp();},deliveryLifter));
     joystick.pov(0).onTrue(new InstantCommand(() -> {m_candleSubsystem.GreenLights();}));
     joystick.pov(180).onTrue(new InstantCommand(() -> {m_candleSubsystem.RainbowRoadLights();}));
+    
+    //if in Amp positions or Shoot position, pressing A will execute that action. 
+    //joystick.a().whileTrue(runAuto);
+
+    joystick.rightTrigger().onTrue(new InstantCommand(()->{deliveryTilt.setSetpointZero();},deliveryTilt));
+    joystick.rightBumper().onTrue(new InstantCommand(()->{deliveryTilt.setSetpointPassing();},deliveryTilt));
   }
 
   public RobotContainer() {

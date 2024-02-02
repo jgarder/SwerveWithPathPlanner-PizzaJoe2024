@@ -8,18 +8,15 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
-import edu.wpi.first.hal.CANAPITypes.CANDeviceType;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class DeliveryLifter extends SubsystemBase {
+public class DeliveryTilt extends SubsystemBase {
 
     
-  private static final String MotorName = "DeliveryLift";
-    public double CurrentLiftEncoderValue = 0;
+    public String MotorName = "DeliveryTilt";
+    public double CurrentEncoderValue = 0;
     public double WantedEncoderValue = 0;
     public double CurrentEncoderVelocity = 0;
     public double OutputCurrent = 0;
@@ -34,10 +31,11 @@ public class DeliveryLifter extends SubsystemBase {
 
     double kFF = 0.0003;
     double kIz = 0;
-    private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.DeliveryHead.Lift_CanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
+    private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.DeliveryHead.Tilt_CanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
     private final SparkPIDController MotorControllerPid = Motor_Controller.getPIDController();
-    public DeliveryLifter()
+    
+    public DeliveryTilt()
     {
         //super(new PIDController(Constants.PickupHead.kP_lifter, Constants.PickupHead.kI_lifter, Constants.PickupHead.kD_lifter));//super class, must setup PID first
         //even though the default should be 0, lets tell the PID to goto 0 which is our starting position.
@@ -100,8 +98,8 @@ public class DeliveryLifter extends SubsystemBase {
        * 
        * GetPosition() returns the position of the encoder in units of revolutions
        */
-      CurrentLiftEncoderValue = Motor_Encoder.getPosition();
-      SmartDashboard.putNumber(MotorName + " PID Encoder Position",CurrentLiftEncoderValue);
+      CurrentEncoderValue = Motor_Encoder.getPosition();
+      SmartDashboard.putNumber(MotorName + " PID Encoder Position",CurrentEncoderValue);
   
       /**
        * Encoder velocity is read from a RelativeEncoder object by calling the
@@ -130,7 +128,6 @@ public class DeliveryLifter extends SubsystemBase {
     double d = SmartDashboard.getNumber(MotorName + " D Gain", 0);
     double iz = SmartDashboard.getNumber(MotorName + " I Zone", 0);
     double ff = SmartDashboard.getNumber(MotorName + " Feed Forward", 0);
-
       
       if((p != kP_lifter)) { MotorControllerPid.setP(p); kP_lifter = p; }
     if((i != kI_lifter)) { MotorControllerPid.setI(i); kI_lifter = i; }
@@ -147,32 +144,47 @@ public class DeliveryLifter extends SubsystemBase {
 
       public void resetEncoder() {
         SetSpeed(0);
-        Motor_Encoder.setPosition(Constants.PickupHead.minValue_Lifter);
+        Motor_Encoder.setPosition(Constants.DeliveryHead.Tilt_minValue);
         setSetpointZero();
         
         Motor_Controller.enableSoftLimit(SoftLimitDirection.kReverse, true);
         //enable();//reactivate the pidcontroller of this subsystem
-        Motor_Encoder.setPosition(Constants.PickupHead.minValue_Lifter);
+        Motor_Encoder.setPosition(Constants.DeliveryHead.Tilt_minValue);
+      }
+
+      public void setSetpointToPosition(double position)
+      {
+        //enable();
+        WantedEncoderValue = position;
+        MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
       }
 
       public void setSetpointZero() {
         //enable();
-        WantedEncoderValue = Constants.DeliveryHead.Lift_Position_Zero;
+        WantedEncoderValue = Constants.DeliveryHead.Tilt_Position_Zero;
+        MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
+      }
+        public void setSetpointPassing() {
+        //enable();
+        WantedEncoderValue = Constants.DeliveryHead.Tilt_Position_Passing;
         MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
       }
       public void setSetpointAmp() {
         //enable();
-        WantedEncoderValue = Constants.DeliveryHead.Lift_Position_Amp;
+        WantedEncoderValue = Constants.DeliveryHead.Tilt_Position_Amp;
         MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
       }
 
 
       public boolean HasNote = false;
-       double setpointTolerance = 2.5;
-      public boolean atSetpoint() {
-        if(Math.abs(WantedEncoderValue-CurrentLiftEncoderValue) < setpointTolerance){
-          return true;
-        }
-        return false;
+
+
+    double setpointTolerance = 2.5;
+      public boolean atSetpoint() {        
+          if (Constants.isWithinPercentage(CurrentEncoderValue, WantedEncoderValue, setpointTolerance)) {
+            return true;
+          } else {
+            return false; 
+          }
       }
 }

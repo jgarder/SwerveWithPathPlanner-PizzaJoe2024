@@ -15,9 +15,9 @@ import frc.robot.Constants;
 
 public class DeliveryShooter extends SubsystemBase {
     
-    private static final int UppershooterCanID = 14;
-    private static final int LowerShooterCanID = 7;
-
+    
+    private static final String MotorName = "Upper Shooter";
+    private static final String MotorName2 = "Lower Shooter";
     private CANSparkMax m_motor;
     private CANSparkMax m_motor_LowS;
     private SparkPIDController m_pidController;
@@ -41,8 +41,8 @@ public class DeliveryShooter extends SubsystemBase {
 
     public DeliveryShooter()
     {
-        m_motor = new CANSparkMax(UppershooterCanID, MotorType.kBrushless);
-        m_motor_LowS = new CANSparkMax(LowerShooterCanID, MotorType.kBrushless);
+        m_motor = new CANSparkMax(Constants.DeliveryHead.UppershooterCanID, MotorType.kBrushless);
+        m_motor_LowS = new CANSparkMax(Constants.DeliveryHead.LowerShooterCanID, MotorType.kBrushless);
         //m_motor_LowS.follow(m_motor, false);
 
         //set the idle mode to brake so it doesnt move when we dont want it to, or coast if we want it to coast after "stopping"
@@ -95,32 +95,26 @@ public class DeliveryShooter extends SubsystemBase {
         m_pidController_LowS.setOutputRange(kMinOutput, kMaxOutput);
 
         // display PID coefficients on SmartDashboard
-        SmartDashboard.putNumber("P Gain UpS", kP);
-        SmartDashboard.putNumber("I Gain UpS", kI);
-        SmartDashboard.putNumber("D Gain UpS", kD);
-        SmartDashboard.putNumber("I Zone UpS", kIz);
-        SmartDashboard.putNumber("Feed Forward UpS", kFF);
-        SmartDashboard.putNumber("Max Output UpS", kMaxOutput);
-        SmartDashboard.putNumber("Min Output UpS", kMinOutput);
-        SmartDashboard.putNumber("Setpoint RPM UpS", WantedRPM);
+        SmartDashboard.putNumber(MotorName + " P Gain", kP);
+        SmartDashboard.putNumber(MotorName + " I Gain", kI);
+        SmartDashboard.putNumber(MotorName + " D Gain", kD);
+        SmartDashboard.putNumber(MotorName + " I Zone", kIz);
+        SmartDashboard.putNumber(MotorName + " Feed Forward", kFF);
+        SmartDashboard.putNumber(MotorName + " Max Output", kMaxOutput);
+        SmartDashboard.putNumber(MotorName + " Min Output", kMinOutput);
+        SmartDashboard.putNumber(MotorName + " Setpoint RPM", WantedRPM);
     }
 
     @Override
     public void periodic()
     {
         getEncoderData();
-        double p = SmartDashboard.getNumber("P Gain UpS", 0);
-        double i = SmartDashboard.getNumber("I Gain UpS", 0);
-        double d = SmartDashboard.getNumber("D Gain UpS", 0);
-        double iz = SmartDashboard.getNumber("I Zone UpS", 0);
-        double ff = SmartDashboard.getNumber("Feed Forward UpS", 0);
-        double max = SmartDashboard.getNumber("Max Output UpS", 0);
-        double min = SmartDashboard.getNumber("Min Output UpS", 0);
-        double maxV = SmartDashboard.getNumber("Max Velocity UpS", 0);
-        double minV = SmartDashboard.getNumber("Min Velocity UpS", 0);
-        double maxA = SmartDashboard.getNumber("Max Acceleration UpS", 0);
-        double allE = SmartDashboard.getNumber("Allowed Closed Loop Error UpS", 0);
-        double WRPM = SmartDashboard.getNumber("Setpoint RPM UpS", 0);
+        double p = SmartDashboard.getNumber(MotorName + " P Gain", 0);
+        double i = SmartDashboard.getNumber(MotorName + " I Gain", 0);
+        double d = SmartDashboard.getNumber(MotorName + " D Gain", 0);
+        double iz = SmartDashboard.getNumber(MotorName + " I Zone", 0);
+        double ff = SmartDashboard.getNumber(MotorName + " Feed Forward", 0);
+        double WRPM = SmartDashboard.getNumber(MotorName + " Setpoint RPM", 0);
           
           if((p != kP)) { m_pidController.setP(p); m_pidController_LowS.setP(p); kP = p; }
         if((i != kI)) { m_pidController.setI(i); m_pidController_LowS.setI(i); kI = i; }
@@ -142,16 +136,16 @@ public class DeliveryShooter extends SubsystemBase {
     public void getEncoderData()
     {
       OutputCurrent = m_motor.getOutputCurrent();
-      SmartDashboard.putNumber("Motor Controller UpS Amps",OutputCurrent);
+      SmartDashboard.putNumber(MotorName + " Amps",OutputCurrent);
         
       OutputCurrent_LowS= m_motor_LowS.getOutputCurrent();
-      SmartDashboard.putNumber("Motor Controller LowS Amps",OutputCurrent_LowS);
+      SmartDashboard.putNumber(MotorName2 + " Amps",OutputCurrent_LowS);
 
       MotorTemp = m_motor.getMotorTemperature();
-      SmartDashboard.putNumber("Motor Controller UpS Motor Temp",MotorTemp);
+      SmartDashboard.putNumber(MotorName + " Motor Temp",MotorTemp);
 
       MotorTemp_LowS = m_motor_LowS.getMotorTemperature();
-      SmartDashboard.putNumber("Motor Controller LowS Motor Temp",MotorTemp_LowS);
+      SmartDashboard.putNumber(MotorName2 + " Motor Temp",MotorTemp_LowS);
       /**
        * Encoder position is read from a RelativeEncoder object by calling the
        * GetPosition() method.
@@ -159,10 +153,10 @@ public class DeliveryShooter extends SubsystemBase {
        * GetPosition() returns the position of the encoder in units of revolutions
        */
       CurrentEncoderValue = m_encoder.getPosition();
-      SmartDashboard.putNumber("Motor_Encoder UpS PID Encoder Position",CurrentEncoderValue);
+      SmartDashboard.putNumber(MotorName + " PID Encoder Position",CurrentEncoderValue);
 
       CurrentEncoderValue_LowS = m_encoder_LowS.getPosition();
-      SmartDashboard.putNumber("Motor_Encoder LowS PID Encoder Position",CurrentEncoderValue_LowS);
+      SmartDashboard.putNumber(MotorName2 + " PID Encoder Position",CurrentEncoderValue_LowS);
   
       /**
        * Encoder velocity is read from a RelativeEncoder object by calling the
@@ -171,10 +165,10 @@ public class DeliveryShooter extends SubsystemBase {
        * GetVelocity() returns the velocity of the encoder in units of RPM
        */
       CurrentEncoderVelocity = m_encoder.getVelocity();
-      SmartDashboard.putNumber("Motor_Encoder UpS Velocity", CurrentEncoderVelocity);
+      SmartDashboard.putNumber(MotorName + " Velocity", CurrentEncoderVelocity);
 
       CurrentEncoderVelocity_LowS = m_encoder_LowS.getVelocity();
-      SmartDashboard.putNumber("Motor_Encoder LowS Velocity", CurrentEncoderVelocity_LowS);
+      SmartDashboard.putNumber(MotorName2 + " Velocity", CurrentEncoderVelocity_LowS);
   
     }
 }

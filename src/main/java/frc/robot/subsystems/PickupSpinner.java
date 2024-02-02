@@ -16,6 +16,7 @@ import frc.robot.Constants;
 
 public class PickupSpinner extends PIDSubsystem{
 
+    public String MotorName = "PickUp Intake";
     public double CurrentEncoderValue = 0;
     public double CurrentEncoderVelocity = 0;
     public double OutputCurrent = 0;
@@ -72,8 +73,8 @@ public class PickupSpinner extends PIDSubsystem{
     @Override
     public void useOutput(double output, double setpoint) {
       SetSpeed(output);
-      SmartDashboard.putNumber("Motor_Encoder 2 PID output",output);
-      SmartDashboard.putNumber("Motor_Encoder 2 SetPoint",setpoint);
+      SmartDashboard.putNumber(MotorName + " PID output",output);
+      SmartDashboard.putNumber(MotorName + " SetPoint",setpoint);
       //m_shooterMotor.setVoltage(output + m_shooterFeedforward.calculate(setpoint));
     }
     
@@ -93,7 +94,7 @@ public class PickupSpinner extends PIDSubsystem{
     public void RunPickup() {
         int reduction = 15;
         //if our limit switch is turned on And there is no note in the pickup, then we can run the pickup motor.. 
-        if (SmartDashboard.getBoolean("Forward Limit Enabled", true)) 
+        if (SmartDashboard.getBoolean(MotorName + " Forward Limit Enabled", true)) 
         {
             boolean istriggered = m_forwardLimit.isPressed();
             if (istriggered) {//we have a note in pickup and limit switch is pressed, so we need to reduce the setpoint to hold the note in pickup.
@@ -137,10 +138,10 @@ public class PickupSpinner extends PIDSubsystem{
     public void getEncoderData()
       {
         OutputCurrent = Motor_Controller.getOutputCurrent();
-        SmartDashboard.putNumber("Motor Controller 2 Amps",OutputCurrent);
+        SmartDashboard.putNumber(MotorName + " Amps",OutputCurrent);
     
         MotorTemp = Motor_Controller.getMotorTemperature();
-        SmartDashboard.putNumber("Motor Controller 2 Motor Temp",MotorTemp);
+        SmartDashboard.putNumber(MotorName + " Motor Temp",MotorTemp);
         /**
          * Encoder position is read from a RelativeEncoder object by calling the
          * GetPosition() method.
@@ -148,7 +149,7 @@ public class PickupSpinner extends PIDSubsystem{
          * GetPosition() returns the position of the encoder in units of revolutions
          */
         CurrentEncoderValue = Motor_Encoder.getPosition();
-        SmartDashboard.putNumber("Motor_Encoder 2 PID Encoder Position",CurrentEncoderValue);
+        SmartDashboard.putNumber(MotorName + " PID Encoder Position",CurrentEncoderValue);
     
         /**
          * Encoder velocity is read from a RelativeEncoder object by calling the
@@ -157,15 +158,15 @@ public class PickupSpinner extends PIDSubsystem{
          * GetVelocity() returns the velocity of the encoder in units of RPM
          */
         CurrentEncoderVelocity = Motor_Encoder.getVelocity();
-        SmartDashboard.putNumber("Motor_Encoder 2 Velocity", CurrentEncoderVelocity);
+        SmartDashboard.putNumber(MotorName + " Velocity", CurrentEncoderVelocity);
         
-        SmartDashboard.putBoolean("Forward Limit Enabled", m_forwardLimit.isLimitSwitchEnabled());
-        SmartDashboard.putBoolean("Forward Limit Triggered", m_forwardLimit.isPressed());
+        SmartDashboard.putBoolean(MotorName + " Forward Limit Enabled", m_forwardLimit.isLimitSwitchEnabled());
+        SmartDashboard.putBoolean(MotorName + " Forward Limit Triggered", m_forwardLimit.isPressed());
       }
     @Override
     public void periodic() {
          // enable/disable limit switches based on value read from SmartDashboard
-    m_forwardLimit.enableLimitSwitch(SmartDashboard.getBoolean("Forward Limit Enabled", true));
+    m_forwardLimit.enableLimitSwitch(SmartDashboard.getBoolean(MotorName + " Forward Limit Enabled", true));
     super.periodic();// This is a PidSubsystem, we have orridden the periodic method to get encoder data... So we need to call the super periodic method to get the PID stuff to work.
 
 

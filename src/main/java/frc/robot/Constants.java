@@ -47,25 +47,42 @@ public class Constants {
         //soft limits min/max values
         public static final double maxValue_Lifter = 44;
         public static final double minValue_Lifter = 0;
-        public static final float maxValue_Spinner = 0;
-        public static final float minValue_Spinner = 0;
+        public static final double maxValue_Spinner = 0;
+        public static final double minValue_Spinner = 0;
 
     }
     public static class DeliveryHead
     {
 
 
+      public static final int UppershooterCanID = 14;
+      public static final int LowerShooterCanID = 7;
+      public static final int DeliveryIntakeCanBusID = 5;
+
+      public static final int Lift_CanBusID = 10;
+      public static final int Tilt_CanBusID = 9;
       
-      public static final int LifterCanBusID = 10;
 
-      public static final double minValue_Lifter = 0;
-      public static final float maxValue_Lifter = 133;
+      public static final double Lift_minValue = 0;
+      public static final double Lift_maxValue = 133;
+      
 
-      public static final double Position_Zero = 0;
-      public static final double Position_Speaker = 25;
-      public static final double Position_Amp = 50;
-      public static final double Position_TrapStart = 120;
-      public static final double Position_Trap = 125;
+      public static final double Lift_Position_Zero = 0;
+      public static final double Lift_Position_Speaker = 25;
+      public static final double Lift_Position_Amp = 50;
+      public static final double Lift_Position_TrapStart = 120;
+      public static final double Lift_Position_Trap = 125;
+
+      //TILT
+      public static final double Tilt_minValue = 0;
+      public static final double Tilt_maxValue = 13;
+      
+      public static final double Tilt_Position_Zero = 0;
+      public static final double Tilt_Position_Passing = 2;
+      public static final double Tilt_Position_Speaker = 5;
+      public static final double Tilt_Position_Amp = 10;
+      public static final double Tilt_Position_TrapStart = 11;
+      public static final double Tilt_Position_Trap = 12;
       
     }
     

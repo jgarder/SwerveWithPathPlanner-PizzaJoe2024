@@ -16,6 +16,7 @@ public class PickupArm extends PIDSubsystem{
 
     
 
+    private static final String MotorName = "PickupArm";
     public double CurrentLiftEncoderValue = 0;
     public double CurrentEncoderVelocity = 0;
     public double OutputCurrent = 0;
@@ -74,18 +75,18 @@ public class PickupArm extends PIDSubsystem{
     @Override
     public void useOutput(double output, double setpoint) {
       SetSpeed(output);
-      SmartDashboard.putNumber("Motor_Encoder 1 PID output",output);
-      SmartDashboard.putNumber("Motor_Encoder 1 SetPoint",setpoint);
+      SmartDashboard.putNumber(MotorName + " PID output",output);
+      SmartDashboard.putNumber(MotorName + " SetPoint",setpoint);
       //m_shooterMotor.setVoltage(output + m_shooterFeedforward.calculate(setpoint));
     }
 
     public void getEncoderData()
     {
       OutputCurrent = Motor_Controller.getOutputCurrent();
-      SmartDashboard.putNumber("Motor Controller 1 Amps",OutputCurrent);
+      SmartDashboard.putNumber(MotorName + " Amps",OutputCurrent);
   
       MotorTemp = Motor_Controller.getMotorTemperature();
-      SmartDashboard.putNumber("Motor Controller 1 Motor Temp",MotorTemp);
+      SmartDashboard.putNumber(MotorName + " Motor Temp",MotorTemp);
       /**
        * Encoder position is read from a RelativeEncoder object by calling the
        * GetPosition() method.
@@ -93,7 +94,7 @@ public class PickupArm extends PIDSubsystem{
        * GetPosition() returns the position of the encoder in units of revolutions
        */
       CurrentLiftEncoderValue = Motor_Encoder.getPosition();
-      SmartDashboard.putNumber("Motor_Encoder 1 PID Encoder Position",CurrentLiftEncoderValue);
+      SmartDashboard.putNumber(MotorName + " PID Encoder Position",CurrentLiftEncoderValue);
   
       /**
        * Encoder velocity is read from a RelativeEncoder object by calling the
@@ -102,7 +103,7 @@ public class PickupArm extends PIDSubsystem{
        * GetVelocity() returns the velocity of the encoder in units of RPM
        */
       CurrentEncoderVelocity = Motor_Encoder.getVelocity();
-      SmartDashboard.putNumber("Motor_Encoder 1 Velocity", CurrentEncoderVelocity);
+      SmartDashboard.putNumber(MotorName + " Velocity", CurrentEncoderVelocity);
   
     }
 
