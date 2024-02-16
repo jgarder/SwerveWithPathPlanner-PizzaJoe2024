@@ -204,7 +204,7 @@ public class PickupArm extends PIDSubsystem{
           //return m_controller.atSetpoint();
           double setpointGoal = getSetpoint();
          
-          if (Constants.isWithinPercentage(CurrentLiftEncoderValue, setpointGoal, setpointTolerance)) {
+          if (Constants.isWithinAmount(CurrentLiftEncoderValue, setpointGoal, setpointTolerance)) {
             return true;
           } else {
             return false; 

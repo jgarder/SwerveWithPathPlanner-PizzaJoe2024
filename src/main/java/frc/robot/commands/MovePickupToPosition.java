@@ -5,15 +5,16 @@ import frc.robot.subsystems.PickupArm;
 import frc.robot.subsystems.PickupSpinner;
 
 public class MovePickupToPosition extends Command{
-    private final PickupSpinner m_PickupSpinner;
+    //private final PickupSpinner m_PickupSpinner;
     private final PickupArm m_pickuparm;
     private final Timer m_Timer = new Timer();
     double desiredSetpoint = 0;
-    public MovePickupToPosition(double DesiredSetpoint, PickupArm pickuparm,PickupSpinner pickupSpinner){
-        m_PickupSpinner = pickupSpinner;
+    public MovePickupToPosition(double DesiredSetpoint, PickupArm pickuparm)
+    {
+        //m_PickupSpinner = pickupSpinner;
         m_pickuparm = pickuparm;
         this.desiredSetpoint = DesiredSetpoint;
-        addRequirements(m_PickupSpinner);
+        //addRequirements(m_PickupSpinner);
         addRequirements(m_pickuparm);
     }
 
@@ -30,7 +31,7 @@ public class MovePickupToPosition extends Command{
    
   }
 
-  double TimeoutSeconds = 5.0;
+  double TimeoutSeconds = 10.0;
   @Override
   public boolean isFinished() {
     if(m_Timer.get() > TimeoutSeconds){

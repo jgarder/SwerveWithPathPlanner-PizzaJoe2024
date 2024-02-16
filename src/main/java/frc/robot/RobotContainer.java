@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.MovePickupToPosition;
 import frc.robot.commands.RunIntake;
@@ -42,6 +43,7 @@ public class RobotContainer {
 
 
   //
+
   private double MaxSpeed = 6; // 6 meters per second desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
@@ -88,16 +90,18 @@ public class RobotContainer {
 
 
 
-    joystick.x().onTrue(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner));// (pickuparm.runonce(() -> {pickuparm.setSetpointFloorPickup();}));
+    joystick.x().onTrue(new InstantCommand(()->{pickupSpinner.ReleaseNotecommand();},pickupSpinner));// (pickuparm.runonce(() -> {pickuparm.setSetpointFloorPickup();}));
     //joystick.y().whileTrue(new InstantCommand(()->{pickuparm.setSetpointFloorPickup();},pickuparm).andThen(()->{pickupSpinner.RunPickup();}).repeatedly()).onFalse(new InstantCommand(()->{pickuparm.setSetpointVerticle();}).andThen(()->{pickupSpinner.HoldAutoLoaded();})); //.until(()->{pickupSpinner.m_forwardLimit.isPressed();})
     joystick.y().onTrue(
-    new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm, pickupSpinner)
+    new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm)
     .andThen(new InstantCommand(()->{pickupSpinner.setIsnoteInPickup(false);},pickupSpinner))
     .andThen(new RunIntake(pickupSpinner))
     .andThen(new InstantCommand(()->{m_candleSubsystem.GreenLights();},m_candleSubsystem))
-    .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm, pickupSpinner))
-    .andThen(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner))
+    .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm))
+    .andThen(new InstantCommand(()->{pickupSpinner.ReleaseNotecommand();},pickupSpinner))
     .andThen(new InstantCommand(()->{m_candleSubsystem.RedLights();},m_candleSubsystem))
+    .andThen(new WaitCommand(1))
+    .andThen(new InstantCommand(()->{pickupSpinner.disable();}))
     );
     //left trigger will bring joe into the speaker position
     joystick.leftTrigger().onTrue(new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter));

@@ -160,4 +160,8 @@
 </dashboard>
 <live-window>
 </live-window>
+	<hidden field="Module 2"/>
+	<hidden field="Module 3"/>
+	<hidden field="Module 0"/>
+	<hidden field="Module 1"/>
 </xml>

@@ -22,7 +22,7 @@ public class RunIntake extends Command{
    m_PickupSpinner.RunPickup();
   }
 
-  double PickupTimeoutSeoncds = 5.0;
+  double PickupTimeoutSeoncds = 10.0;
   @Override
   public boolean isFinished() {
     if(m_Timer.get() > PickupTimeoutSeoncds){

@@ -38,12 +38,19 @@ public class Constants {
   }
 
 
-    public static boolean isWithinPercentage(double numberA, double numberB, double range)
+    public static boolean isWithinPercentage(double numberA, double numberB, double PercentRange)
     {
         double percentage = 0;
         percentage = (numberB - numberA) * 100 / numberA;
 
-        return Math.abs(percentage) <= range;
+        return Math.abs(percentage) <= PercentRange;
+    }
+    public static boolean isWithinAmount(double numberA, double numberB, double NumericalTolerance)
+    {
+        double Difference = 0;
+        Difference = numberB - numberA;
+
+        return Math.abs(Difference) <= NumericalTolerance;
     }
 
     public static class NeoBrushless
@@ -73,7 +80,7 @@ public class Constants {
         public static final double lifterSlewRate = 0.1;
 
         public static final double PickupZero = 0;
-        public static final double PickupPassing = 0;
+        public static final double PickupPassing = .5;
         public static final double PickupFloorPickup = 46;
         public static final double PickupSourcePickup = 13;
         public static final double PickupVertical = 16;

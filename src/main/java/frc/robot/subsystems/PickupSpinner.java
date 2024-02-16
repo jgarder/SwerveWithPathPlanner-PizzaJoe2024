@@ -6,7 +6,9 @@ import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -93,11 +95,13 @@ public class PickupSpinner extends PIDSubsystem{
     }
 
     public void RunPickup() {
-      m_forwardLimit.enableLimitSwitch(SmartDashboard.getBoolean(MotorName + " Forward Limit Enabled", true));
+      enable();
+      boolean isenabled = SmartDashboard.getBoolean(MotorName + " Forward Limit Enabled", true);
+      m_forwardLimit.enableLimitSwitch(isenabled);
       //m_forwardLimit.enableLimitSwitch(true);
         int reduction = 15;
         //if our limit switch is turned on And there is no note in the pickup, then we can run the pickup motor.. 
-        if (SmartDashboard.getBoolean(MotorName + " Forward Limit Enabled", true)) 
+        if (isenabled) 
         {
             boolean istriggered = m_forwardLimit.isPressed();
             if (istriggered) {//we have a note in pickup and limit switch is pressed, so we need to reduce the setpoint to hold the note in pickup.
@@ -137,6 +141,10 @@ public class PickupSpinner extends PIDSubsystem{
         setSetpoint(position+releaseDistance);
         enable();
         setIsnoteInPickup(false);
+    }
+    public void ReleaseNotecommand()
+    {
+      new InstantCommand(()->{ReleaseNote();},this).andThen(new WaitCommand(3)).andThen(new InstantCommand(()->{disable();},this)).schedule();
     }
 
     public void getEncoderData()
