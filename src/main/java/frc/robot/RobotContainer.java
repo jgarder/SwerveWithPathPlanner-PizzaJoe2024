@@ -21,6 +21,7 @@ import frc.robot.subsystems.DeliveryShooter;
 import frc.robot.subsystems.DeliveryTilt;
 import frc.robot.subsystems.PickupArm;
 import frc.robot.subsystems.PickupSpinner;
+import frc.robot.subsystems.PickupArm.PickupState;
 
 public class RobotContainer {
 
@@ -32,6 +33,12 @@ public class RobotContainer {
   private final DeliveryShooter deliveryShooter = new DeliveryShooter();
   //
 
+  public static class PizzaManager{
+    public static PickupState LastKnownPickupState = PickupState.ZERO;
+    public static boolean IsNoteInPickup = false;
+    
+
+  }
 
 
   //

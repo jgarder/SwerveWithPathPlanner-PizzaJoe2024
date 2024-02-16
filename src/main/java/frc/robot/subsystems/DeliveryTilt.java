@@ -31,7 +31,7 @@ public class DeliveryTilt extends SubsystemBase {
 
     double kFF = 0.0003;
     double kIz = 0;
-    private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.DeliveryHead.Tilt_CanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
+    private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.CANBus.Tilt_CanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
     private final SparkPIDController MotorControllerPid = Motor_Controller.getPIDController();
     

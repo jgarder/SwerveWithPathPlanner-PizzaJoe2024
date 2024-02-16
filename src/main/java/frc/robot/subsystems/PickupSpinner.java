@@ -13,6 +13,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkLimitSwitch;
 
 import frc.robot.Constants;
+import frc.robot.RobotContainer.PizzaManager;
 
 public class PickupSpinner extends PIDSubsystem{
 
@@ -23,9 +24,9 @@ public class PickupSpinner extends PIDSubsystem{
     public double MotorTemp = 0;
     public double TempCForOverTemp = 37;
 
-    boolean NoteInPickup = false;
+    //boolean NoteInPickup = false;
 
-    private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.PickupHead.PickUpSpinnerCanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
+    private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.CANBus.PickUpSpinnerCanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
     public SparkLimitSwitch m_forwardLimit = Motor_Controller.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
     public PickupSpinner()
@@ -80,31 +81,33 @@ public class PickupSpinner extends PIDSubsystem{
     
     public boolean setIsnoteInPickup(boolean isnoteinpickup)
     {
-      NoteInPickup = isnoteinpickup;
-      return NoteInPickup;
+      PizzaManager.IsNoteInPickup = isnoteinpickup;
+      return isnoteinpickup;
     }
     public boolean IsNoteInPickup()
     {
-      return NoteInPickup;
+      return PizzaManager.IsNoteInPickup;
     }
     public void SetSpeed(double thisspeed) {
         Motor_Controller.set(thisspeed);
     }
 
     public void RunPickup() {
+      m_forwardLimit.enableLimitSwitch(SmartDashboard.getBoolean(MotorName + " Forward Limit Enabled", true));
+      //m_forwardLimit.enableLimitSwitch(true);
         int reduction = 15;
         //if our limit switch is turned on And there is no note in the pickup, then we can run the pickup motor.. 
         if (SmartDashboard.getBoolean(MotorName + " Forward Limit Enabled", true)) 
         {
             boolean istriggered = m_forwardLimit.isPressed();
             if (istriggered) {//we have a note in pickup and limit switch is pressed, so we need to reduce the setpoint to hold the note in pickup.
-                if (!NoteInPickup) {
+                if (!PizzaManager.IsNoteInPickup) {
                     HoldAutoLoaded();
-                NoteInPickup = true;
+                PizzaManager.IsNoteInPickup = true;
                 }
                 else
                 {
-                    NoteInPickup = true;
+                    PizzaManager.IsNoteInPickup = true;
                     //trying to run pickup but the limit switch is enabled and there is a note in the pickup so dont run the head. 
                 }
                 return;   
@@ -126,6 +129,7 @@ public class PickupSpinner extends PIDSubsystem{
     }
       double releaseDistance = 30;
     public void ReleaseNote(){
+        m_forwardLimit.enableLimitSwitch(false);//so the note will shoot out even though we are endstopped (does it need this?)
         disable();
         //pickupState = pickupState.ZERO;
         double position = Motor_Encoder.getPosition();
@@ -166,7 +170,7 @@ public class PickupSpinner extends PIDSubsystem{
     @Override
     public void periodic() {
          // enable/disable limit switches based on value read from SmartDashboard
-    m_forwardLimit.enableLimitSwitch(SmartDashboard.getBoolean(MotorName + " Forward Limit Enabled", true));
+    
     super.periodic();// This is a PidSubsystem, we have orridden the periodic method to get encoder data... So we need to call the super periodic method to get the PID stuff to work.
 
 

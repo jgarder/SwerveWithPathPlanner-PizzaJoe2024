@@ -160,27 +160,4 @@
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="Current velocity UpS"/>
-	<hidden field="I Gain"/>
-	<hidden field="Motor_Controller 3 PID output"/>
-	<hidden field="P Gain"/>
-	<hidden field="Feed Forward"/>
-	<hidden field="Module 2"/>
-	<hidden field="Feed Forward UpS"/>
-	<hidden field="Module 3"/>
-	<hidden field="Motor_Encoder 3 Velocity"/>
-	<hidden field="Module 0"/>
-	<hidden field="Module 1"/>
-	<hidden field="Motor_Encoder UpS PID Encoder Position"/>
-	<hidden field="Motor Controller 3 Amps"/>
-	<hidden field="D Gain"/>
-	<hidden field="Motor Controller 3 Motor Temp"/>
-	<hidden field="I Gain UpS"/>
-	<hidden field="Motor_Encoder UpS Velocity"/>
-	<hidden field="D Gain UpS"/>
-	<hidden field="Motor_Controller 3 setpoint "/>
-	<hidden field="P Gain UpS"/>
-	<hidden field="I Zone"/>
-	<hidden field="Setpoint RPM UpS"/>
-	<hidden field="Motor_Encoder 3 PID Encoder Position"/>
 </xml>

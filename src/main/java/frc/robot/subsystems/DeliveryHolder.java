@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkLimitSwitch;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
@@ -31,10 +32,11 @@ public class DeliveryHolder extends SubsystemBase {
 
     double kFF = 0.0003;
     double kIz = 0;
-    private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.DeliveryHead.DeliveryIntakeCanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
+    private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.CANBus.DeliveryIntakeCanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
     private final SparkPIDController MotorControllerPid = Motor_Controller.getPIDController();
-    
+    private final SparkLimitSwitch m_forwardLimit = Motor_Controller.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
+
     public DeliveryHolder()
     {
         //super(new PIDController(Constants.PickupHead.kP_lifter, Constants.PickupHead.kI_lifter, Constants.PickupHead.kD_lifter));//super class, must setup PID first
@@ -50,6 +52,9 @@ public class DeliveryHolder extends SubsystemBase {
         //setSetpoint(0);
         //should the motor controller be inverted? 0 is folded in and 44 (or max) is folded out.
         Motor_Controller.setInverted(false);
+
+         //the forward limit switch is used to detect note in pickup.
+         m_forwardLimit.enableLimitSwitch(true);
 
         //Enable the soft limits and set the values
         Motor_Controller.enableSoftLimit(SoftLimitDirection.kForward, true);

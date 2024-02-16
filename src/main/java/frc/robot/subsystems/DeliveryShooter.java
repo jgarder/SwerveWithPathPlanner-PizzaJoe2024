@@ -41,8 +41,8 @@ public class DeliveryShooter extends SubsystemBase {
 
     public DeliveryShooter()
     {
-        m_motor = new CANSparkMax(Constants.DeliveryHead.UppershooterCanID, MotorType.kBrushless);
-        m_motor_LowS = new CANSparkMax(Constants.DeliveryHead.LowerShooterCanID, MotorType.kBrushless);
+        m_motor = new CANSparkMax(Constants.CANBus.UppershooterCanID, MotorType.kBrushless);
+        m_motor_LowS = new CANSparkMax(Constants.CANBus.LowerShooterCanID, MotorType.kBrushless);
         //m_motor_LowS.follow(m_motor, false);
 
         //set the idle mode to brake so it doesnt move when we dont want it to, or coast if we want it to coast after "stopping"

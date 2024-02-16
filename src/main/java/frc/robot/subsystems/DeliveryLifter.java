@@ -34,7 +34,7 @@ public class DeliveryLifter extends SubsystemBase {
 
     double kFF = 0.0003;
     double kIz = 0;
-    private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.DeliveryHead.Lift_CanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
+    private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.CANBus.Lift_CanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
     private final SparkPIDController MotorControllerPid = Motor_Controller.getPIDController();
     public DeliveryLifter()

@@ -65,7 +65,7 @@ public class CANdleSystem extends SubsystemBase {
     double speed = 0.2;
     double brightness = 0.5;
     private final int LEDS_PER_ANIMATION = 30;
-    private final CANdle m_candle = new CANdle(Constants.CANdleID, "rio");
+    private final CANdle m_candle = new CANdle(Constants.CANBus.CANdleCanBusID, Constants.CANBus.kRIOCANbusName);
     private int m_candleChannel = 0;
     private boolean m_clearAllAnims = false;
     private boolean m_last5V = false;

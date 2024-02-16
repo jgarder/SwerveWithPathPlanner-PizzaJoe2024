@@ -23,7 +23,7 @@ public class PickupArm extends PIDSubsystem{
     public double MotorTemp = 0;
     public double TempCForOverTemp = 37;
 
-    private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.PickupHead.PickUpLifterCanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
+    private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.CANBus.PickUpLifterCanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
     public PickupArm()
     {
