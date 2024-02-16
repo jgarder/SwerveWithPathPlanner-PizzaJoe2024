@@ -62,6 +62,7 @@ public class PickupSpinner extends PIDSubsystem{
         Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Position,Duty Cycle Absolute Encoder Absolute Angle
         Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Velocity,Duty Cycle Absolute Encoder Frequency
         
+        SmartDashboard.putBoolean(MotorName + " Forward Limit Enabled", m_forwardLimit.isLimitSwitchEnabled());
         enable();//enable the pidcontroller of this subsystem 
     }
 
@@ -172,7 +173,7 @@ public class PickupSpinner extends PIDSubsystem{
         CurrentEncoderVelocity = Motor_Encoder.getVelocity();
         SmartDashboard.putNumber(MotorName + " Velocity", CurrentEncoderVelocity);
         
-        SmartDashboard.putBoolean(MotorName + " Forward Limit Enabled", m_forwardLimit.isLimitSwitchEnabled());
+        //SmartDashboard.putBoolean(MotorName + " Forward Limit Enabled", m_forwardLimit.isLimitSwitchEnabled());//dont set this every loop because we want the user to have some control. 
         SmartDashboard.putBoolean(MotorName + " Forward Limit Triggered", m_forwardLimit.isPressed());
       }
     @Override

@@ -160,6 +160,11 @@ public class DeliveryLifter extends SubsystemBase {
         WantedEncoderValue = Constants.DeliveryHead.Lift_Position_Zero;
         MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
       }
+      public void setSetpointPassing() {
+        //enable();
+        WantedEncoderValue = Constants.DeliveryHead.Lift_Position_Passing;
+        MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
+      }
       public void setSetpointAmp() {
         //enable();
         WantedEncoderValue = Constants.DeliveryHead.Lift_Position_Amp;

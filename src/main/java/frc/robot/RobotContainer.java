@@ -20,18 +20,23 @@ import frc.robot.subsystems.CANdleSystem;
 import frc.robot.subsystems.DeliveryLifter;
 import frc.robot.subsystems.DeliveryShooter;
 import frc.robot.subsystems.DeliveryTilt;
+import frc.robot.subsystems.DrivetrainManager;
 import frc.robot.subsystems.PickupArm;
 import frc.robot.subsystems.PickupSpinner;
 import frc.robot.subsystems.PickupArm.PickupState;
 
 public class RobotContainer {
 
+  /* Setting up bindings for necessary control of the swerve drive platform */
+  private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
+  
   //
   private final PickupArm pickuparm = new PickupArm();
   private final PickupSpinner pickupSpinner = new PickupSpinner();
   private final DeliveryLifter deliveryLifter = new DeliveryLifter();
   private final DeliveryTilt deliveryTilt = new DeliveryTilt();
   private final DeliveryShooter deliveryShooter = new DeliveryShooter();
+  public final DrivetrainManager drivetrainManager = new DrivetrainManager(joystick);
   //
 
   public static class PizzaManager{
@@ -42,51 +47,17 @@ public class RobotContainer {
   }
 
 
-  //
 
-  private double MaxSpeed = 6; // 6 meters per second desired top speed
-  private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
-  /* Setting up bindings for necessary control of the swerve drive platform */
-  private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
-  public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
+  
 
-  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
-                                                               // driving in open loop
-  private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-
-  /* Path follower */
-  private Command runAuto = drivetrain.getAutoPath("Tests");
-
-  private final Telemetry logger = new Telemetry(MaxSpeed);
+  
   private final CANdleSystem m_candleSubsystem = new CANdleSystem();
 
   private void configureBindings() {
-    drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
-                                                                                           // negative Y (forward)
-            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        ).ignoringDisable(true));
+    drivetrainManager.configureBindings();
 
-    //stuff below should be tested when drivetrain is complete    
-    //joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    //joystick.b().whileTrue(drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
-
-    //joystick.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
-    //joystick.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
     
-    // reset the field-centric heading on left bumper press
-    joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
-
-    // if (Utils.isSimulation()) {
-    //   drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
-    // }
-    drivetrain.registerTelemetry(logger::telemeterize);
 
 
 
@@ -106,7 +77,7 @@ public class RobotContainer {
     //left trigger will bring joe into the speaker position
     joystick.leftTrigger().onTrue(new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter));
     //left bumper will bring joe into the amp position 
-    joystick.leftBumper().onTrue(new InstantCommand(()->{deliveryLifter.setSetpointAmp();},deliveryLifter));
+    joystick.leftBumper().onTrue(new InstantCommand(()->{deliveryLifter.setSetpointPassing();},deliveryLifter));
     joystick.pov(0).onTrue(new InstantCommand(() -> {m_candleSubsystem.GreenLights();}));
     joystick.pov(180).onTrue(new InstantCommand(() -> {m_candleSubsystem.RainbowRoadLights();}));
     
@@ -123,6 +94,6 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     /* First put the drivetrain into auto run mode, then run the auto */
-    return runAuto;
+    return drivetrainManager.runAuto;
   }
 }
