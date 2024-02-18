@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
+
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 
@@ -67,20 +69,22 @@ public class RobotContainer {
     joystick.b().onTrue((new RunDeliveryHoldIntake(deliveryHolder)));
     joystick.x().onTrue(new InstantCommand(()->{pickupSpinner.ReleaseNotecommand();},pickupSpinner));// (pickuparm.runonce(() -> {pickuparm.setSetpointFloorPickup();}));
     //joystick.y().whileTrue(new InstantCommand(()->{pickuparm.setSetpointFloorPickup();},pickuparm).andThen(()->{pickupSpinner.RunPickup();}).repeatedly()).onFalse(new InstantCommand(()->{pickuparm.setSetpointVerticle();}).andThen(()->{pickupSpinner.HoldAutoLoaded();})); //.until(()->{pickupSpinner.m_forwardLimit.isPressed();})
-    joystick.y().onTrue(
+    joystick.y().onTrue(new RunDeliveryHoldIntake(deliveryHolder).alongWith(
     new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm)
     .andThen(new InstantCommand(()->{pickupSpinner.setIsnoteInPickup(false);},pickupSpinner))
     .andThen(new RunIntake(pickupSpinner))
     .andThen(new InstantCommand(()->{m_candleSubsystem.GreenLights();},m_candleSubsystem))
-    .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm)
-      .alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(50);}))
-        .alongWith(new RunDeliveryHoldIntake(deliveryHolder)))
+    .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm))
+      //.alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(50);}))
+        //.alongWith(new RunDeliveryHoldIntake(deliveryHolder)))
     
-    //.andThen(new InstantCommand(()->{pickupSpinner.ReleaseNotecommand();},pickupSpinner))
+    .andThen(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner))
     .andThen(new InstantCommand(()->{m_candleSubsystem.RedLights();},m_candleSubsystem))
-    .andThen(new WaitCommand(1))
+    .andThen(new WaitCommand(2))
     .andThen(new InstantCommand(()->{pickupSpinner.disable();}))
-    );
+    .andThen(new WaitCommand(3))
+    
+    ));
     //left trigger will bring joe into the speaker position
     joystick.leftTrigger().onTrue(new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter));
     //left bumper will bring joe into the amp position 

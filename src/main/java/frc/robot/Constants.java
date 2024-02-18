@@ -80,7 +80,7 @@ public class Constants {
         public static final double lifterSlewRate = 0.1;
 
         public static final double PickupZero = 0;
-        public static final double PickupPassing = .5;
+        public static final double PickupPassing = -1;
         public static final double PickupFloorPickup = 46;
         public static final double PickupSourcePickup = 13;
         public static final double PickupVertical = 16;
