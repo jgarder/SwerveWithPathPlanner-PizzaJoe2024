@@ -1,5 +1,45 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Delivery Holder Forward Limit Triggered" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="401" y="51"/>
+	</widget>
+	<widget field="Delivery Holder Forward Limit Enabled" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="407" y="29"/>
+		<height>20</height>
+	</widget>
+	<widget field="Delivery Holder setpoint " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="318" y="773"/>
+	</widget>
+	<widget field="Delivery Holder PID output" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="307" y="747"/>
+	</widget>
+	<widget field="Delivery Holder Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="814" y="265"/>
+	</widget>
+	<widget field="Delivery Holder PID Encoder Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1019" y="264"/>
+	</widget>
+	<widget field="Delivery Holder Motor Temp" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="390" y="266"/>
+	</widget>
+	<widget field="Delivery Holder Amps" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="616" y="265"/>
+	</widget>
+	<widget field="Delivery Holder Feed Forward" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="299" y="720"/>
+	</widget>
+	<widget field="Delivery Holder I Zone" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="334" y="696"/>
+	</widget>
+	<widget field="Delivery Holder D Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="337" y="674"/>
+	</widget>
+	<widget field="Delivery Holder I Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="343" y="647"/>
+	</widget>
+	<widget field="Delivery Holder P Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="344" y="627"/>
+	</widget>
 	<widget field="DeliveryLift setpoint " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="595" y="576"/>
 	</widget>

@@ -14,9 +14,11 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.MovePickupToPosition;
+import frc.robot.commands.RunDeliveryHoldIntake;
 import frc.robot.commands.RunIntake;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CANdleSystem;
+import frc.robot.subsystems.DeliveryHolder;
 import frc.robot.subsystems.DeliveryLifter;
 import frc.robot.subsystems.DeliveryShooter;
 import frc.robot.subsystems.DeliveryTilt;
@@ -37,11 +39,13 @@ public class RobotContainer {
   private final DeliveryTilt deliveryTilt = new DeliveryTilt();
   private final DeliveryShooter deliveryShooter = new DeliveryShooter();
   public final DrivetrainManager drivetrainManager = new DrivetrainManager(joystick);
+  public final DeliveryHolder deliveryHolder = new DeliveryHolder();
   //
 
   public static class PizzaManager{
     public static PickupState LastKnownPickupState = PickupState.ZERO;
     public static boolean IsNoteInPickup = false;
+    public static boolean IsNoteInDeliveryPickup = false;
     
 
   }
@@ -59,8 +63,8 @@ public class RobotContainer {
 
     
 
-
-
+    
+    joystick.b().onTrue((new RunDeliveryHoldIntake(deliveryHolder)));
     joystick.x().onTrue(new InstantCommand(()->{pickupSpinner.ReleaseNotecommand();},pickupSpinner));// (pickuparm.runonce(() -> {pickuparm.setSetpointFloorPickup();}));
     //joystick.y().whileTrue(new InstantCommand(()->{pickuparm.setSetpointFloorPickup();},pickuparm).andThen(()->{pickupSpinner.RunPickup();}).repeatedly()).onFalse(new InstantCommand(()->{pickuparm.setSetpointVerticle();}).andThen(()->{pickupSpinner.HoldAutoLoaded();})); //.until(()->{pickupSpinner.m_forwardLimit.isPressed();})
     joystick.y().onTrue(
@@ -68,8 +72,11 @@ public class RobotContainer {
     .andThen(new InstantCommand(()->{pickupSpinner.setIsnoteInPickup(false);},pickupSpinner))
     .andThen(new RunIntake(pickupSpinner))
     .andThen(new InstantCommand(()->{m_candleSubsystem.GreenLights();},m_candleSubsystem))
-    .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm))
-    .andThen(new InstantCommand(()->{pickupSpinner.ReleaseNotecommand();},pickupSpinner))
+    .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm)
+      .alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(50);}))
+        .alongWith(new RunDeliveryHoldIntake(deliveryHolder)))
+    
+    //.andThen(new InstantCommand(()->{pickupSpinner.ReleaseNotecommand();},pickupSpinner))
     .andThen(new InstantCommand(()->{m_candleSubsystem.RedLights();},m_candleSubsystem))
     .andThen(new WaitCommand(1))
     .andThen(new InstantCommand(()->{pickupSpinner.disable();}))

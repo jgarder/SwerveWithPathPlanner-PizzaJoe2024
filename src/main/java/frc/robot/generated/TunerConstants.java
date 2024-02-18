@@ -38,13 +38,13 @@ public class TunerConstants {
 
     // Theoretical free speed (m/s) at 12v applied output;
     // This needs to be tuned to your individual robot
-    public static final double kSpeedAt12VoltsMps = 6.0;//5.0;
+    public static final double kSpeedAt12VoltsMps = 4.572;//5.0;//6.0;//5.0;
 
     // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
     // This may need to be tuned to your individual robot
     private static final double kCoupleRatio = 3.5;
 
-    private static final double kDriveGearRatio = 8.14;//7.363636364;
+    private static final double kDriveGearRatio = 6.75;//8.14;//7.363636364;
     private static final double kSteerGearRatio = 15.42857143;
     private static final double kWheelRadiusInches = 2.167; // Estimated at first, then fudge-factored to make odom match record
 

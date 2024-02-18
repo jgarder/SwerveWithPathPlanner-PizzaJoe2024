@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer.PizzaManager;
 
 public class DeliveryHolder extends SubsystemBase {
 
@@ -51,7 +52,7 @@ public class DeliveryHolder extends SubsystemBase {
         MotorControllerPid.setReference(0.0, CANSparkBase.ControlType.kPosition);
         //setSetpoint(0);
         //should the motor controller be inverted? 0 is folded in and 44 (or max) is folded out.
-        Motor_Controller.setInverted(false);
+        Motor_Controller.setInverted(true);
 
          //the forward limit switch is used to detect note in pickup.
          m_forwardLimit.enableLimitSwitch(true);
@@ -87,8 +88,34 @@ public class DeliveryHolder extends SubsystemBase {
         SmartDashboard.putNumber(MotorName + " D Gain", kD_lifter);
         SmartDashboard.putNumber(MotorName + " I Zone", kIz);
         SmartDashboard.putNumber(MotorName + " Feed Forward", kFF);
-
+        SmartDashboard.putBoolean(MotorName + " Forward Limit Enabled", m_forwardLimit.isLimitSwitchEnabled());
     }
+
+    //int reduction = 15;
+    public void IntakeRuntoHoldCommand(int reduction) {
+      //m_forwardLimit.enableLimitSwitch(false);
+      boolean istriggered = m_forwardLimit.isPressed();
+      
+      if (istriggered) {
+        Motor_Encoder.setPosition(0);
+        MotorControllerPid.setReference(0, CANSparkBase.ControlType.kPosition);
+        PizzaManager.IsNoteInDeliveryPickup = true;
+      }
+      else 
+      {
+        Motor_Encoder.setPosition(0);
+        MotorControllerPid.setReference(reduction, CANSparkBase.ControlType.kPosition);
+      }
+
+      //enable();
+    }
+
+      public boolean IsNoteInDeliveryHold()
+      {
+        return PizzaManager.IsNoteInDeliveryPickup;
+      }
+
+
 
     public void getEncoderData()
     {
@@ -123,22 +150,23 @@ public class DeliveryHolder extends SubsystemBase {
 
     @Override
     public void periodic() {
-        //anything you wanted to do periodically put it here.
-      //INSIDE GET ENCODER DATA WE UPDATE OUR CurrentLiftEncoderValue! this is how the PID WORKS!!!!
-      getEncoderData();
-      //super.periodic();// This is a PidSubsystem, we have orridden the periodic method to get encoder data... So we need to call the super periodic method to get the PID stuff to work.
-      // read PID coefficients from SmartDashboard
-    double p = SmartDashboard.getNumber(MotorName + " P Gain", 0);
-    double i = SmartDashboard.getNumber(MotorName + " I Gain", 0);
-    double d = SmartDashboard.getNumber(MotorName + " D Gain", 0);
-    double iz = SmartDashboard.getNumber(MotorName + " I Zone", 0);
-    double ff = SmartDashboard.getNumber(MotorName + " Feed Forward", 0);
-      
-      if((p != kP_lifter)) { MotorControllerPid.setP(p); kP_lifter = p; }
-    if((i != kI_lifter)) { MotorControllerPid.setI(i); kI_lifter = i; }
-    if((d != kD_lifter)) { MotorControllerPid.setD(d); kD_lifter = d; }
-    if((iz != kIz)) { MotorControllerPid.setIZone(iz); kIz = iz; }
-    if((ff != kFF)) { MotorControllerPid.setFF(ff); kFF = ff; }
+      SmartDashboard.putBoolean(MotorName + " Forward Limit Triggered", m_forwardLimit.isPressed());
+          //anything you wanted to do periodically put it here.
+        //INSIDE GET ENCODER DATA WE UPDATE OUR CurrentLiftEncoderValue! this is how the PID WORKS!!!!
+        getEncoderData();
+        //super.periodic();// This is a PidSubsystem, we have orridden the periodic method to get encoder data... So we need to call the super periodic method to get the PID stuff to work.
+        // read PID coefficients from SmartDashboard
+      double p = SmartDashboard.getNumber(MotorName + " P Gain", 0);
+      double i = SmartDashboard.getNumber(MotorName + " I Gain", 0);
+      double d = SmartDashboard.getNumber(MotorName + " D Gain", 0);
+      double iz = SmartDashboard.getNumber(MotorName + " I Zone", 0);
+      double ff = SmartDashboard.getNumber(MotorName + " Feed Forward", 0);
+        
+        if((p != kP_lifter)) { MotorControllerPid.setP(p); kP_lifter = p; }
+      if((i != kI_lifter)) { MotorControllerPid.setI(i); kI_lifter = i; }
+      if((d != kD_lifter)) { MotorControllerPid.setD(d); kD_lifter = d; }
+      if((iz != kIz)) { MotorControllerPid.setIZone(iz); kIz = iz; }
+      if((ff != kFF)) { MotorControllerPid.setFF(ff); kFF = ff; }
     
     }
 
@@ -150,7 +178,7 @@ public class DeliveryHolder extends SubsystemBase {
       public void resetEncoder() {
         SetSpeed(0);
         Motor_Encoder.setPosition(Constants.DeliveryHead.Tilt_minValue);
-        setSetpointZero();
+  
         
         Motor_Controller.enableSoftLimit(SoftLimitDirection.kReverse, true);
         //enable();//reactivate the pidcontroller of this subsystem
@@ -164,21 +192,7 @@ public class DeliveryHolder extends SubsystemBase {
         MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
       }
 
-      public void setSetpointZero() {
-        //enable();
-        WantedEncoderValue = Constants.DeliveryHead.Tilt_Position_Zero;
-        MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
-      }
-        public void setSetpointPassing() {
-        //enable();
-        WantedEncoderValue = Constants.DeliveryHead.Tilt_Position_Passing;
-        MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
-      }
-      public void setSetpointAmp() {
-        //enable();
-        WantedEncoderValue = Constants.DeliveryHead.Tilt_Position_Amp;
-        MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
-      }
+
 
 
       public boolean HasNote = false;

@@ -100,7 +100,7 @@ public class PickupSpinner extends PIDSubsystem{
       boolean isenabled = SmartDashboard.getBoolean(MotorName + " Forward Limit Enabled", true);
       m_forwardLimit.enableLimitSwitch(isenabled);
       //m_forwardLimit.enableLimitSwitch(true);
-        int reduction = 15;
+        
         //if our limit switch is turned on And there is no note in the pickup, then we can run the pickup motor.. 
         if (isenabled) 
         {
@@ -109,6 +109,7 @@ public class PickupSpinner extends PIDSubsystem{
                 if (!PizzaManager.IsNoteInPickup) {
                     HoldAutoLoaded();
                 PizzaManager.IsNoteInPickup = true;
+                
                 }
                 else
                 {
@@ -119,7 +120,14 @@ public class PickupSpinner extends PIDSubsystem{
             }   
       
         }
-        setSetpoint(CurrentEncoderValue-reduction);
+        IntakeRunCommand(reduction);
+    }
+    int reduction = 15;
+    public void IntakeRunCommand(int reduction) {
+      m_forwardLimit.enableLimitSwitch(false);
+      Motor_Encoder.setPosition(0);
+      setSetpoint(-reduction);
+      enable();
     }
     //
     double windback = 3;
@@ -138,7 +146,7 @@ public class PickupSpinner extends PIDSubsystem{
         disable();
         //pickupState = pickupState.ZERO;
         double position = Motor_Encoder.getPosition();
-        Motor_Encoder.setPosition(position);
+        Motor_Encoder.setPosition(0);
         setSetpoint(position+releaseDistance);
         enable();
         setIsnoteInPickup(false);
@@ -174,12 +182,12 @@ public class PickupSpinner extends PIDSubsystem{
         SmartDashboard.putNumber(MotorName + " Velocity", CurrentEncoderVelocity);
         
         //SmartDashboard.putBoolean(MotorName + " Forward Limit Enabled", m_forwardLimit.isLimitSwitchEnabled());//dont set this every loop because we want the user to have some control. 
-        SmartDashboard.putBoolean(MotorName + " Forward Limit Triggered", m_forwardLimit.isPressed());
+        
       }
     @Override
     public void periodic() {
          // enable/disable limit switches based on value read from SmartDashboard
-    
+    SmartDashboard.putBoolean(MotorName + " Forward Limit Triggered", m_forwardLimit.isPressed());
     super.periodic();// This is a PidSubsystem, we have orridden the periodic method to get encoder data... So we need to call the super periodic method to get the PID stuff to work.
 
 

@@ -32,8 +32,8 @@ public class DrivetrainManager {
         //drivetrain = Drivetrain;
     }
     
-    public static final double slewrateXY = 1.4;
-    public static final double slewrateRotation = 2.0;
+    public static final double slewrateXY = 3;
+    public static final double slewrateRotation = 2.7;
     SlewRateLimiter speedLimiterX = new SlewRateLimiter(slewrateXY);
     SlewRateLimiter speedLimiterY = new SlewRateLimiter(slewrateXY);
     SlewRateLimiter speedLimiterRotation = new SlewRateLimiter(slewrateRotation);
