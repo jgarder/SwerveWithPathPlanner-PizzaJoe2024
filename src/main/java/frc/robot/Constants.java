@@ -62,9 +62,9 @@ public class Constants {
     public static class PickupHead
     {
         //PID Constants for PICKUP Lifter
-        public static final double kP_lifter = 0.0250; 
-        public static final double kI_lifter = 0.00001;
-        public static final double kD_lifter = 0.003;
+        public static final double kP_lifter = 0.05; 
+        public static final double kI_lifter = 0.004;
+        public static final double kD_lifter = 0.0033;
 
         //PID Constants for PICKUP Spinner
         public static final double kP_Spinner = 0.040; 
