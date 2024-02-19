@@ -6,8 +6,10 @@ import frc.robot.subsystems.DeliveryHolder;
 public class RunDeliveryHoldIntake extends Command{
     private final DeliveryHolder m_DeliveryHolder;
     private final Timer m_Timer = new Timer();
-    public RunDeliveryHoldIntake(DeliveryHolder deliveryHolder){
+    private final boolean IgnorelimitSwitch;
+    public RunDeliveryHoldIntake(DeliveryHolder deliveryHolder,boolean ignoreLimitSwitch){
         m_DeliveryHolder = deliveryHolder;
+        IgnorelimitSwitch = ignoreLimitSwitch;
         addRequirements(m_DeliveryHolder);
     }
 
@@ -22,17 +24,18 @@ public class RunDeliveryHoldIntake extends Command{
   @Override
   public void execute() {
     //System.out.println("executing hold");
-   m_DeliveryHolder.IntakeRuntoHoldCommand(reduction);
+   m_DeliveryHolder.IntakeRuntoHoldCommand(reduction,IgnorelimitSwitch);
   }
 
-  double PickupTimeoutSeoncds = 15.0;
+  double PickupTimeoutSeoncds = 5.0;
   @Override
   public boolean isFinished() {
     if(m_Timer.get() > PickupTimeoutSeoncds){
         return true;
     } 
-    if (m_DeliveryHolder.IsNoteInDeliveryHold()) {
-         return true;
+    if (m_DeliveryHolder.IsNoteInDeliveryHold() & !IgnorelimitSwitch) {
+      m_DeliveryHolder.MovePosition(750);
+          return true;
     }  
     return false;
   }

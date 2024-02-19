@@ -25,6 +25,7 @@ public class DeliveryShooter extends SubsystemBase {
     private RelativeEncoder m_encoder;
     private RelativeEncoder m_encoder_LowS;
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
+    public double LastSetRPM = 0;
     public double WantedRPM = 0;
 
     public double CurrentEncoderValue = 0;
@@ -38,6 +39,11 @@ public class DeliveryShooter extends SubsystemBase {
     public double MotorTemp_LowS = 0;
 
     public double TempCForOverTemp = 37;
+
+    public void SetShootSpeed(double rpm)
+    {
+      WantedRPM = rpm;
+    }
 
     public DeliveryShooter()
     {
@@ -114,7 +120,7 @@ public class DeliveryShooter extends SubsystemBase {
         double d = SmartDashboard.getNumber(MotorName + " D Gain", 0);
         double iz = SmartDashboard.getNumber(MotorName + " I Zone", 0);
         double ff = SmartDashboard.getNumber(MotorName + " Feed Forward", 0);
-        double WRPM = SmartDashboard.getNumber(MotorName + " Setpoint RPM", 0);
+        //double WRPM = SmartDashboard.getNumber(MotorName + " Setpoint RPM", 0);
           
           if((p != kP)) { m_pidController.setP(p); m_pidController_LowS.setP(p); kP = p; }
         if((i != kI)) { m_pidController.setI(i); m_pidController_LowS.setI(i); kI = i; }
@@ -122,10 +128,19 @@ public class DeliveryShooter extends SubsystemBase {
         if((iz != kIz)) { m_pidController.setIZone(iz); m_pidController_LowS.setIZone(iz); kIz = iz; }
         if((ff != kFF)) { m_pidController.setFF(ff); m_pidController_LowS.setFF(ff); kFF = ff; }
 
-        if (WRPM != WantedRPM) {
-            WantedRPM = WRPM;
-            m_pidController.setReference(WantedRPM, CANSparkMax.ControlType.kVelocity);
-            m_pidController_LowS.setReference(WantedRPM, CANSparkMax.ControlType.kVelocity);
+        if (LastSetRPM != WantedRPM) {
+            LastSetRPM = WantedRPM;
+            if(WantedRPM == 0)
+            {
+              m_pidController.setReference(0, CANSparkMax.ControlType.kVoltage);
+              m_pidController_LowS.setReference(0, CANSparkMax.ControlType.kVoltage);
+            }
+            else
+            {
+              m_pidController.setReference(WantedRPM, CANSparkMax.ControlType.kVelocity);
+              m_pidController_LowS.setReference(WantedRPM, CANSparkMax.ControlType.kVelocity);
+            }
+            
             
         }
 

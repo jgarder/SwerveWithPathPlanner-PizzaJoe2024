@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkLimitSwitch;
+import com.revrobotics.SparkPIDController;
 
 import frc.robot.Constants;
 import frc.robot.RobotContainer.PizzaManager;
@@ -26,10 +28,13 @@ public class PickupSpinner extends PIDSubsystem{
     public double MotorTemp = 0;
     public double TempCForOverTemp = 37;
 
+    public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+
     //boolean NoteInPickup = false;
 
     private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.CANBus.PickUpSpinnerCanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
+    private final SparkPIDController MotorControllerPid = Motor_Controller.getPIDController();
     public SparkLimitSwitch m_forwardLimit = Motor_Controller.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
     public PickupSpinner()
     {
@@ -63,6 +68,32 @@ public class PickupSpinner extends PIDSubsystem{
         Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Velocity,Duty Cycle Absolute Encoder Frequency
         
         SmartDashboard.putBoolean(MotorName + " Forward Limit Enabled", m_forwardLimit.isLimitSwitchEnabled());
+
+        // PID coefficients
+        kP = 0.0003; 
+        kI = 0.000001;
+        kD = 0.000001; 
+        kIz = 0; 
+        kFF = 0.00011; 
+        kMaxOutput = 1; 
+        kMinOutput = -1;
+
+        // set PID coefficients
+        MotorControllerPid.setP(kP);
+        MotorControllerPid.setI(kI);
+        MotorControllerPid.setD(kD);
+        MotorControllerPid.setIZone(kIz);
+        MotorControllerPid.setFF(kFF);
+        MotorControllerPid.setOutputRange(kMinOutput, kMaxOutput);
+
+        // display PID coefficients on SmartDashboard
+        SmartDashboard.putNumber(MotorName + " P Gain", kP);
+        SmartDashboard.putNumber(MotorName + " I Gain", kI);
+        SmartDashboard.putNumber(MotorName + " D Gain", kD);
+        SmartDashboard.putNumber(MotorName + " I Zone", kIz);
+        SmartDashboard.putNumber(MotorName + " Feed Forward", kFF);
+        SmartDashboard.putBoolean(MotorName + " Forward Limit Enabled", m_forwardLimit.isLimitSwitchEnabled());
+
         enable();//enable the pidcontroller of this subsystem 
     }
 
@@ -145,12 +176,20 @@ public class PickupSpinner extends PIDSubsystem{
         m_forwardLimit.enableLimitSwitch(false);//so the note will shoot out even though we are endstopped (does it need this?)
         disable();
         //pickupState = pickupState.ZERO;
-        double position = Motor_Encoder.getPosition();
+        //double position = Motor_Encoder.getPosition();
         Motor_Encoder.setPosition(0);
-        setSetpoint(position+releaseDistance);
-        enable();
+        //setSetpoint(position+releaseDistance);
+        //enable();
         setIsnoteInPickup(false);
+        MotorControllerPid.setReference(1500, CANSparkBase.ControlType.kVelocity);
     }
+    
+    public void stopSpinner()
+    {
+      disable();
+      MotorControllerPid.setReference(0, CANSparkBase.ControlType.kVoltage);
+    }
+
     public void ReleaseNotecommand()
     {
       new InstantCommand(()->{ReleaseNote();},this).andThen(new WaitCommand(3)).andThen(new InstantCommand(()->{disable();},this)).schedule();
@@ -188,6 +227,19 @@ public class PickupSpinner extends PIDSubsystem{
     public void periodic() {
          // enable/disable limit switches based on value read from SmartDashboard
     SmartDashboard.putBoolean(MotorName + " Forward Limit Triggered", m_forwardLimit.isPressed());
+
+      double p = SmartDashboard.getNumber(MotorName + " P Gain", 0);
+      double i = SmartDashboard.getNumber(MotorName + " I Gain", 0);
+      double d = SmartDashboard.getNumber(MotorName + " D Gain", 0);
+      double iz = SmartDashboard.getNumber(MotorName + " I Zone", 0);
+      double ff = SmartDashboard.getNumber(MotorName + " Feed Forward", 0);
+        
+        if((p != kP)) { MotorControllerPid.setP(p); kP = p; }
+      if((i != kI)) { MotorControllerPid.setI(i); kI = i; }
+      if((d != kD)) { MotorControllerPid.setD(d); kD = d; }
+      if((iz != kIz)) { MotorControllerPid.setIZone(iz); kIz = iz; }
+      if((ff != kFF)) { MotorControllerPid.setFF(ff); kFF = ff; }
+
     super.periodic();// This is a PidSubsystem, we have orridden the periodic method to get encoder data... So we need to call the super periodic method to get the PID stuff to work.
 
 

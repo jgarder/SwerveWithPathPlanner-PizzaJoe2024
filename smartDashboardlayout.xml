@@ -1,11 +1,112 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="PickUp Intake Feed Forward" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="590" y="715"/>
+	</widget>
+	<widget field="PickUp Intake I Zone" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="616" y="694"/>
+	</widget>
+	<widget field="PickUp Intake D Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="616" y="671"/>
+	</widget>
+	<widget field="PickUp Intake I Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="619" y="651"/>
+	</widget>
+	<widget field="PickUp Intake P Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="614" y="629"/>
+	</widget>
+	<widget field="Lowest Voltage" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="188" y="186"/>
+	</widget>
+	<widget field="MAX Total Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="172" y="208"/>
+	</widget>
+	<widget field="Ch23 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="574"/>
+	</widget>
+	<widget field="Ch22 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="553"/>
+	</widget>
+	<widget field="Ch21 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="532"/>
+	</widget>
+	<widget field="Ch20 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="511"/>
+	</widget>
+	<widget field="Ch19 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="490"/>
+	</widget>
+	<widget field="Ch18 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="469"/>
+	</widget>
+	<widget field="Ch17 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="448"/>
+	</widget>
+	<widget field="Ch16 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="427"/>
+	</widget>
+	<widget field="Ch15 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="406"/>
+	</widget>
+	<widget field="Ch14 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="385"/>
+	</widget>
+	<widget field="Ch13 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="364"/>
+	</widget>
+	<widget field="Ch12 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="343"/>
+	</widget>
+	<widget field="Ch11 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="322"/>
+	</widget>
+	<widget field="Ch10 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="301"/>
+	</widget>
+	<widget field="Ch9 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="280"/>
+	</widget>
+	<widget field="Ch8 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="259"/>
+	</widget>
+	<widget field="Ch7 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="238"/>
+	</widget>
+	<widget field="Ch6 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="217"/>
+	</widget>
+	<widget field="Ch5 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="196"/>
+	</widget>
+	<widget field="Ch4 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="175"/>
+	</widget>
+	<widget field="Ch3 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="154"/>
+	</widget>
+	<widget field="Ch2 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="133"/>
+	</widget>
+	<widget field="Ch1 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="112"/>
+	</widget>
+	<widget field="Ch0 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="91"/>
+	</widget>
+	<widget field="Total Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="193" y="138"/>
+	</widget>
+	<widget field="Voltage" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="220" y="116"/>
+	</widget>
+	<widget field="PickUp Intake Forward Limit Enabled" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.CheckBox">
+		<location x="141" y="27"/>
+	</widget>
+	<widget field="Delivery Holder Forward Limit Enabled" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.CheckBox">
+		<location x="407" y="29"/>
+	</widget>
 	<widget field="Delivery Holder Forward Limit Triggered" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="401" y="51"/>
-	</widget>
-	<widget field="Delivery Holder Forward Limit Enabled" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="407" y="29"/>
-		<height>20</height>
 	</widget>
 	<widget field="Delivery Holder setpoint " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="318" y="773"/>
@@ -105,9 +206,6 @@
 	</widget>
 	<widget field="PickUp Intake Forward Limit Triggered" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="129" y="49"/>
-	</widget>
-	<widget field="PickUp Intake Forward Limit Enabled" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="139" y="27"/>
 	</widget>
 	<widget field="PickUp Intake Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="797" y="108"/>

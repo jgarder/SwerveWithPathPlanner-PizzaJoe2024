@@ -25,6 +25,7 @@ public class Robot extends TimedRobot {
   }
   @Override
   public void robotPeriodic() {
+    m_robotContainer.UpdatePDHToSmartDashboard();
     CommandScheduler.getInstance().run(); 
     if (UseLimelight) {    
       var lastResult = LimelightHelpers.getLatestResults("limelight").targetingResults;

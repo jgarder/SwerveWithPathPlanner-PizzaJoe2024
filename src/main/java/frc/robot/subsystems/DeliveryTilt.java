@@ -25,11 +25,11 @@ public class DeliveryTilt extends SubsystemBase {
     double kMaxOutput = 1; 
     double kMinOutput = -1;
 
-    double kP_lifter = 0.0250;
-    double kI_lifter = 0.0000;
+    double kP_lifter = 0.040;
+    double kI_lifter = 0.00001;
     double kD_lifter = 0.000;
 
-    double kFF = 0.0003;
+    double kFF = 0.01;
     double kIz = 0;
     private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.CANBus.Tilt_CanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
@@ -65,7 +65,7 @@ public class DeliveryTilt extends SubsystemBase {
         Motor_Controller.setOpenLoopRampRate(.05);//small ramp rate becuase this will reverse instantly. 
         
         //current limit to keep motors safe from Fire (over current)
-        Motor_Controller.setSmartCurrentLimit(Constants.NeoBrushless.neo1650safelimitAmps);
+        Motor_Controller.setSmartCurrentLimit(30);
 
         //limit everything on this motor controller to 500ms except the status 0 frame which is 10ms and does faults and applied output. 
         Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);  //Default Rate: 20ms ,Motor Velocity,Motor Temperature,Motor VoltageMotor Current

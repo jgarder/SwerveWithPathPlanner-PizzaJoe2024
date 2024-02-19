@@ -92,11 +92,18 @@ public class DeliveryHolder extends SubsystemBase {
     }
 
     //int reduction = 15;
-    public void IntakeRuntoHoldCommand(int reduction) {
+    public void IntakeRuntoHoldCommand(int reduction,boolean IgnorelimitSwitch) {
+      if (IgnorelimitSwitch) {
+        m_forwardLimit.enableLimitSwitch(false);
+      }
+      else
+      {
+        // m_forwardLimit.enableLimitSwitch(true);
+      }
       //m_forwardLimit.enableLimitSwitch(false);
       boolean istriggered = m_forwardLimit.isPressed();
       
-      if (istriggered) {
+      if (istriggered & !IgnorelimitSwitch) {
         Motor_Encoder.setPosition(0);
         MotorControllerPid.setReference(0, CANSparkBase.ControlType.kPosition);
         PizzaManager.IsNoteInDeliveryPickup = true;
@@ -105,9 +112,16 @@ public class DeliveryHolder extends SubsystemBase {
       {
         Motor_Encoder.setPosition(0);
         MotorControllerPid.setReference(reduction, CANSparkBase.ControlType.kPosition);
+        PizzaManager.IsNoteInDeliveryPickup = false;
       }
 
       //enable();
+    }
+
+    public void MovePosition(double amount)
+    {
+      Motor_Encoder.setPosition(0);
+        MotorControllerPid.setReference(amount, CANSparkBase.ControlType.kPosition);
     }
 
       public boolean IsNoteInDeliveryHold()
