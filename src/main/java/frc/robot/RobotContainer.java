@@ -31,6 +31,7 @@ import frc.robot.subsystems.DeliveryTilt;
 import frc.robot.subsystems.DrivetrainManager;
 import frc.robot.subsystems.PickupArm;
 import frc.robot.subsystems.PickupSpinner;
+import frc.robot.subsystems.SmartDashboardHandler;
 import frc.robot.subsystems.PickupArm.PickupState;
 
 public class RobotContainer {
@@ -44,13 +45,16 @@ public class RobotContainer {
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
   
   //
-  private final PickupArm pickuparm = new PickupArm();
-  private final PickupSpinner pickupSpinner = new PickupSpinner();
-  private final DeliveryLifter deliveryLifter = new DeliveryLifter();
-  private final DeliveryTilt deliveryTilt = new DeliveryTilt();
-  private final DeliveryShooter deliveryShooter = new DeliveryShooter();
+  public final PickupArm pickuparm = new PickupArm();
+  public final PickupSpinner pickupSpinner = new PickupSpinner();
+  public final DeliveryLifter deliveryLifter = new DeliveryLifter();
+  public final DeliveryTilt deliveryTilt = new DeliveryTilt();
+  public final DeliveryShooter deliveryShooter = new DeliveryShooter();
   public final DrivetrainManager drivetrainManager = new DrivetrainManager(joystick);
   public final DeliveryHolder deliveryHolder = new DeliveryHolder();
+
+
+  public final SmartDashboardHandler SDashBoardH = new SmartDashboardHandler(this);
   //
 
   public static class PizzaManager{
@@ -74,7 +78,7 @@ public class RobotContainer {
     return //new RunDeliveryHoldIntake(deliveryHolder).alongWith(
     new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm)
     .andThen(new InstantCommand(()->{pickupSpinner.setIsnoteInPickup(false);},pickupSpinner))
-    .andThen(new RunIntake(pickupSpinner))
+    .andThen(new RunIntake(pickupSpinner)).andThen(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(25);},pickupSpinner))
     .andThen(new InstantCommand(()->{m_candleSubsystem.GreenLights();},m_candleSubsystem))
     // .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm))
     //   //.alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(50);}))
@@ -92,9 +96,9 @@ public class RobotContainer {
   public Command C_ReturnPickupToPassing()
   {
     return new RunDeliveryHoldIntake(deliveryHolder,false).alongWith(
-    new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm)
+    new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm).andThen(new WaitCommand(.125)) //small wait for debounce maybe take out and make grab deeper.
     .andThen(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner))
-    .andThen(new WaitCommand(2))
+    .andThen(new WaitCommand(1.25))//.onlyWhile((pickupSpinner::getLimitSwitchEnabled))
     .andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}))
     )
     ;
@@ -103,7 +107,7 @@ public class RobotContainer {
   public Command C_ParkDeliveryHead()
   {
     return  new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter)
-      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointZero();},deliveryTilt),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff)));
+      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Park);},deliveryTilt),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff)));
   }
 
   private void configureBindings() {

@@ -220,4 +220,15 @@ public class DeliveryHolder extends SubsystemBase {
             return false; 
           }
       }
+      public boolean isMotorOvertemp()
+      {
+        if(MotorTemp >TempCForOverTemp)
+        {
+          return true;
+        }
+        else
+        {
+          return false;
+        }
+      }
 }

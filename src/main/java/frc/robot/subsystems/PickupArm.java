@@ -213,4 +213,16 @@ public class PickupArm extends PIDSubsystem{
           return false; 
         }
       }
+
+      public boolean isMotorOvertemp()
+      {
+        if(MotorTemp >TempCForOverTemp)
+        {
+          return true;
+        }
+        else
+        {
+          return false;
+        }
+      }
 }

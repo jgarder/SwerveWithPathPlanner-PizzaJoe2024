@@ -27,7 +27,7 @@ public class DeliveryTilt extends SubsystemBase {
 
     double kP_lifter = 0.040;
     double kI_lifter = 0.00001;
-    double kD_lifter = 0.000;
+    double kD_lifter = 0.0001;
 
     double kFF = 0.01;
     double kIz = 0;
@@ -186,5 +186,16 @@ public class DeliveryTilt extends SubsystemBase {
           } else {
             return false; 
           }
+      }
+      public boolean isMotorOvertemp()
+      {
+        if(MotorTemp >TempCForOverTemp)
+        {
+          return true;
+        }
+        else
+        {
+          return false;
+        }
       }
 }

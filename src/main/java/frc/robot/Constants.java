@@ -121,6 +121,7 @@ public class Constants {
       public static final double Tilt_maxValue = 19;
       
       public static final double Tilt_Position_Zero = 0;
+      public static final double Tilt_Position_Park = 2;
       public static final double Tilt_Position_Passing = 6;
       public static final double Tilt_Position_Speaker_Closest = 7;
       public static final double Tilt_Position_Speaker_SafePost = 11;

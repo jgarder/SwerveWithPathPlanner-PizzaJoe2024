@@ -1,5 +1,36 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Pickup Spinner OverTemp" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="435" y="94"/>
+	</widget>
+	<widget field="Alliance" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="845" y="77"/>
+	</widget>
+	<widget field="AutonEnable" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="235" y="83"/>
+	</widget>
+	<widget field="teleOpEnable" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="231" y="62"/>
+	</widget>
+	<widget field="Auto choices" type="String Chooser" class="edu.wpi.first.smartdashboard.gui.elements.Chooser">
+		<location x="839" y="40"/>
+		<property name="Use Radio Buttons" value="false"/>
+	</widget>
+	<widget field="Jow Rotation Multiplier" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="826" y="27"/>
+	</widget>
+	<widget field="Jow Speed Multiplier" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="837" y="5"/>
+	</widget>
+	<widget field="limelight_Stream" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1113" y="30"/>
+	</widget>
+	<widget field="limelight_Interface" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1102" y="8"/>
+	</widget>
+	<widget field="limelight_PipelineName" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1084" y="53"/>
+	</widget>
 	<widget field="PickUp Intake Feed Forward" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="590" y="715"/>
 	</widget>
@@ -100,13 +131,13 @@
 		<location x="220" y="116"/>
 	</widget>
 	<widget field="PickUp Intake Forward Limit Enabled" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.CheckBox">
-		<location x="141" y="27"/>
+		<location x="236" y="6"/>
 	</widget>
 	<widget field="Delivery Holder Forward Limit Enabled" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.CheckBox">
-		<location x="407" y="29"/>
+		<location x="510" y="6"/>
 	</widget>
 	<widget field="Delivery Holder Forward Limit Triggered" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="401" y="51"/>
+		<location x="485" y="30"/>
 	</widget>
 	<widget field="Delivery Holder setpoint " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="318" y="773"/>
@@ -205,7 +236,7 @@
 		<location x="994" y="311"/>
 	</widget>
 	<widget field="PickUp Intake Forward Limit Triggered" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="129" y="49"/>
+		<location x="213" y="30"/>
 	</widget>
 	<widget field="PickUp Intake Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="797" y="108"/>

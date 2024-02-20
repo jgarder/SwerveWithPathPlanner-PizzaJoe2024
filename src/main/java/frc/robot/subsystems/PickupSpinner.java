@@ -30,12 +30,19 @@ public class PickupSpinner extends PIDSubsystem{
 
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
 
+
     //boolean NoteInPickup = false;
 
     private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.CANBus.PickUpSpinnerCanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
     private final SparkPIDController MotorControllerPid = Motor_Controller.getPIDController();
     public SparkLimitSwitch m_forwardLimit = Motor_Controller.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
+    
+    public boolean getLimitSwitchEnabled()
+    {
+      return m_forwardLimit.isPressed();
+    }
+    
     public PickupSpinner()
     {
         super(new PIDController(Constants.PickupHead.kP_Spinner, Constants.PickupHead.kI_Spinner, Constants.PickupHead.kD_Spinner));//super class, must setup PID first
@@ -172,28 +179,35 @@ public class PickupSpinner extends PIDSubsystem{
         enable();
     }
       double releaseDistance = 30;
+      public double wantedRPM = 1500;//rpm used during note release
+      public double LastSetRPM = 0;
     public void ReleaseNote(){
         m_forwardLimit.enableLimitSwitch(false);//so the note will shoot out even though we are endstopped (does it need this?)
         disable();
         //pickupState = pickupState.ZERO;
         //double position = Motor_Encoder.getPosition();
-        Motor_Encoder.setPosition(0);
+        //Motor_Encoder.setPosition(0);
         //setSetpoint(position+releaseDistance);
         //enable();
         setIsnoteInPickup(false);
-        MotorControllerPid.setReference(1500, CANSparkBase.ControlType.kVelocity);
+        if (wantedRPM != LastSetRPM) {
+          LastSetRPM = wantedRPM;
+          MotorControllerPid.setReference(LastSetRPM, CANSparkBase.ControlType.kVelocity);
+        }
+        
     }
     
     public void stopSpinner()
     {
       disable();
-      MotorControllerPid.setReference(0, CANSparkBase.ControlType.kVoltage);
+      LastSetRPM = 0;
+      MotorControllerPid.setReference(LastSetRPM, CANSparkBase.ControlType.kVoltage);
     }
 
-    public void ReleaseNotecommand()
-    {
-      new InstantCommand(()->{ReleaseNote();},this).andThen(new WaitCommand(3)).andThen(new InstantCommand(()->{disable();},this)).schedule();
-    }
+    // public void ReleaseNotecommand()
+    // {
+    //   new InstantCommand(()->{ReleaseNote();},this).andThen(new WaitCommand(3)).andThen(new InstantCommand(()->{disable();},this)).schedule();
+    // }
 
     public void getEncoderData()
       {
@@ -244,4 +258,15 @@ public class PickupSpinner extends PIDSubsystem{
 
 
   }
+      public boolean isMotorOvertemp()
+    {
+      if(MotorTemp >TempCForOverTemp)
+      {
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+    }
 }

@@ -34,7 +34,7 @@ public class RunDeliveryHoldIntake extends Command{
         return true;
     } 
     if (m_DeliveryHolder.IsNoteInDeliveryHold() & !IgnorelimitSwitch) {
-      m_DeliveryHolder.MovePosition(750);
+      m_DeliveryHolder.MovePosition(20);//This is a post running sequence that need not be run at this moment. add it back if needed?
           return true;
     }  
     return false;
