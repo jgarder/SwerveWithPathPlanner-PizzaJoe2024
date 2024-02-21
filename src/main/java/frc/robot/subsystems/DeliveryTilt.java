@@ -25,7 +25,7 @@ public class DeliveryTilt extends SubsystemBase {
     double kMaxOutput = 1; 
     double kMinOutput = -1;
 
-    double kP_lifter = 0.040;
+    double kP_lifter = 0.0300;
     double kI_lifter = 0.00001;
     double kD_lifter = 0.0001;
 
@@ -61,8 +61,8 @@ public class DeliveryTilt extends SubsystemBase {
         Motor_Controller.setIdleMode(IdleMode.kBrake);
         
         //set the ramp rate to controll sudden input changes (smooth input
-        Motor_Controller.setClosedLoopRampRate(.05);
-        Motor_Controller.setOpenLoopRampRate(.05);//small ramp rate becuase this will reverse instantly. 
+        Motor_Controller.setClosedLoopRampRate(.1);
+        Motor_Controller.setOpenLoopRampRate(.1);//small ramp rate becuase this will reverse instantly. 
         
         //current limit to keep motors safe from Fire (over current)
         Motor_Controller.setSmartCurrentLimit(30);

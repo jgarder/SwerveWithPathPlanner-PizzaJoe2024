@@ -20,7 +20,7 @@ public class RunDeliveryHoldIntake extends Command{
     m_Timer.start();
     
   }
-  int reduction = 75;
+  int reduction = 40;
   @Override
   public void execute() {
     //System.out.println("executing hold");
@@ -34,7 +34,7 @@ public class RunDeliveryHoldIntake extends Command{
         return true;
     } 
     if (m_DeliveryHolder.IsNoteInDeliveryHold() & !IgnorelimitSwitch) {
-      m_DeliveryHolder.MovePosition(20);//This is a post running sequence that need not be run at this moment. add it back if needed?
+      //m_DeliveryHolder.MovePosition(20);//This is a post running sequence that need not be run at this moment. add it back if needed?
           return true;
     }  
     return false;
