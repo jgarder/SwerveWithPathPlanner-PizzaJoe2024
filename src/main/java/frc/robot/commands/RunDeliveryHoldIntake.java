@@ -7,20 +7,22 @@ public class RunDeliveryHoldIntake extends Command{
     private final DeliveryHolder m_DeliveryHolder;
     private final Timer m_Timer = new Timer();
     private final boolean IgnorelimitSwitch;
-    public RunDeliveryHoldIntake(DeliveryHolder deliveryHolder,boolean ignoreLimitSwitch){
+    private double reduction = 40;
+    public RunDeliveryHoldIntake(DeliveryHolder deliveryHolder,boolean ignoreLimitSwitch,double speed){
         m_DeliveryHolder = deliveryHolder;
         IgnorelimitSwitch = ignoreLimitSwitch;
+        reduction = speed;
         addRequirements(m_DeliveryHolder);
     }
 
     @Override
   public void initialize() {
-    PizzaManager.IsNoteInDeliveryPickup = false;
+    PizzaManager.NoteInDeliveryHolder = false;
     m_Timer.reset();
     m_Timer.start();
     
   }
-  int reduction = 40;
+  
   @Override
   public void execute() {
     //System.out.println("executing hold");

@@ -67,8 +67,8 @@ public class DeliveryHolder extends SubsystemBase {
         Motor_Controller.setIdleMode(IdleMode.kBrake);
         
         //set the ramp rate to controll sudden input changes (smooth input
-        Motor_Controller.setClosedLoopRampRate(.05);
-        Motor_Controller.setOpenLoopRampRate(.05);//small ramp rate becuase this will reverse instantly. 
+        Motor_Controller.setClosedLoopRampRate(.01);
+        Motor_Controller.setOpenLoopRampRate(.01);//small ramp rate becuase this will reverse instantly. 
         
         //current limit to keep motors safe from Fire (over current)
         Motor_Controller.setSmartCurrentLimit(Constants.NeoBrushless.neo1650safelimitAmps);
@@ -92,7 +92,7 @@ public class DeliveryHolder extends SubsystemBase {
     }
 
     //int reduction = 15;
-    public void IntakeRuntoHoldCommand(int reduction,boolean IgnorelimitSwitch) {
+    public void IntakeRuntoHoldCommand(double reduction,boolean IgnorelimitSwitch) {
       if (IgnorelimitSwitch) {
         m_forwardLimit.enableLimitSwitch(false);
       }
@@ -106,13 +106,13 @@ public class DeliveryHolder extends SubsystemBase {
       if (istriggered & !IgnorelimitSwitch) {
         Motor_Encoder.setPosition(0);
         MotorControllerPid.setReference(0, CANSparkBase.ControlType.kPosition);
-        PizzaManager.IsNoteInDeliveryPickup = true;
+        PizzaManager.NoteInDeliveryHolder = true;
       }
       else 
       {
         Motor_Encoder.setPosition(0);
         MotorControllerPid.setReference(reduction, CANSparkBase.ControlType.kPosition);
-        PizzaManager.IsNoteInDeliveryPickup = false;
+        PizzaManager.NoteInDeliveryHolder = false;
       }
 
       //enable();
@@ -126,9 +126,27 @@ public class DeliveryHolder extends SubsystemBase {
 
       public boolean IsNoteInDeliveryHold()
       {
-        return PizzaManager.IsNoteInDeliveryPickup;
+        return PizzaManager.NoteInDeliveryHolder;
       }
 
+      public double IdleDutyCycle = 0;
+      public double SpeakerDutyCycle = 1;//rpm used during note release
+      public double AmpDutyCycle = .75;//rpm used during note release
+      public double PassingDutyCycle = .75;//rpm used during note release
+      public double LastSetDutyCycle = 0;
+
+      public void SetToWantedDutyCycle(double wantedDutyCycle) {
+        if (wantedDutyCycle != LastSetDutyCycle) {
+          LastSetDutyCycle = wantedDutyCycle;
+          MotorControllerPid.setReference(LastSetDutyCycle, CANSparkBase.ControlType.kDutyCycle);
+        }
+      }
+      
+      public void stopSpinner()
+      {
+        LastSetDutyCycle = IdleDutyCycle;
+        MotorControllerPid.setReference(LastSetDutyCycle, CANSparkBase.ControlType.kDutyCycle);
+      }
 
 
     public void getEncoderData()

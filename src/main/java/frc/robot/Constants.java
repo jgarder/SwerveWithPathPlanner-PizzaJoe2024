@@ -2,6 +2,8 @@ package frc.robot;
 
 public class Constants {
 
+  public static final double nominalBatteryVoltage = 12.0;
+
   public static class XboxControllerMap {
     //THIS MAP EXCEPT POV exist as Xboxcontroller.button.KBack.value or .Axis.kRightY ect ect ect.
     //these are the pov directional buttons (this had 8 directions but we do not have them mapped.)
@@ -16,6 +18,7 @@ public class Constants {
   {
     //NEO CANBUS
     public static final String kRIOCANbusName = "rio";
+    public static final int PDH_CAN_ID = 1;
     public static final int PickUpLifterCanBusID = 8;//7;
     public static final int PickUpSpinnerCanBusID = 15;//16;
     public static final int CANdleCanBusID = 11;
@@ -118,14 +121,16 @@ public class Constants {
 
       //TILT
       public static final double Tilt_minValue = 0;
-      public static final double Tilt_maxValue = 19;
+      public static final double Tilt_maxValue = 28;
       
       public static final double Tilt_Position_Zero = 0;
       public static final double Tilt_Position_Park = 2;
-      public static final double Tilt_Position_Passing = 6;
-      public static final double Tilt_Position_Speaker_Closest = 7;
-      public static final double Tilt_Position_Speaker_SafePost = 11;
-      public static final double Tilt_Position_Amp = 18;
+      public static final double Tilt_Position_Passing = 2;
+      public static final double Tilt_Position_Speaker_Closest = 7.75;
+      public static final double Tilt_Position_Speaker_SafePost = 10.85;
+      public static final double Tilt_Position_Speaker_Furthest = 10;
+      public static final double Tilt_Position_Amp = 22;
+
       public static final double Tilt_Position_TrapStart = 11;
       public static final double Tilt_Position_Trap = 12;
       

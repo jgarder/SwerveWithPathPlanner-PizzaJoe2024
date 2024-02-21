@@ -17,6 +17,7 @@ public static final double defaultRotationMulti = .25;
 
     bootupPersistents();
     BuildAutonomousChooser();
+    //thisrobot.m_pdh.clearStickyFaults();
     //BuildConeCubeChooser();
   }
 
@@ -54,6 +55,7 @@ public static final double defaultRotationMulti = .25;
     public void periodic() {
         // This method will be called once per scheduler run
         getdataToDashboard();
+        UpdatePDHToSmartDashboard();
     }
 
     public void getdataToDashboard()
@@ -64,4 +66,41 @@ public static final double defaultRotationMulti = .25;
         SmartDashboard.putBoolean("Pickup Spinner OverTemp", !thisrobot.pickupSpinner.isMotorOvertemp());
         
     }
+    
+    private static final int NUM_PDH_CHANNELS =24;
+    private double maxcurrent = 0.0;
+  public double lowestVoltage = 48.00;
+  public void UpdatePDHToSmartDashboard() {
+     /**
+     * Get the input voltage of the PDH and display it on Shuffleboard.
+     */
+    double Voltage = thisrobot.m_pdh.getVoltage();
+    if (Voltage < lowestVoltage){
+      lowestVoltage = Voltage;
+    }
+    SmartDashboard.putNumber("Voltage", Voltage);
+    SmartDashboard.putNumber("Lowest Voltage", lowestVoltage);
+    /**
+     * Get the total current of the PDH and display it on Shuffleboard. This will
+     * be to the nearest even number.
+     *
+     * To get a better total current reading, sum the currents of all channels.
+     * See below for getting channel current.
+     */
+    double current = thisrobot.m_pdh.getTotalCurrent();
+    if (current > maxcurrent){
+      maxcurrent = current;
+    }
+    SmartDashboard.putNumber("Total Current",current);
+    SmartDashboard.putNumber("MAX Total Current", maxcurrent);
+    /**
+     * Get the currents of each channel of the PDH and display them on
+     * Shuffleboard.
+     */
+    for (int channel = 0; channel < NUM_PDH_CHANNELS; channel++) {
+      SmartDashboard.putNumber(
+          ("Ch" + String.valueOf(channel) + " Current"),
+          thisrobot.m_pdh.getCurrent(channel));
+    }
+  }
 }

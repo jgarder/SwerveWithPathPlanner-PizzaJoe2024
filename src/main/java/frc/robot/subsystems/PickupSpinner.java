@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import com.revrobotics.CANSparkMax;
@@ -19,7 +20,7 @@ import com.revrobotics.SparkPIDController;
 import frc.robot.Constants;
 import frc.robot.RobotContainer.PizzaManager;
 
-public class PickupSpinner extends PIDSubsystem{
+public class PickupSpinner extends SubsystemBase{
 
     public String MotorName = "PickUp Intake";
     public double CurrentEncoderValue = 0;
@@ -45,10 +46,10 @@ public class PickupSpinner extends PIDSubsystem{
     
     public PickupSpinner()
     {
-        super(new PIDController(Constants.PickupHead.kP_Spinner, Constants.PickupHead.kI_Spinner, Constants.PickupHead.kD_Spinner));//super class, must setup PID first
+        //super(new PIDController(Constants.PickupHead.kP_Spinner, Constants.PickupHead.kI_Spinner, Constants.PickupHead.kD_Spinner));//super class, must setup PID first
          //even though the default should be 0, lets tell the PID to goto 0 which is our starting position.
          Motor_Encoder.setPosition(Constants.PickupHead.minValue_Spinner);
-         setSetpoint(0);
+         //setSetpoint(0);
 
          //the forward limit switch is used to detect note in pickup.
          m_forwardLimit.enableLimitSwitch(true);
@@ -66,6 +67,9 @@ public class PickupSpinner extends PIDSubsystem{
         //current limit to keep motors safe from Fire (over current)
         Motor_Controller.setSmartCurrentLimit(Constants.NeoBrushless.neo550safelimitAmps);
 
+        // set voltage sag compensation. 
+        Motor_Controller.enableVoltageCompensation(Constants.nominalBatteryVoltage);
+
         //limit everything on this motor controller to 500ms except the status 0 frame which is 10ms and does faults and applied output. 
         Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);  //Default Rate: 20ms ,Motor Velocity,Motor Temperature,Motor VoltageMotor Current
         Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);  //Default Rate: 20ms ,Motor Position
@@ -77,47 +81,31 @@ public class PickupSpinner extends PIDSubsystem{
         SmartDashboard.putBoolean(MotorName + " Forward Limit Enabled", m_forwardLimit.isLimitSwitchEnabled());
 
         // PID coefficients
-        kP = 0.0003; 
-        kI = 0.000001;
-        kD = 0.000001; 
+        kP = 0.000074; 
+        kI = 0.00000051;
+        kD = 0.000000; 
         kIz = 0; 
-        kFF = 0.00011; 
+        kFF = 0.000008; 
         kMaxOutput = 1; 
         kMinOutput = -1;
 
         // set PID coefficients
-        MotorControllerPid.setP(kP);
-        MotorControllerPid.setI(kI);
-        MotorControllerPid.setD(kD);
-        MotorControllerPid.setIZone(kIz);
+        //MotorControllerPid.setP(kP);
+        //MotorControllerPid.setI(kI);
+        //MotorControllerPid.setD(kD);
+        //MotorControllerPid.setIZone(kIz);
         MotorControllerPid.setFF(kFF);
         MotorControllerPid.setOutputRange(kMinOutput, kMaxOutput);
 
         // display PID coefficients on SmartDashboard
-        SmartDashboard.putNumber(MotorName + " P Gain", kP);
-        SmartDashboard.putNumber(MotorName + " I Gain", kI);
-        SmartDashboard.putNumber(MotorName + " D Gain", kD);
-        SmartDashboard.putNumber(MotorName + " I Zone", kIz);
-        SmartDashboard.putNumber(MotorName + " Feed Forward", kFF);
-        SmartDashboard.putBoolean(MotorName + " Forward Limit Enabled", m_forwardLimit.isLimitSwitchEnabled());
+        //SmartDashboard.putNumber(MotorName + " P Gain", kP);
+        //SmartDashboard.putNumber(MotorName + " I Gain", kI);
+        //SmartDashboard.putNumber(MotorName + " D Gain", kD);
+        //SmartDashboard.putNumber(MotorName + " I Zone", kIz);
+        //SmartDashboard.putNumber(MotorName + " Feed Forward", kFF);
+        //SmartDashboard.putBoolean(MotorName + " Forward Limit Enabled", m_forwardLimit.isLimitSwitchEnabled());
 
-        enable();//enable the pidcontroller of this subsystem 
-    }
-
-      @Override
-    public double getMeasurement() {
-        //INSIDE GET ENCODER DATA WE UPDATE OUR CurrentLiftEncoderValue! this is how the PID WORKS!!!!
-        getEncoderData();
-        
-        return CurrentEncoderValue;
-    }
-
-    @Override
-    public void useOutput(double output, double setpoint) {
-      SetSpeed(output);
-      SmartDashboard.putNumber(MotorName + " PID output",output);
-      SmartDashboard.putNumber(MotorName + " SetPoint",setpoint);
-      //m_shooterMotor.setVoltage(output + m_shooterFeedforward.calculate(setpoint));
+        //enable();//enable the pidcontroller of this subsystem 
     }
     
     public boolean setIsnoteInPickup(boolean isnoteinpickup)
@@ -134,7 +122,6 @@ public class PickupSpinner extends PIDSubsystem{
     }
 
     public void RunPickup() {
-      enable();
       boolean isenabled = SmartDashboard.getBoolean(MotorName + " Forward Limit Enabled", true);
       m_forwardLimit.enableLimitSwitch(isenabled);
       //m_forwardLimit.enableLimitSwitch(true);
@@ -145,9 +132,10 @@ public class PickupSpinner extends PIDSubsystem{
             boolean istriggered = m_forwardLimit.isPressed();
             if (istriggered) {//we have a note in pickup and limit switch is pressed, so we need to reduce the setpoint to hold the note in pickup.
                 if (!PizzaManager.IsNoteInPickup) {
-                    HoldAutoLoaded();
+                    //HoldAutoLoaded();
+                    stopSpinner();
                 PizzaManager.IsNoteInPickup = true;
-                
+                return;
                 }
                 else
                 {
@@ -163,51 +151,41 @@ public class PickupSpinner extends PIDSubsystem{
     int reduction = 15;
     public void IntakeRunCommand(int reduction) {
       m_forwardLimit.enableLimitSwitch(false);
-      Motor_Encoder.setPosition(0);
-      setSetpoint(-reduction);
-      enable();
+      SetToWantedRpm(IntakeDutyCycle);
+      //Motor_Encoder.setPosition(0);
+      //setSetpoint(-reduction);
+      //enable();
     }
     //
     double windback = 3;
     public void HoldAutoLoaded(){
-        disable();
         //pickupState = pickupState.ZERO;
         double position = Motor_Encoder.getPosition();
         Motor_Encoder.setPosition(position);
-        setSetpoint(position-windback);
-    
-        enable();
     }
-      double releaseDistance = 30;
-      public double wantedRPM = 1500;//rpm used during note release
+
+      public double IntakeDutyCycle = -.75;//rpm used during note release
+      public double PassingDutyCycle = .75;//rpm used during note release
       public double LastSetRPM = 0;
     public void ReleaseNote(){
         m_forwardLimit.enableLimitSwitch(false);//so the note will shoot out even though we are endstopped (does it need this?)
-        disable();
-        //pickupState = pickupState.ZERO;
-        //double position = Motor_Encoder.getPosition();
-        //Motor_Encoder.setPosition(0);
-        //setSetpoint(position+releaseDistance);
-        //enable();
         setIsnoteInPickup(false);
-        if (wantedRPM != LastSetRPM) {
-          LastSetRPM = wantedRPM;
-          MotorControllerPid.setReference(LastSetRPM, CANSparkBase.ControlType.kVelocity);
-        }
+        SetToWantedRpm(PassingDutyCycle);
         
+    }
+
+    private void SetToWantedRpm(double wantedRPM) {
+      if (wantedRPM != LastSetRPM) {
+        LastSetRPM = wantedRPM;
+        MotorControllerPid.setReference(LastSetRPM, CANSparkBase.ControlType.kDutyCycle);
+      }
     }
     
     public void stopSpinner()
     {
-      disable();
       LastSetRPM = 0;
-      MotorControllerPid.setReference(LastSetRPM, CANSparkBase.ControlType.kVoltage);
+      MotorControllerPid.setReference(LastSetRPM, CANSparkBase.ControlType.kDutyCycle);
     }
-
-    // public void ReleaseNotecommand()
-    // {
-    //   new InstantCommand(()->{ReleaseNote();},this).andThen(new WaitCommand(3)).andThen(new InstantCommand(()->{disable();},this)).schedule();
-    // }
 
     public void getEncoderData()
       {
@@ -239,6 +217,7 @@ public class PickupSpinner extends PIDSubsystem{
       }
     @Override
     public void periodic() {
+      getEncoderData();
          // enable/disable limit switches based on value read from SmartDashboard
     SmartDashboard.putBoolean(MotorName + " Forward Limit Triggered", m_forwardLimit.isPressed());
 

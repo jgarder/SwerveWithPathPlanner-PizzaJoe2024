@@ -36,10 +36,9 @@ import frc.robot.subsystems.PickupArm.PickupState;
 
 public class RobotContainer {
 
-  private static final int PDH_CAN_ID = 1;
-  private static final int NUM_PDH_CHANNELS =24;
 
-  PowerDistribution m_pdh = new PowerDistribution(PDH_CAN_ID,ModuleType.kRev);
+
+  public final PowerDistribution m_pdh = new PowerDistribution(Constants.CANBus.PDH_CAN_ID,ModuleType.kRev);
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
@@ -60,9 +59,16 @@ public class RobotContainer {
   public static class PizzaManager{
     public static PickupState LastKnownPickupState = PickupState.ZERO;
     public static boolean IsNoteInPickup = false;
-    public static boolean IsNoteInDeliveryPickup = false;
-    
-
+    public static boolean NoteInDeliveryHolder = false;
+    public static boolean AltControlModeEnabled = false;
+    public boolean IsAltControlModeEnabled()
+    {
+      return AltControlModeEnabled;
+    }
+    public boolean IsNoteInDeliveryHolder()
+    {
+      return NoteInDeliveryHolder;
+    }
   }
 
 
@@ -95,10 +101,10 @@ public class RobotContainer {
   }
   public Command C_ReturnPickupToPassing()
   {
-    return new RunDeliveryHoldIntake(deliveryHolder,false).alongWith(
+    return new RunDeliveryHoldIntake(deliveryHolder,false,40).alongWith(
     new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm).andThen(new WaitCommand(.125)) //small wait for debounce maybe take out and make grab deeper.
     .andThen(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner))
-    .andThen(new WaitCommand(1.25))//.onlyWhile((pickupSpinner::getLimitSwitchEnabled))
+    .andThen(new WaitCommand(2.5))//THIS WAIT COMMAND IS THE POST ROLL //.onlyWhile((pickupSpinner::getLimitSwitchEnabled))
     .andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}))
     )
     ;
@@ -109,15 +115,14 @@ public class RobotContainer {
     return  new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter)
       .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Park);},deliveryTilt),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff)));
   }
-
   private void configureBindings() {
     drivetrainManager.configureBindings();
 
     joystick.rightBumper().whileTrue(C_PickupPizzaFromFloorWithoutWashing().andThen(C_ReturnPickupToPassing())).onFalse(C_ReturnPickupToPassing());
 
     
-    joystick.b().onTrue((new RunDeliveryHoldIntake(deliveryHolder,true)).withTimeout(2));
-    joystick.x().onTrue(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner))
+    joystick.b().whileTrue((new RunDeliveryHoldIntake(deliveryHolder,true,999)).withTimeout(2));
+    joystick.x().onTrue(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner).andThen(new RunDeliveryHoldIntake(deliveryHolder,false,40)))
     .onFalse(new InstantCommand(()->{pickupSpinner.stopSpinner();},pickupSpinner));// (pickuparm.runonce(() -> {pickuparm.setSetpointFloorPickup();}));
     //joystick.y().whileTrue(new InstantCommand(()->{pickuparm.setSetpointFloorPickup();},pickuparm).andThen(()->{pickupSpinner.RunPickup();}).repeatedly()).onFalse(new InstantCommand(()->{pickuparm.setSetpointVerticle();}).andThen(()->{pickupSpinner.HoldAutoLoaded();})); //.until(()->{pickupSpinner.m_forwardLimit.isPressed();})
     //joystick.y().onTrue(C_PickupPizzaFromFloorWithoutWashing());
@@ -125,8 +130,18 @@ public class RobotContainer {
     //left trigger will bring joe into the speaker position
     joystick.leftTrigger().whileTrue(
       new InstantCommand(()->{deliveryLifter.setSetpointPassing();;},deliveryLifter)
-      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Closest);},deliveryTilt),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose))))
+      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Closest);},deliveryTilt),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose))).onlyIf(()->PizzaManager.NoteInDeliveryHolder))
       .onFalse(C_ParkDeliveryHead());
+
+//left trigger will bring joe into the speaker position
+    joystick.rightTrigger().whileTrue(
+      new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter)
+      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_SafePost);},deliveryTilt),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose))))
+      .onFalse(C_ParkDeliveryHead());
+
+
+
+
     //left bumper will bring joe into the amp position 
     joystick.leftBumper().whileTrue(
       new InstantCommand(()->{deliveryLifter.setSetpointAmp();},deliveryLifter)
@@ -136,10 +151,12 @@ public class RobotContainer {
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionDOWN).onTrue(new InstantCommand(() -> {m_candleSubsystem.GreenLights();}));
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).onTrue(new InstantCommand(() -> {m_candleSubsystem.RainbowRoadLights();}));
     
+    joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).onTrue(new InstantCommand(() -> {deliveryTilt.AlterSetpointposition(.1);}));
+     joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).onTrue(new InstantCommand(() -> {deliveryTilt.AlterSetpointposition(-.2);}));
     //if in Amp positions or Shoot position, pressing A will execute that action. 
     //joystick.a().whileTrue(runAuto);
 
-    joystick.rightTrigger().onTrue(new InstantCommand(()->{deliveryTilt.setSetpointZero();},deliveryTilt));
+    //joystick.rightTrigger().onTrue(new InstantCommand(()->{deliveryTilt.setSetpointZero();},deliveryTilt));
     
     //.onTrue(new InstantCommand(()->{deliveryTilt.setSetpointPassing();},deliveryTilt));
   }
@@ -152,40 +169,6 @@ public class RobotContainer {
     /* First put the drivetrain into auto run mode, then run the auto */
     return drivetrainManager.runAuto;
   }
-  private double maxcurrent = 0.0;
-  public double lowestVoltage = 48.00;
-  public void UpdatePDHToSmartDashboard() {
-     /**
-     * Get the input voltage of the PDH and display it on Shuffleboard.
-     */
-    double Voltage = m_pdh.getVoltage();
-    if (Voltage < lowestVoltage){
-      lowestVoltage = Voltage;
-    }
-    SmartDashboard.putNumber("Voltage", Voltage);
-    SmartDashboard.putNumber("Lowest Voltage", lowestVoltage);
-    /**
-     * Get the total current of the PDH and display it on Shuffleboard. This will
-     * be to the nearest even number.
-     *
-     * To get a better total current reading, sum the currents of all channels.
-     * See below for getting channel current.
-     */
-    double current = m_pdh.getTotalCurrent();
-    if (current > maxcurrent){
-      maxcurrent = current;
-    }
-    SmartDashboard.putNumber("Total Current",current);
-    SmartDashboard.putNumber("MAX Total Current", maxcurrent);
-    /**
-     * Get the currents of each channel of the PDH and display them on
-     * Shuffleboard.
-     */
-    for (int channel = 0; channel < NUM_PDH_CHANNELS; channel++) {
-      SmartDashboard.putNumber(
-          ("Ch" + String.valueOf(channel) + " Current"),
-          m_pdh.getCurrent(channel));
-    }
-  }
+  
 
 }

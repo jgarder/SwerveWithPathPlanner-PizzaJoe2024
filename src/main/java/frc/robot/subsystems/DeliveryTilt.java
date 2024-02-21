@@ -25,12 +25,13 @@ public class DeliveryTilt extends SubsystemBase {
     double kMaxOutput = 1; 
     double kMinOutput = -1;
 
-    double kP_lifter = 0.0300;
-    double kI_lifter = 0.00001;
-    double kD_lifter = 0.0001;
+    double kP_lifter = 0.0700;
+    double kI_lifter = 0.000004;
+    double kD_lifter = 0.000001;
 
-    double kFF = 0.01;
+    double kFF = 0.00;
     double kIz = 0;
+
     private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.CANBus.Tilt_CanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
     private final SparkPIDController MotorControllerPid = Motor_Controller.getPIDController();
@@ -150,6 +151,12 @@ public class DeliveryTilt extends SubsystemBase {
         Motor_Controller.enableSoftLimit(SoftLimitDirection.kReverse, true);
         //enable();//reactivate the pidcontroller of this subsystem
         Motor_Encoder.setPosition(Constants.DeliveryHead.Tilt_minValue);
+      }
+
+      public void AlterSetpointposition(double AddToPosition)
+      {
+        WantedEncoderValue = WantedEncoderValue + AddToPosition;
+        MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
       }
 
       public void setSetpointToPosition(double position)
