@@ -8,18 +8,15 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
-import edu.wpi.first.hal.CANAPITypes.CANDeviceType;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class DeliveryLifter extends SubsystemBase {
+public class ChainLifterS extends SubsystemBase {
 
     
-  private static final String MotorName = "DeliveryLift";
-    public double CurrentLiftEncoderValue = 0;
+    public String MotorName = "ChainLifter";
+    public double CurrentEncoderValue = 0;
     public double WantedEncoderValue = 0;
     public double CurrentEncoderVelocity = 0;
     public double OutputCurrent = 0;
@@ -28,21 +25,23 @@ public class DeliveryLifter extends SubsystemBase {
     double kMaxOutput = 1; 
     double kMinOutput = -1;
 
-    double kP_lifter = 0.0250;
-    double kI_lifter = 0.0000;
-    double kD_lifter = 0.000;
+    double kP_lifter = 0.0400;
+    double kI_lifter = 0.000004;
+    double kD_lifter = 0.000001;
 
-    double kFF = 0.0003;
+    double kFF = 0.00;
     double kIz = 0;
-    private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.CANBus.Lift_CanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
+
+    private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.CANBus.ChainLifterCanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
     private final SparkPIDController MotorControllerPid = Motor_Controller.getPIDController();
-    public DeliveryLifter()
+    
+    public ChainLifterS()
     {
         //super(new PIDController(Constants.PickupHead.kP_lifter, Constants.PickupHead.kI_lifter, Constants.PickupHead.kD_lifter));//super class, must setup PID first
         //even though the default should be 0, lets tell the PID to goto 0 which is our starting position.
 
-        Motor_Encoder.setPosition(Constants.DeliveryHead.Lift_minValue);
+        Motor_Encoder.setPosition(Constants.ChainLifter.Lift_minValue);
         MotorControllerPid.setP(kP_lifter);
         MotorControllerPid.setI(kI_lifter);
         MotorControllerPid.setD(kD_lifter);
@@ -56,18 +55,18 @@ public class DeliveryLifter extends SubsystemBase {
         //Enable the soft limits and set the values
         Motor_Controller.enableSoftLimit(SoftLimitDirection.kForward, true);
         Motor_Controller.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        Motor_Controller.setSoftLimit(SoftLimitDirection.kForward, (float)Constants.DeliveryHead.Lift_maxValue);
-        Motor_Controller.setSoftLimit(SoftLimitDirection.kReverse, (float)Constants.DeliveryHead.Lift_minValue);
+        Motor_Controller.setSoftLimit(SoftLimitDirection.kForward, (float)Constants.ChainLifter.Lift_maxValue);
+        Motor_Controller.setSoftLimit(SoftLimitDirection.kReverse, (float)Constants.ChainLifter.Lift_minValue);
 
         //set the idle mode to brake so it doesnt move when we dont want it to, or coast if we want it to coast after "stopping"
         Motor_Controller.setIdleMode(IdleMode.kBrake);
         
         //set the ramp rate to controll sudden input changes (smooth input
-        Motor_Controller.setClosedLoopRampRate(.05);
-        Motor_Controller.setOpenLoopRampRate(.05);//small ramp rate becuase this will reverse instantly. 
+        Motor_Controller.setClosedLoopRampRate(.1);
+        Motor_Controller.setOpenLoopRampRate(.1);//small ramp rate becuase this will reverse instantly. 
         
         //current limit to keep motors safe from Fire (over current)
-        Motor_Controller.setSmartCurrentLimit(Constants.NeoBrushless.neo1650safelimitAmps);
+        Motor_Controller.setSmartCurrentLimit(30);
 
         //limit everything on this motor controller to 500ms except the status 0 frame which is 10ms and does faults and applied output. 
         Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);  //Default Rate: 20ms ,Motor Velocity,Motor Temperature,Motor VoltageMotor Current
@@ -100,8 +99,8 @@ public class DeliveryLifter extends SubsystemBase {
        * 
        * GetPosition() returns the position of the encoder in units of revolutions
        */
-      CurrentLiftEncoderValue = Motor_Encoder.getPosition();
-      SmartDashboard.putNumber(MotorName + " PID Encoder Position",CurrentLiftEncoderValue);
+      CurrentEncoderValue = Motor_Encoder.getPosition();
+      SmartDashboard.putNumber(MotorName + " PID Encoder Position",CurrentEncoderValue);
   
       /**
        * Encoder velocity is read from a RelativeEncoder object by calling the
@@ -130,7 +129,6 @@ public class DeliveryLifter extends SubsystemBase {
     double d = SmartDashboard.getNumber(MotorName + " D Gain", 0);
     double iz = SmartDashboard.getNumber(MotorName + " I Zone", 0);
     double ff = SmartDashboard.getNumber(MotorName + " Feed Forward", 0);
-
       
       if((p != kP_lifter)) { MotorControllerPid.setP(p); kP_lifter = p; }
     if((i != kI_lifter)) { MotorControllerPid.setI(i); kI_lifter = i; }
@@ -147,42 +145,57 @@ public class DeliveryLifter extends SubsystemBase {
 
       public void resetEncoder() {
         SetSpeed(0);
-        Motor_Encoder.setPosition(Constants.PickupHead.minValue_Lifter);
+        Motor_Encoder.setPosition(Constants.ChainLifter.Lift_minValue);
         setSetpointZero();
         
         Motor_Controller.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        //enable();//reactivate the pidcontroller of this subsystem
-        Motor_Encoder.setPosition(Constants.PickupHead.minValue_Lifter);
+      }
+
+      public void AlterSetpointposition(double AddToPosition)
+      {
+        WantedEncoderValue = WantedEncoderValue + AddToPosition;
+        MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
+      }
+
+      public void setSetpointToPosition(double position)
+      {
+        //enable();
+        WantedEncoderValue = position;
+        MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
       }
 
       public void setSetpointZero() {
         //enable();
-        WantedEncoderValue = Constants.DeliveryHead.Lift_Position_Zero;
+        WantedEncoderValue = Constants.ChainLifter.Lift_Position_Zero;
         MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
       }
-      public void setSetpointPassing() {
+        public void setSetpointCenterAndTrapLift() {
         //enable();
-        WantedEncoderValue = Constants.DeliveryHead.Lift_Position_Passing;
-        MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
-      }
-      public void setSetpointAmp() {
-        //enable();
-        WantedEncoderValue = Constants.DeliveryHead.Lift_Position_Amp;
-        MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
-      }
-      public void setSetpointTrap() {
-        //enable();
-        WantedEncoderValue = Constants.DeliveryHead.Lift_Position_TrapStart;
+        WantedEncoderValue = Constants.ChainLifter.Lift_Position_CenterAndTrap;
         MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
       }
 
 
       public boolean HasNote = false;
-       double setpointTolerance = 2.5;
-      public boolean atSetpoint() {
-        if(Math.abs(WantedEncoderValue-CurrentLiftEncoderValue) < setpointTolerance){
+
+
+    double setpointTolerance = 2.5;
+      public boolean atSetpoint() {        
+          if (Constants.isWithinAmount(CurrentEncoderValue, WantedEncoderValue, setpointTolerance)) {
+            return true;
+          } else {
+            return false; 
+          }
+      }
+      public boolean isMotorOvertemp()
+      {
+        if(MotorTemp >TempCForOverTemp)
+        {
           return true;
         }
-        return false;
+        else
+        {
+          return false;
+        }
       }
 }

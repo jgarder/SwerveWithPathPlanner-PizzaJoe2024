@@ -25,7 +25,7 @@ public class Constants {
     public static final int UppershooterCanID = 14;
     public static final int LowerShooterCanID = 7;
     public static final int DeliveryIntakeCanBusID = 5;
-
+    public static final int ChainLifterCanBusID = 6;
     public static final int Lift_CanBusID = 10;
     public static final int Tilt_CanBusID = 9;
 
@@ -70,6 +70,21 @@ public class Constants {
     {
       public static int neo550safelimitAmps = 35;//Pickup rollers and delivery index motor
       public static int neo1650safelimitAmps = 30; //pickup head lifter, delivery Head lifter, delivery tilt motor, 2x shooting motor, Chain Lift motor
+    }
+
+    public static class ChainLifter
+    {
+        public static final double Lift_minValue = 0;
+        public static final double Lift_maxValue = 430;
+        
+
+        public static final double Lift_Position_Zero = 0;
+        public static final double Lift_Position_PullDown = 100;
+        public static final double Lift_Position_unfolding = 50;
+        public static final double Lift_Position_CenterAndTrap = 429;
+        public static final double Lift_Position_Edge = 429;
+
+
     }
 
     public static class PickupHead
@@ -125,7 +140,8 @@ public class Constants {
       
       public static final double Tilt_Position_Zero = 0;
       public static final double Tilt_Position_Park = 2;
-      public static final double Tilt_Position_Passing = 2;
+      public static final double Tilt_Position_Passing = 5;
+      public static final double Tilt_Position_TrapLift = 7.75;
       public static final double Tilt_Position_Speaker_Closest = 7.75;
       public static final double Tilt_Position_Speaker_SafePost = 10.85;
       public static final double Tilt_Position_Speaker_Furthest = 10;

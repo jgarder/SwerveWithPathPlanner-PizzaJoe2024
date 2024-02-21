@@ -19,11 +19,14 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.ChainLifter;
+import frc.robot.commands.MoveChainLiftToPosition;
 import frc.robot.commands.MovePickupToPosition;
 import frc.robot.commands.RunDeliveryHoldIntake;
 import frc.robot.commands.RunIntake;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CANdleSystem;
+import frc.robot.subsystems.ChainLifterS;
 import frc.robot.subsystems.DeliveryHolder;
 import frc.robot.subsystems.DeliveryLifter;
 import frc.robot.subsystems.DeliveryShooter;
@@ -51,7 +54,7 @@ public class RobotContainer {
   public final DeliveryShooter deliveryShooter = new DeliveryShooter();
   public final DrivetrainManager drivetrainManager = new DrivetrainManager(joystick);
   public final DeliveryHolder deliveryHolder = new DeliveryHolder();
-
+  public final ChainLifterS ChainLift = new ChainLifterS();
 
   public final SmartDashboardHandler SDashBoardH = new SmartDashboardHandler(this);
   //
@@ -136,7 +139,7 @@ public class RobotContainer {
 //left trigger will bring joe into the speaker position
     joystick.rightTrigger().whileTrue(
       new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter)
-      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_SafePost);},deliveryTilt),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose))))
+      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_SafePost);},deliveryTilt),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose))).onlyIf(()->PizzaManager.NoteInDeliveryHolder))
       .onFalse(C_ParkDeliveryHead());
 
 
@@ -145,14 +148,28 @@ public class RobotContainer {
     //left bumper will bring joe into the amp position 
     joystick.leftBumper().whileTrue(
       new InstantCommand(()->{deliveryLifter.setSetpointAmp();},deliveryLifter)
-            .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Amp);},deliveryTilt),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmAmp))))
+            .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Amp);},deliveryTilt),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmAmp))).onlyIf(()->PizzaManager.NoteInDeliveryHolder))
             .onFalse(C_ParkDeliveryHead());
+    //going DOWN
+    joystick.pov(Constants.XboxControllerMap.kPOVDirectionDOWN)
+    .onTrue(new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_Zero, ChainLift).alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Passing);}))
+    .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm)
+    .alongWith(new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter) )
+    ));
     
-    joystick.pov(Constants.XboxControllerMap.kPOVDirectionDOWN).onTrue(new InstantCommand(() -> {m_candleSubsystem.GreenLights();}));
-    joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).onTrue(new InstantCommand(() -> {m_candleSubsystem.RainbowRoadLights();}));
+    joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT)
+    .onTrue(new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_PullDown, ChainLift)
+      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLift);})));
+
+
+    joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP)
+    .onTrue(new MovePickupToPosition(Constants.PickupHead.PickupVertical, pickuparm)
+    .alongWith(new InstantCommand(()->{deliveryLifter.setSetpointTrap();},deliveryLifter))
+    .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLift);}))
+    .andThen(new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_CenterAndTrap, ChainLift)));
     
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).onTrue(new InstantCommand(() -> {deliveryTilt.AlterSetpointposition(.1);}));
-     joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).onTrue(new InstantCommand(() -> {deliveryTilt.AlterSetpointposition(-.2);}));
+     //joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).onTrue(new InstantCommand(() -> {deliveryTilt.AlterSetpointposition(-.2);}));
     //if in Amp positions or Shoot position, pressing A will execute that action. 
     //joystick.a().whileTrue(runAuto);
 
