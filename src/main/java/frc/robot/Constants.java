@@ -3,6 +3,7 @@ package frc.robot;
 public class Constants {
 
   public static final double nominalBatteryVoltage = 12.0;
+  public static final double stickDeadband = 0.10;
 
   public static class XboxControllerMap {
     //THIS MAP EXCEPT POV exist as Xboxcontroller.button.KBack.value or .Axis.kRightY ect ect ect.
@@ -79,7 +80,7 @@ public class Constants {
         
 
         public static final double Lift_Position_Zero = 0;
-        public static final double Lift_Position_PullDown = 100;
+        public static final double Lift_Position_PullDown =5;
         public static final double Lift_Position_unfolding = 50;
         public static final double Lift_Position_CenterAndTrap = 429;
         public static final double Lift_Position_Edge = 429;
@@ -132,16 +133,17 @@ public class Constants {
       public static final double Lift_Position_Speaker = 0;
       public static final double Lift_Position_Amp = 50;
       public static final double Lift_Position_TrapStart = 120;
-      public static final double Lift_Position_Trap = 125;
+      public static final double Lift_Position_Trap = 133;
 
       //TILT
       public static final double Tilt_minValue = 0;
       public static final double Tilt_maxValue = 28;
       
       public static final double Tilt_Position_Zero = 0;
-      public static final double Tilt_Position_Park = 2;
+      public static final double Tilt_Position_Park = 0;
       public static final double Tilt_Position_Passing = 5;
       public static final double Tilt_Position_TrapLift = 7.75;
+      public static final double Tilt_Position_TrapLiftUP = 10.75;
       public static final double Tilt_Position_Speaker_Closest = 7.75;
       public static final double Tilt_Position_Speaker_SafePost = 10.85;
       public static final double Tilt_Position_Speaker_Furthest = 10;
@@ -156,4 +158,27 @@ public class Constants {
       public static final double ShooterRpmAmp = 1000;
     }
     
+    public static class AllianceAprilTags{
+      public static class Red {
+        public static final int SourceLeft = 10;//from robots pov
+        public static final int SourceRight = 9;//from robots pov
+        public static final int SpeakerCenter = 4;
+        public static final int SpeakerOffset = 3;
+        public static final int Amp = 5;
+        public static final int ChainSourceSide = 11;
+        public static final int ChainAmpSide = 12;
+        public static final int ChainBackSide = 13;
+      }
+      public static class Blue {
+        public static final int SourceLeft = 2;//from robots pov
+        public static final int SourceRight = 1;//from robots pov
+        public static final int SpeakerCenter = 7;
+        public static final int SpeakerOffset = 8;
+        public static final int Amp = 6;
+        public static final int ChainSourceSide = 16;
+        public static final int ChainAmpSide = 15;
+        public static final int ChainBackSide = 14;
+      }
+
+    }
 }
