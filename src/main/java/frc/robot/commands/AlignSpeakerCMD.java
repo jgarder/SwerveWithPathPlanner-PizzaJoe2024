@@ -248,8 +248,8 @@ public final SwerveRequest.RobotCentric drive;
         else{
           System.out.println("Stopping no tags see debounced");
             drivetrainManager.drivetrain.setControl(drive.withVelocityX(0 * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
-            .withVelocityY(strafeVal * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(0 * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
+            .withVelocityY(0 * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(-strafeVal * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
         );
         //   s_Swerve.drive(
         //     new Translation2d(0,strafeVal), 
@@ -284,7 +284,7 @@ public final SwerveRequest.RobotCentric drive;
     
     double Xspeed = 1.0;//5.0 * Constants.Swerve.maxSpeed;
     double Yspeed = 1.0;//5.0 * Constants.Swerve.maxSpeed;
-    double rotationspeed = 1.0;//1.0 * Constants.Swerve.maxAngularVelocity;
+    double rotationspeed = .01;//1.0 * Constants.Swerve.maxAngularVelocity;
     
     //if we are really far away lets keep pid from going insane.
     //double maxYvelocity = 1;//1.00;
@@ -309,8 +309,8 @@ public final SwerveRequest.RobotCentric drive;
         //     .withRotationalRate(RZposeAxis) // Drive counterclockwise with negative X (left)
         // ).ignoringDisable(false); 
         drivetrainManager.drivetrain.setControl(drive.withVelocityX(-XposeAxis * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
-            .withVelocityY(0 * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(-0 * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
+            .withVelocityY(-YposeAxis * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(-RZposeAxis * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
         );
     // s_Swerve.drive(
     //          new Translation2d(XposeAxis,YposeAxis), 
@@ -350,8 +350,8 @@ private void SetPidControlersToRedCenterSpeaker() {
 }
 private void SetPidControlersToBlueCenterSpeaker() {
   XP_Setpoint = -6.81;//6.63;
-  YP_Setpoint = 1.72;
-  RZ_Setpoint = 177;
+  YP_Setpoint = 1.65;
+  RZ_Setpoint = -178;
   //LL POSE X is forward and backward toward target in field space
   AlignXController.setSetpoint(XP_Setpoint);
   //LL POSE Y Is left to right translation in field space

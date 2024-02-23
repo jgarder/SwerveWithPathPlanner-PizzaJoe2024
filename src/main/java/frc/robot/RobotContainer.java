@@ -129,6 +129,11 @@ public class RobotContainer {
   {
     return new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Passing);},deliveryTilt).andThen(new WaitCommand(20).until(()->deliveryLifter.CurrentLiftEncoderValue < 20)).andThen(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Park);},deliveryTilt));
   }
+  public Command C_ReadyCloseSpeakerShot()
+  {
+    return new InstantCommand(()->{deliveryLifter.setSetpointPassing();},deliveryLifter)
+      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Closest);},deliveryTilt),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose)));
+  }
   private void configureBindings() {
     drivetrainManager.configureBindings();
     joystick.back().onTrue(new InstantCommand(()->{PizzaManager.AltControlModeEnabled = !PizzaManager.AltControlModeEnabled;}));
@@ -143,8 +148,7 @@ public class RobotContainer {
 
     //left trigger will bring joe into the speaker position
     joystick.leftTrigger().whileTrue(
-      new InstantCommand(()->{deliveryLifter.setSetpointPassing();;},deliveryLifter)
-      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Closest);},deliveryTilt),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose))).onlyIf(()->PizzaManager.NoteInDeliveryHolder))
+      C_ReadyCloseSpeakerShot().onlyIf(()->PizzaManager.NoteInDeliveryHolder))
       .onFalse(C_ParkDeliveryHead());
 
 //left trigger will bring joe into the speaker position
@@ -165,7 +169,13 @@ public class RobotContainer {
     //DoubleSupplier sup = () -> joystick.getRawAxis(strafeAxis);
 
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).and(()->!PizzaManager.AltControlModeEnabled)
-    .whileTrue(new AlignSpeakerCMD(drivetrainManager,LL3,() -> joystick.getRawAxis(strafeAxis)));
+    .whileTrue(new AlignSpeakerCMD(drivetrainManager,LL3,() -> joystick.getRawAxis(strafeAxis))
+    .andThen(
+      C_ReadyCloseSpeakerShot(),
+      new WaitCommand(1),
+    (new RunDeliveryHoldIntake(deliveryHolder,true,999)).withTimeout(.25),
+    C_ParkDeliveryHead()))
+    .onFalse(C_ParkDeliveryHead());
     
        joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).and(()->!PizzaManager.AltControlModeEnabled)
        .whileTrue(
