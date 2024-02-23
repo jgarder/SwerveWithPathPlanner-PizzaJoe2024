@@ -8,6 +8,8 @@ import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix.motorcontrol.IFollower;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
 import com.pathplanner.lib.path.PathPoint;
@@ -31,12 +33,14 @@ import frc.robot.subsystems.DrivetrainManager;
 import frc.robot.subsystems.Limelight3Subsystem;
 
 
-public class AlignSubstationCMD extends Command {
+public class AlignSpeakerCMD extends Command {
   
 
   /** Creates a new ArmStopCMD. */
   Limelight3Subsystem limelight3Subsystem;
-  CommandSwerveDrivetrain s_Swerve;
+  DrivetrainManager drivetrainManager;
+
+   
 
   //LL POSE X is forward and backward toward target in field space
   double k_PoseX_P = 1.20;
@@ -79,12 +83,18 @@ public class AlignSubstationCMD extends Command {
   double RZ_Setpoint = 0;
 
   private DoubleSupplier strafeSup;
+public final SwerveRequest.RobotCentric drive;
 
-  public AlignSubstationCMD(CommandSwerveDrivetrain Thiss_Swerve, Limelight3Subsystem ThisLimelight, DoubleSupplier strafeSup) {
-    s_Swerve = Thiss_Swerve;
+  public AlignSpeakerCMD(DrivetrainManager Thiss_Swerve, Limelight3Subsystem ThisLimelight, DoubleSupplier strafeSup) {
+    drivetrainManager = Thiss_Swerve;
     limelight3Subsystem = ThisLimelight;
     this.strafeSup = strafeSup;
-    addRequirements(s_Swerve,limelight3Subsystem); 
+
+     drive = new SwerveRequest.RobotCentric()
+      .withDeadband(drivetrainManager.MaxSpeed * 0.1).withRotationalDeadband(drivetrainManager.MaxAngularRate * 0.1) // Add a 10% deadband
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
+                                                               // driving in open loop
+    addRequirements(drivetrainManager,limelight3Subsystem); 
 
   }
 
@@ -141,6 +151,7 @@ public class AlignSubstationCMD extends Command {
 
   @Override
   public void execute() {
+    //System.out.println(strafeSup.getAsDouble());
     if(this.limelight3Subsystem == null)   
     {
       System.out.println("LIMELIGHT IS DEAD");
@@ -160,21 +171,24 @@ public class AlignSubstationCMD extends Command {
 
    if ( (CurrentAlliance.get() == Alliance.Red) && targetID == Constants.AllianceAprilTags.Red.SpeakerCenter)//substation
    {  
-     
+     //System.out.println("Setting up for red team");
       xymulti = -1.0;
-      SetPidControlersToRedSubstation();
+      SetPidControlersToRedCenterSpeaker();
     //flip flag sayign we see a substation
     WeSeeourSubstationTag = true;
     WeSeeourSubstationTagThisTime = true;
    }
-   if ( (CurrentAlliance.get() == Alliance.Blue) && targetID == Constants.AllianceAprilTags.Blue.SpeakerCenter)//substation
+   else if ( (CurrentAlliance.get() == Alliance.Blue) && targetID == Constants.AllianceAprilTags.Blue.SpeakerCenter)//substation
    {
-    
+      //System.out.println("Setting up for blue team");
       xymulti = 1.0;
-      SetPidControlersToBlueSubstation();
+      SetPidControlersToBlueCenterSpeaker();
     //flip flag sayign we see a substation
     WeSeeourSubstationTag = true;
     WeSeeourSubstationTagThisTime = true;
+   }
+   else{
+    //System.out.println("Cannot setup for speaker here no speaker tag");
    }
    if ( (CurrentAlliance.get() == Alliance.Red) && (
     targetID == Constants.AllianceAprilTags.Red.ChainAmpSide | 
@@ -190,7 +204,7 @@ public class AlignSubstationCMD extends Command {
     WeSeeourCommunityTag = true;
     WeSeeourCommunityTagThisTime = true;
    }
-   if ( (CurrentAlliance.get() == Alliance.Blue) && (
+   else if ( (CurrentAlliance.get() == Alliance.Blue) && (
     targetID == Constants.AllianceAprilTags.Blue.ChainAmpSide | 
     targetID == Constants.AllianceAprilTags.Blue.ChainBackSide | 
     targetID == Constants.AllianceAprilTags.Blue.ChainSourceSide) )
@@ -211,7 +225,19 @@ public class AlignSubstationCMD extends Command {
        //when we are at X area set bool to true.
        if(debounceloops >= loopsoffbeforestopping)
        {
-        if(false){ //RobotContainer.cowboyMode != CowboyMode.SCOREHUNTING
+        if(false){ 
+          System.out.println("Stopping no tags see debounced");
+          //RobotContainer.cowboyMode != CowboyMode.SCOREHUNTING
+
+        //   drivetrainManager.drivetrain.applyRequest(() -> drivetrainManager.drive.withVelocityX(0 * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
+        //     .withVelocityY(0 * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
+        //     .withRotationalRate(0 * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
+        // ).ignoringDisable(false);
+
+            drivetrainManager.drivetrain.setControl(drive.withVelocityX(0 * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
+            .withVelocityY(0 * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(0 * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
+        );
         //   s_Swerve.drive(
         //     new Translation2d(0,0), 
         //     0  , 
@@ -220,6 +246,11 @@ public class AlignSubstationCMD extends Command {
         // ); 
         }
         else{
+          System.out.println("Stopping no tags see debounced");
+            drivetrainManager.drivetrain.setControl(drive.withVelocityX(0 * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
+            .withVelocityY(strafeVal * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(0 * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
+        );
         //   s_Swerve.drive(
         //     new Translation2d(0,strafeVal), 
         //     0  , 
@@ -229,7 +260,7 @@ public class AlignSubstationCMD extends Command {
         }
           
        }
-      
+    System.out.println("returning no tags seen");  
     return;
    }
    loopsoffbeforestopping = 0;
@@ -256,12 +287,12 @@ public class AlignSubstationCMD extends Command {
     double rotationspeed = 1.0;//1.0 * Constants.Swerve.maxAngularVelocity;
     
     //if we are really far away lets keep pid from going insane.
-    double maxYvelocity = .5;//1.00;
-    double maxXvelocity = .5;
-    double maxRZvelocity = .4;//1.0;
-    Ypose_adjust = MathUtil.clamp(Ypose_adjust, maxYvelocity * -1.0, maxYvelocity);
-    xpose_adjust = MathUtil.clamp(xpose_adjust, maxXvelocity * -1.0, maxXvelocity);
-    RZAdjust = MathUtil.clamp(RZAdjust, maxRZvelocity * -1.0, maxRZvelocity);
+    //double maxYvelocity = 1;//1.00;
+    //double maxXvelocity = 10;
+    //double maxRZvelocity = 2;//1.0;
+    //Ypose_adjust = MathUtil.clamp(Ypose_adjust, maxYvelocity * -1.0, maxYvelocity);
+    //xpose_adjust = MathUtil.clamp(xpose_adjust, maxXvelocity * -1.0, maxXvelocity);
+    //RZAdjust = MathUtil.clamp(RZAdjust, maxRZvelocity * -1.0, maxRZvelocity);
     // if(Math.abs(xpose_adjust) > .7){
     //   Xspeed = .25;
     // }
@@ -272,12 +303,15 @@ public class AlignSubstationCMD extends Command {
     double YposeAxis = Ypose_adjust * Yspeed;
     double XposeAxis = xpose_adjust * Xspeed;
     double RZposeAxis = RZAdjust * rotationspeed;
-    
-    // drivetrain.applyRequest(() -> drive.withVelocityX(speedLimiterY.calculate(-joystick.getLeftY()) * MaxSpeed) // Drive forward with
-    //                                                                                        // negative Y (forward)
-    //         .withVelocityY(speedLimiterX.calculate(-joystick.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
-    //         .withRotationalRate(speedLimiterRotation.calculate(-joystick.getRightX()) * MaxAngularRate) // Drive counterclockwise with negative X (left)
-    //     ).ignoringDisable(true)); 
+    //System.out.println("requesting swerve now"); 
+        //   drivetrainManager.drivetrain.applyRequest(() -> drivetrainManager.drive.withVelocityX(XposeAxis) // Drive forward with // negative Y (forward)
+        //     .withVelocityY(YposeAxis) // Drive left with negative X (left)
+        //     .withRotationalRate(RZposeAxis) // Drive counterclockwise with negative X (left)
+        // ).ignoringDisable(false); 
+        drivetrainManager.drivetrain.setControl(drive.withVelocityX(-XposeAxis * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
+            .withVelocityY(0 * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(-0 * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
+        );
     // s_Swerve.drive(
     //          new Translation2d(XposeAxis,YposeAxis), 
     //          RZposeAxis  , 
@@ -286,22 +320,22 @@ public class AlignSubstationCMD extends Command {
     //      );
 
     //s_Swerve.drive(ChassisSpeeds.fromFieldRelativeSpeeds(translationAxis, strafeAxis, rotationAxis,s_Swerve.swerveOdometry.getPoseMeters().getRotation() ));
-    SmartDashboard.putNumber("RZ_Current", RZ_buffer);
-    SmartDashboard.putNumber("RZ_PID", RZAdjust);
+    SmartDashboard.putNumber("R_Curr", RZ_buffer);
+    SmartDashboard.putNumber("R_PID", RZposeAxis);
     
    
-    SmartDashboard.putNumber("Ypose_Current", YP_buffer);
-    SmartDashboard.putNumber("Ypose_PID", Ypose_adjust);
+    SmartDashboard.putNumber("Y_Curr", YP_buffer);
+    SmartDashboard.putNumber("Y_PID", YposeAxis);
 
-    SmartDashboard.putNumber("Xpose", XP_buffer);
-    SmartDashboard.putNumber("Xpose_PID", XposeAxis);
+    SmartDashboard.putNumber("X_Curr", XP_buffer);
+    SmartDashboard.putNumber("X_PID", XposeAxis);
 
     SmartDashboard.putNumber("RZ_Offset", RZ_Offset);
     SmartDashboard.putNumber("Ypose_Offset", Ypose_Offset);
     SmartDashboard.putNumber("Xpose_Offset", Xpose_Offset);
   }
 
-private void SetPidControlersToRedSubstation() {
+private void SetPidControlersToRedCenterSpeaker() {
   XP_Setpoint = -6.59;//-6.63;
   YP_Setpoint = 2.06;
   RZ_Setpoint = 180;
@@ -314,10 +348,10 @@ private void SetPidControlersToRedSubstation() {
 
   
 }
-private void SetPidControlersToBlueSubstation() {
-  XP_Setpoint = 6.59;//6.63;
-  YP_Setpoint = 3.44;
-  RZ_Setpoint = 0;
+private void SetPidControlersToBlueCenterSpeaker() {
+  XP_Setpoint = -6.81;//6.63;
+  YP_Setpoint = 1.72;
+  RZ_Setpoint = 177;
   //LL POSE X is forward and backward toward target in field space
   AlignXController.setSetpoint(XP_Setpoint);
   //LL POSE Y Is left to right translation in field space

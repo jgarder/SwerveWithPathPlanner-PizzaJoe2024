@@ -5,13 +5,14 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.Constants;
 import frc.robot.Telemetry;
 import frc.robot.generated.TunerConstants;
 
-public class DrivetrainManager {
+public class DrivetrainManager extends SubsystemBase{
     
     
   public double MaxSpeed = 9;//6; // 6 meters per second desired top speed
@@ -67,6 +68,13 @@ public class DrivetrainManager {
 
     }
 
+    public void move(double x,double y,double r)
+    {
+      drivetrain.applyRequest(() -> drive.withVelocityX(-.1 * MaxSpeed) // Drive forward with                                                                                        // negative Y (forward)
+            .withVelocityY(-.1 * MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(0 * MaxAngularRate) // Drive counterclockwise with negative X (left)
+        ).ignoringDisable(false);
+    }
       //
 
 

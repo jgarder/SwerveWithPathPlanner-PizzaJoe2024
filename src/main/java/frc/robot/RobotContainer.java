@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -20,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ChainLifter;
+import frc.robot.commands.AlignSpeakerCMD;
+import frc.robot.commands.AlignSpeakerTest;
 import frc.robot.commands.MoveChainLiftToPosition;
 import frc.robot.commands.MovePickupToPosition;
 import frc.robot.commands.RunDeliveryHoldIntake;
@@ -119,7 +122,12 @@ public class RobotContainer {
   public Command C_ParkDeliveryHead()
   {
     return  new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter)
-      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Park);},deliveryTilt),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff)));
+      .alongWith(C_TiltGotoPark(),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff)));
+  }
+
+  public Command C_TiltGotoPark()
+  {
+    return new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Passing);},deliveryTilt).andThen(new WaitCommand(20).until(()->deliveryLifter.CurrentLiftEncoderValue < 20)).andThen(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Park);},deliveryTilt));
   }
   private void configureBindings() {
     drivetrainManager.configureBindings();
@@ -153,18 +161,31 @@ public class RobotContainer {
       new InstantCommand(()->{deliveryLifter.setSetpointAmp();},deliveryLifter)
             .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Amp);},deliveryTilt),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmAmp))).onlyIf(()->PizzaManager.NoteInDeliveryHolder))
             .onFalse(C_ParkDeliveryHead());
-
-    
+    int strafeAxis = 4;
+    //DoubleSupplier sup = () -> joystick.getRawAxis(strafeAxis);
 
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).and(()->!PizzaManager.AltControlModeEnabled)
-    .onTrue(new UndoDeliveryHold(deliveryHolder).andThen(new RunDeliveryHoldIntake(deliveryHolder,false,40)));
-    joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).and(()->!PizzaManager.AltControlModeEnabled)
-    .whileTrue(drivetrainManager.drivetrain.applyRequest(() -> drivetrainManager.drive.withVelocityX(.1 * drivetrainManager.MaxSpeed) // Drive forward with
-                                                                                           // negative Y (forward)
-            .withVelocityY(.1 * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(0 * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
-        ).ignoringDisable(false));
+    .whileTrue(new AlignSpeakerCMD(drivetrainManager,LL3,() -> joystick.getRawAxis(strafeAxis)));
     
+       joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).and(()->!PizzaManager.AltControlModeEnabled)
+       .whileTrue(
+      new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_Trap);},deliveryLifter)
+      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Amp);},deliveryTilt)))
+       .onFalse(new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter).alongWith(C_TiltGotoPark()));
+      //.whileTrue(new AlignSpeakerTest(drivetrainManager,LL3));
+    
+    joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).and(()->!PizzaManager.AltControlModeEnabled)
+    .whileTrue(new InstantCommand(()->{drivetrainManager.move(0,0,0);}));
+    joystick.pov(Constants.XboxControllerMap.kPOVDirectionDOWN).and(()->!PizzaManager.AltControlModeEnabled)
+    .whileTrue(drivetrainManager.drivetrain.applyRequest(() -> drivetrainManager.drive.withVelocityX(-.1 * drivetrainManager.MaxSpeed) // Drive forward with                                                                                        // negative Y (forward)
+            .withVelocityY(-.1 * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(0 * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
+        ).ignoringDisable(false)).onFalse(
+          drivetrainManager.drivetrain.applyRequest(() -> drivetrainManager.drive.withVelocityX(0 * drivetrainManager.MaxSpeed) // Drive forward with                                                                                        // negative Y (forward)
+            .withVelocityY(0 * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(0 * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
+        ).ignoringDisable(false)
+        );
      //joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).onTrue(new InstantCommand(() -> {deliveryTilt.AlterSetpointposition(-.2);}));
     //if in Amp positions or Shoot position, pressing A will execute that action. 
     //joystick.a().whileTrue(runAuto);
@@ -175,13 +196,15 @@ public class RobotContainer {
     configureTrapButtons();
   }
 
+
+
   public void configureTrapButtons()
   {
     //going DOWN
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionDOWN).and(()->PizzaManager.AltControlModeEnabled)
-    .onTrue(new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_Zero, ChainLift).alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Passing);}))
+    .onTrue(new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_Zero, ChainLift).alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Park);}))
     .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm)
-    .alongWith(new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter) )
+    .alongWith(C_TiltGotoPark())
     ));
     
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).and(()->PizzaManager.AltControlModeEnabled)
@@ -197,13 +220,17 @@ public class RobotContainer {
 
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).and(()->PizzaManager.AltControlModeEnabled)
     .onTrue(new MovePickupToPosition(Constants.PickupHead.PickupVertical, pickuparm)
-    .alongWith(new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Tilt_Position_TrapStart);},deliveryLifter))
+    .alongWith(new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_TrapStart);},deliveryLifter))
     .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLift);}))
     .andThen(new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_CenterAndTrap, ChainLift)));
     
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).and(()->PizzaManager.AltControlModeEnabled)
     .onTrue(new InstantCommand(() -> {deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUpSHOOT);})
-    .alongWith(new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_TrapShoot);},deliveryLifter)));
+    .alongWith(new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_TrapShoot);},deliveryLifter))
+    .alongWith(new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm).alongWith(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose))))
+    )
+    .onFalse(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff))
+    .alongWith(new InstantCommand(() -> {deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUp);}).andThen(new MovePickupToPosition(Constants.PickupHead.PickupVertical, pickuparm))));
     //////
   }
   public RobotContainer() {
