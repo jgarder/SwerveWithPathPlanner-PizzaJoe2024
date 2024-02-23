@@ -181,6 +181,7 @@ public class DeliveryLifter extends SubsystemBase {
         WantedEncoderValue = Constants.DeliveryHead.Lift_Position_TrapStart;
         MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
       }
+      
 
 
       public boolean HasNote = false;

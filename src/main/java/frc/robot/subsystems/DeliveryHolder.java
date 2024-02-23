@@ -36,7 +36,7 @@ public class DeliveryHolder extends SubsystemBase {
     private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.CANBus.DeliveryIntakeCanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
     private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
     private final SparkPIDController MotorControllerPid = Motor_Controller.getPIDController();
-    private final SparkLimitSwitch m_forwardLimit = Motor_Controller.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
+    public final SparkLimitSwitch m_forwardLimit = Motor_Controller.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
 
     public DeliveryHolder()
     {
@@ -58,10 +58,10 @@ public class DeliveryHolder extends SubsystemBase {
          m_forwardLimit.enableLimitSwitch(true);
 
         //Enable the soft limits and set the values
-        Motor_Controller.enableSoftLimit(SoftLimitDirection.kForward, true);
-        Motor_Controller.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        Motor_Controller.setSoftLimit(SoftLimitDirection.kForward, (float)Constants.DeliveryHead.Lift_maxValue);
-        Motor_Controller.setSoftLimit(SoftLimitDirection.kReverse, (float)Constants.DeliveryHead.Lift_minValue);
+        Motor_Controller.enableSoftLimit(SoftLimitDirection.kForward, false);
+        Motor_Controller.enableSoftLimit(SoftLimitDirection.kReverse, false);
+       // Motor_Controller.setSoftLimit(SoftLimitDirection.kForward, (float)Constants.DeliveryHead.Lift_maxValue);
+        //Motor_Controller.setSoftLimit(SoftLimitDirection.kReverse, (float)Constants.DeliveryHead.Lift_minValue);
 
         //set the idle mode to brake so it doesnt move when we dont want it to, or coast if we want it to coast after "stopping"
         Motor_Controller.setIdleMode(IdleMode.kBrake);
@@ -105,27 +105,31 @@ public class DeliveryHolder extends SubsystemBase {
       
       if (istriggered & !IgnorelimitSwitch) {
         Motor_Encoder.setPosition(0);
+        WantedEncoderValue = 0;
         MotorControllerPid.setReference(0, CANSparkBase.ControlType.kPosition);
         PizzaManager.NoteInDeliveryHolder = true;
       }
       else 
       {
         Motor_Encoder.setPosition(0);
+        WantedEncoderValue = reduction;
         MotorControllerPid.setReference(reduction, CANSparkBase.ControlType.kPosition);
         PizzaManager.NoteInDeliveryHolder = false;
       }
 
       //enable();
     }
-
+    
     public void MovePosition(double amount)
     {
       Motor_Encoder.setPosition(0);
+      WantedEncoderValue = amount;
         MotorControllerPid.setReference(amount, CANSparkBase.ControlType.kPosition);
     }
 
       public boolean IsNoteInDeliveryHold()
       {
+        PizzaManager.NoteInDeliveryHolder = m_forwardLimit.isPressed();
         return PizzaManager.NoteInDeliveryHolder;
       }
 

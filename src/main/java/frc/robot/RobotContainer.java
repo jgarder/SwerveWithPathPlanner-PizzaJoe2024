@@ -24,6 +24,7 @@ import frc.robot.commands.MoveChainLiftToPosition;
 import frc.robot.commands.MovePickupToPosition;
 import frc.robot.commands.RunDeliveryHoldIntake;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.UndoDeliveryHold;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CANdleSystem;
 import frc.robot.subsystems.ChainLifterS;
@@ -89,7 +90,7 @@ public class RobotContainer {
     return //new RunDeliveryHoldIntake(deliveryHolder).alongWith(
     new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm)
     .andThen(new InstantCommand(()->{pickupSpinner.setIsnoteInPickup(false);},pickupSpinner))
-    .andThen(new RunIntake(pickupSpinner))//.andThen(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(10);},pickupSpinner))
+    .andThen(new RunIntake(pickupSpinner)).andThen(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(35);},pickupSpinner))
     .andThen(new InstantCommand(()->{m_candleSubsystem.GreenLights();},m_candleSubsystem))
     // .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm))
     //   //.alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(50);}))
@@ -106,8 +107,8 @@ public class RobotContainer {
   }
   public Command C_ReturnPickupToPassing()
   {
-    return new RunDeliveryHoldIntake(deliveryHolder,false,40).alongWith(
-    new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm).andThen(new WaitCommand(.175)) //small wait for debounce maybe take out and make grab deeper.
+    return new SequentialCommandGroup(new RunDeliveryHoldIntake(deliveryHolder,false,40),new UndoDeliveryHold(deliveryHolder).andThen(new RunDeliveryHoldIntake(deliveryHolder,false,40)))
+    .alongWith(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm).andThen(new WaitCommand(.175)) //small wait for debounce maybe take out and make grab deeper.
     .andThen(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner))
     .andThen(new WaitCommand(.75))//THIS WAIT COMMAND IS THE POST ROLL //.onlyWhile((pickupSpinner::getLimitSwitchEnabled))
     .andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}))
@@ -122,7 +123,7 @@ public class RobotContainer {
   }
   private void configureBindings() {
     drivetrainManager.configureBindings();
-
+    joystick.back().onTrue(new InstantCommand(()->{PizzaManager.AltControlModeEnabled = !PizzaManager.AltControlModeEnabled;}));
     joystick.rightBumper().whileTrue(C_PickupPizzaFromFloorWithoutWashing().andThen(C_ReturnPickupToPassing())).onFalse(C_ReturnPickupToPassing());
 
     
@@ -152,16 +153,40 @@ public class RobotContainer {
       new InstantCommand(()->{deliveryLifter.setSetpointAmp();},deliveryLifter)
             .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Amp);},deliveryTilt),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmAmp))).onlyIf(()->PizzaManager.NoteInDeliveryHolder))
             .onFalse(C_ParkDeliveryHead());
+
+    
+
+    joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).and(()->!PizzaManager.AltControlModeEnabled)
+    .onTrue(new UndoDeliveryHold(deliveryHolder).andThen(new RunDeliveryHoldIntake(deliveryHolder,false,40)));
+    joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).and(()->!PizzaManager.AltControlModeEnabled)
+    .whileTrue(drivetrainManager.drivetrain.applyRequest(() -> drivetrainManager.drive.withVelocityX(.1 * drivetrainManager.MaxSpeed) // Drive forward with
+                                                                                           // negative Y (forward)
+            .withVelocityY(.1 * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(0 * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
+        ).ignoringDisable(false));
+    
+     //joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).onTrue(new InstantCommand(() -> {deliveryTilt.AlterSetpointposition(-.2);}));
+    //if in Amp positions or Shoot position, pressing A will execute that action. 
+    //joystick.a().whileTrue(runAuto);
+
+    //joystick.rightTrigger().onTrue(new InstantCommand(()->{deliveryTilt.setSetpointZero();},deliveryTilt));
+    
+    //.onTrue(new InstantCommand(()->{deliveryTilt.setSetpointPassing();},deliveryTilt));
+    configureTrapButtons();
+  }
+
+  public void configureTrapButtons()
+  {
     //going DOWN
-    joystick.pov(Constants.XboxControllerMap.kPOVDirectionDOWN)
+    joystick.pov(Constants.XboxControllerMap.kPOVDirectionDOWN).and(()->PizzaManager.AltControlModeEnabled)
     .onTrue(new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_Zero, ChainLift).alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Passing);}))
     .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm)
     .alongWith(new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter) )
     ));
     
-    joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT)
+    joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).and(()->PizzaManager.AltControlModeEnabled)
     .onTrue(new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_PullDown, ChainLift)
-      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUP);})
+      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUp);})
       .andThen(new WaitCommand(1.0))
       .andThen(new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm))
       .andThen(new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_Trap);},deliveryLifter))
@@ -170,22 +195,17 @@ public class RobotContainer {
       );
 
 
-    joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP)
+    joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).and(()->PizzaManager.AltControlModeEnabled)
     .onTrue(new MovePickupToPosition(Constants.PickupHead.PickupVertical, pickuparm)
-    .alongWith(new InstantCommand(()->{deliveryLifter.setSetpointTrap();},deliveryLifter))
+    .alongWith(new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Tilt_Position_TrapStart);},deliveryLifter))
     .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLift);}))
     .andThen(new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_CenterAndTrap, ChainLift)));
     
-    joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).onTrue(new InstantCommand(() -> {deliveryTilt.AlterSetpointposition(.1);}));
-     //joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).onTrue(new InstantCommand(() -> {deliveryTilt.AlterSetpointposition(-.2);}));
-    //if in Amp positions or Shoot position, pressing A will execute that action. 
-    //joystick.a().whileTrue(runAuto);
-
-    //joystick.rightTrigger().onTrue(new InstantCommand(()->{deliveryTilt.setSetpointZero();},deliveryTilt));
-    
-    //.onTrue(new InstantCommand(()->{deliveryTilt.setSetpointPassing();},deliveryTilt));
+    joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).and(()->PizzaManager.AltControlModeEnabled)
+    .onTrue(new InstantCommand(() -> {deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUpSHOOT);})
+    .alongWith(new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_TrapShoot);},deliveryLifter)));
+    //////
   }
-
   public RobotContainer() {
     configureBindings();
   }

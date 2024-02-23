@@ -14,8 +14,11 @@ import frc.robot.generated.TunerConstants;
 public class DrivetrainManager {
     
     
-  private double MaxSpeed = 9;//6; // 6 meters per second desired top speed
-  private double MaxAngularRate = 1.8 * Math.PI; // 3/4 of a rotation per second max angular velocity
+  public double MaxSpeed = 9;//6; // 6 meters per second desired top speed
+  public double MaxAngularRate = 1.8 * Math.PI; // 3/4 of a rotation per second max angular velocity
+
+  public double MaxSpeedPid = 2;//6; // 6 meters per second desired top speed
+  public double MaxAngularRatePid = 1.0 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
   
     private CommandXboxController joystick;
@@ -69,7 +72,7 @@ public class DrivetrainManager {
 
 
 
-  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+  public final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop

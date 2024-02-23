@@ -134,6 +134,7 @@ public class Constants {
       public static final double Lift_Position_Amp = 50;
       public static final double Lift_Position_TrapStart = 120;
       public static final double Lift_Position_Trap = 133;
+      public static final double Lift_Position_TrapShoot = 133;
 
       //TILT
       public static final double Tilt_minValue = 0;
@@ -143,7 +144,8 @@ public class Constants {
       public static final double Tilt_Position_Park = 0;
       public static final double Tilt_Position_Passing = 5;
       public static final double Tilt_Position_TrapLift = 7.75;
-      public static final double Tilt_Position_TrapLiftUP = 10.75;
+      public static final double Tilt_Position_TrapLiftUp = 10.75;
+      public static final double Tilt_Position_TrapLiftUpSHOOT = 16.75;
       public static final double Tilt_Position_Speaker_Closest = 7.75;
       public static final double Tilt_Position_Speaker_SafePost = 10.85;
       public static final double Tilt_Position_Speaker_Furthest = 10;
