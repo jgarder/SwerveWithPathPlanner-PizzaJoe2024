@@ -135,6 +135,9 @@ public final SwerveRequest.RobotCentric drive;
 
   boolean WeSeeourSubstationTag = false;
   boolean WeSeeourCommunityTag = false;
+  double Xspeed = 1.0;//5.0 * Constants.Swerve.maxSpeed;
+  double Yspeed = .5;//5.0 * Constants.Swerve.maxSpeed;
+  double rotationspeed = -1.1;//.01;//1.0 * Constants.Swerve.maxAngularVelocity;
 
   @Override
   public void execute() {
@@ -213,9 +216,7 @@ public final SwerveRequest.RobotCentric drive;
     }
 
     
-    double Xspeed = 1.0;//5.0 * Constants.Swerve.maxSpeed;
-    double Yspeed = .5;//5.0 * Constants.Swerve.maxSpeed;
-    double rotationspeed = -1.1;//.01;//1.0 * Constants.Swerve.maxAngularVelocity;
+    
     
     //if we are really far away lets keep pid from going insane.
     //double maxYvelocity = 1;//1.00;
@@ -267,9 +268,12 @@ public final SwerveRequest.RobotCentric drive;
   }
 
 private void SetPidControlersToRedAmp() {
-  XP_Setpoint = -6.59;//-6.63;
-  YP_Setpoint = 2.06;
-  RZ_Setpoint = 180;
+  XP_Setpoint = 6.42;//-6.63;
+  YP_Setpoint = 3.36;
+  RZ_Setpoint = 90;
+
+  Xspeed = -1.0;
+  Yspeed = -.6;
   //LL POSE X is forward and backward toward target in field space
   AlignXController.setSetpoint(XP_Setpoint);
   //LL POSE Y Is left to right translation in field space
@@ -281,40 +285,17 @@ private void SetPidControlersToRedAmp() {
 }
 private void SetPidControlersToBlueAmp() {
   XP_Setpoint = -6.42;//6.63;
-  YP_Setpoint = 3.35;
+  YP_Setpoint = 3.36;
   RZ_Setpoint = 90;
-  //LL POSE X is forward and backward toward target in field space
-  AlignXController.setSetpoint(XP_Setpoint);
-  //LL POSE Y Is left to right translation in field space
-  AlignPoseYController.setSetpoint(YP_Setpoint);
-  //LL pose RZ is our rotation relative to the target in field space
-  AlignRZController.setSetpoint(RZ_Setpoint);
-}
-private void SetPidControlersToRedCommunity() {
-  XP_Setpoint = 6.10;
-  YP_Setpoint = -.5;
-  RZ_Setpoint = 0;
-  //LL POSE X is forward and backward toward target in field space
-  AlignXController.setSetpoint(XP_Setpoint);
-  //LL POSE Y Is left to right translation in field space
-  AlignPoseYController.setSetpoint(YP_Setpoint);
-  //LL pose RZ is our rotation relative to the target in field space
-  AlignRZController.setSetpoint(RZ_Setpoint);
 
-  
-}
-private void SetPidControlersToBlueCommunity() {
-  XP_Setpoint = -6.10;
-  YP_Setpoint = .5;
-  RZ_Setpoint = 180;
+  Xspeed = 1.0;
+  Yspeed = .6;
   //LL POSE X is forward and backward toward target in field space
   AlignXController.setSetpoint(XP_Setpoint);
   //LL POSE Y Is left to right translation in field space
   AlignPoseYController.setSetpoint(YP_Setpoint);
   //LL pose RZ is our rotation relative to the target in field space
   AlignRZController.setSetpoint(RZ_Setpoint);
-
-  
 }
 private void FillBuffers()
 {
