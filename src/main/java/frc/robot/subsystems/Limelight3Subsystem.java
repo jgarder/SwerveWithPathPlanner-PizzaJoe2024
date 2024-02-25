@@ -96,7 +96,7 @@ public class Limelight3Subsystem extends SubsystemBase {
    int targetID = getTargetID();
    //get if the closest target is for our team(ignore others obviously)
    boolean WeSeeourSubstationTag = false;
-   if(CurrentAlliance == null || CurrentAlliance.get() == null){System.out.println("no alliance"); return;}
+   if(!CurrentAlliance.isPresent()){System.out.println("no alliance!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); return;}
    if ( (CurrentAlliance.get() == Alliance.Red) && targetID == Constants.AllianceAprilTags.Red.SourceRight)
    {
       WeSeeourSubstationTag = true;

@@ -9,10 +9,13 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer.PizzaManager;
+import frc.robot.RobotContainer.PizzaManager.PizzaTracker;
 
 public class DeliveryHolder extends SubsystemBase {
 
@@ -108,6 +111,14 @@ public class DeliveryHolder extends SubsystemBase {
         WantedEncoderValue = 0;
         MotorControllerPid.setReference(0, CANSparkBase.ControlType.kPosition);
         PizzaManager.NoteInDeliveryHolder = true;
+        if(PizzaManager.pizzaStage == PizzaTracker.passed)//if we are first getting this note from the pass
+          {
+              PizzaManager.pizzaStage = PizzaTracker.indexNeeded;//then we need to index it
+          }
+        else if(PizzaManager.pizzaStage == PizzaTracker.NoteOutDexed)//if we are receiving from an outindex
+          {
+              PizzaManager.pizzaStage = PizzaTracker.Indexed;//then we are indexed
+          }
       }
       else 
       {
@@ -115,11 +126,71 @@ public class DeliveryHolder extends SubsystemBase {
         WantedEncoderValue = reduction;
         MotorControllerPid.setReference(reduction, CANSparkBase.ControlType.kPosition);
         PizzaManager.NoteInDeliveryHolder = false;
+        //PizzaManager.pizzaStage = PizzaTracker.indexNeeded;
       }
 
       //enable();
     }
-    
+    public boolean requestingIndex = false;
+    private Timer m_Timer = new Timer();
+    public void RequestIndex()
+    {
+      m_Timer.reset();
+      m_Timer.start();
+      requestingIndex = true;
+      SmartDashboard.putString("IndexStage","Requested");
+      
+    }
+    public void indexNote()
+    {
+      
+      if(m_Timer.get() > 5){
+        return;
+      } 
+        if (requestingIndex) {
+          if(PizzaManager.pizzaStage == PizzaTracker.passed)
+          {
+            System.out.println("intaking");
+            SmartDashboard.putString("IndexStage","Intaking");
+              IntakeRuntoHoldCommand(40,false);
+          }
+          else if(PizzaManager.pizzaStage == PizzaTracker.indexNeeded)
+          {
+            m_forwardLimit.enableLimitSwitch(false);
+            System.out.println("outdexiong");
+            SmartDashboard.putString("IndexStage","OutDexing");
+            SetToWantedDutyCycle(-1);
+            isUndoIndexFinished();
+          }
+          else if(PizzaManager.pizzaStage == PizzaTracker.NoteOutDexed)
+          {
+            System.out.println("secondindexing");
+            SmartDashboard.putString("IndexStage","secondIndexnow");
+              IntakeRuntoHoldCommand(40,false);
+          }
+          else if (PizzaManager.pizzaStage == PizzaTracker.Indexed) {
+            double indexBacklash =-5;
+            MovePosition(indexBacklash);
+            System.out.println("Now indexed");
+            SmartDashboard.putString("IndexStage","Indexed");
+            requestingIndex = false;
+          }
+        }
+        else{}
+    }
+    double Timeout = .5;
+  public boolean isUndoIndexFinished() {
+    if (!IsNoteInDeliveryHold() ) {
+      System.out.println("No Note In Holder");
+        PizzaManager.pizzaStage = PizzaTracker.NoteOutDexed;
+        m_forwardLimit.enableLimitSwitch(true);
+        stopSpinner();
+        return true;
+      }  
+    return false;
+  }
+
+
     public void MovePosition(double amount)
     {
       Motor_Encoder.setPosition(0);
@@ -203,7 +274,8 @@ public class DeliveryHolder extends SubsystemBase {
       if((d != kD_lifter)) { MotorControllerPid.setD(d); kD_lifter = d; }
       if((iz != kIz)) { MotorControllerPid.setIZone(iz); kIz = iz; }
       if((ff != kFF)) { MotorControllerPid.setFF(ff); kFF = ff; }
-    
+
+      indexNote();
     }
 
     public void SetSpeed(double thisspeed) {

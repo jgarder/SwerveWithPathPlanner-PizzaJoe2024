@@ -36,8 +36,8 @@ public class DrivetrainManager extends SubsystemBase{
         //drivetrain = Drivetrain;
     }
     
-    public static final double slewrateXY = 999;//3;
-    public static final double slewrateRotation = 999;//2.7;
+    public static final double slewrateXY = 20;//3;
+    public static final double slewrateRotation = 20;//2.7;
     SlewRateLimiter speedLimiterX = new SlewRateLimiter(slewrateXY);
     SlewRateLimiter speedLimiterY = new SlewRateLimiter(slewrateXY);
     SlewRateLimiter speedLimiterRotation = new SlewRateLimiter(slewrateRotation);

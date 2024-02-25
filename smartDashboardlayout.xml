@@ -1,5 +1,11 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="islowerWithinRange" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1114" y="200"/>
+	</widget>
+	<widget field="isUpperWithinRange" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1112" y="180"/>
+	</widget>
 	<widget field="X_PID" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="6" y="303"/>
 	</widget>

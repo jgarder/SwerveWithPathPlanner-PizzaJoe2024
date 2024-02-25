@@ -22,12 +22,14 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ChainLifter;
+import frc.robot.RobotContainer.PizzaManager.PizzaTracker;
 import frc.robot.commands.AlignSpeakerCMD;
 import frc.robot.commands.AlignSpeakerTest;
 import frc.robot.commands.MoveChainLiftToPosition;
 import frc.robot.commands.MovePickupToPosition;
 import frc.robot.commands.RunDeliveryHoldIntake;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.ShootDeliveryHold;
 import frc.robot.commands.SpoolPizzaDeliveryToRPM;
 import frc.robot.commands.UndoDeliveryHold;
 import frc.robot.generated.TunerConstants;
@@ -72,6 +74,21 @@ public class RobotContainer {
     public static boolean IsNoteInPickup = false;
     public static boolean NoteInDeliveryHolder = false;
     public static boolean AltControlModeEnabled = false;
+    public static PizzaTracker pizzaStage = PizzaTracker.Startup; //0-10 empty, 20 detected, 30 passing, 40 passed to head, 50 index started, 51 indexout, 52 Indexed ready to fire, 
+    
+    public enum PizzaTracker
+      {
+        Startup,
+        empty,
+        detected,
+        passing,
+        passed,
+        indexNeeded,
+        NoteOutDexed,
+        Indexed,
+        TrapReady,
+      }
+    
     public boolean IsAltControlModeEnabled()
     {
       return AltControlModeEnabled;
@@ -98,7 +115,9 @@ public class RobotContainer {
     new InstantCommand(()->{pickupSpinner.setIsnoteInPickup(false);},pickupSpinner)
     .andThen(new RunIntake(pickupSpinner).withInterruptBehavior(InterruptionBehavior.kCancelIncoming))
     .andThen(new InstantCommand(()->{intakepassing = false;}))
-    .andThen(C_ReturnPickupHead().alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(5);},pickupSpinner).andThen(new WaitCommand(.5)).andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}))))//POST ROLL PICKUP INTAKE SPIN)
+    .andThen(C_ReturnPickupHead().alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(5);},pickupSpinner)
+    .andThen(new WaitCommand(.5))
+    .andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}))))//POST ROLL PICKUP INTAKE SPIN)
     
     .andThen(new InstantCommand(()->{m_candleSubsystem.GreenLights();},m_candleSubsystem))
     // .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm))
@@ -135,7 +154,14 @@ public class RobotContainer {
   }
   public Command C_CatchAndIndexNote()
   {
-      return new SequentialCommandGroup(new RunDeliveryHoldIntake(deliveryHolder,false,40),new UndoDeliveryHold(deliveryHolder),new RunDeliveryHoldIntake(deliveryHolder,false,30));
+     return new InstantCommand(()->{deliveryHolder.RequestIndex();})
+     .alongWith(new InstantCommand(()->{PizzaManager.pizzaStage = PizzaTracker.passed;})
+     );
+      // return new SequentialCommandGroup(
+      //   new RunDeliveryHoldIntake(deliveryHolder,false,40).withInterruptBehavior(InterruptionBehavior.kCancelIncoming),
+      //   new UndoDeliveryHold(deliveryHolder).withInterruptBehavior(InterruptionBehavior.kCancelIncoming),
+      //   new RunDeliveryHoldIntake(deliveryHolder,false,30).withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
+      //   ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
   public Command C_ReturnPickupHead()
   {
@@ -169,7 +195,7 @@ public class RobotContainer {
     .onFalse(C_ReturnPickupHead().unless(isNoteInIntakeboolSup).andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();})));//.andThen(C_passNoteFromIntakeToDeliveryHolder().alongWith(C_CatchAndIndexNote().withInterruptBehavior(InterruptionBehavior.kCancelSelf)).onlyIf(isNoteInIntakeboolSup)).andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();})));
 
     joystick.a().onTrue(C_CatchAndIndexNote());
-    joystick.b().whileTrue((new RunDeliveryHoldIntake(deliveryHolder,true,999)).withTimeout(2));
+    joystick.b().onTrue(new ShootDeliveryHold(deliveryHolder));
     joystick.x().onTrue(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner).andThen(new RunDeliveryHoldIntake(deliveryHolder,false,40)))
     .onFalse(new InstantCommand(()->{pickupSpinner.stopSpinner();},pickupSpinner));// (pickuparm.runonce(() -> {pickuparm.setSetpointFloorPickup();}));
     //joystick.y().whileTrue(new InstantCommand(()->{pickuparm.setSetpointFloorPickup();},pickuparm).andThen(()->{pickupSpinner.RunPickup();}).repeatedly()).onFalse(new InstantCommand(()->{pickuparm.setSetpointVerticle();}).andThen(()->{pickupSpinner.HoldAutoLoaded();})); //.until(()->{pickupSpinner.m_forwardLimit.isPressed();})
@@ -202,7 +228,7 @@ public class RobotContainer {
     .andThen(
       C_ReadyCloseSpeakerShot(),
       //new WaitCommand(1),
-    (new RunDeliveryHoldIntake(deliveryHolder,true,999)).withTimeout(.25),
+    (new ShootDeliveryHold(deliveryHolder)),
     C_ParkDeliveryHead()))
     .onFalse(C_ParkDeliveryHead());
 
