@@ -349,8 +349,8 @@ private void SetPidControlersToRedCenterSpeaker() {
   
 }
 private void SetPidControlersToBlueCenterSpeaker() {
-  XP_Setpoint = -6.81;//6.63;
-  YP_Setpoint = 1.65;
+  XP_Setpoint = -6.87;//6.63;
+  YP_Setpoint = 1.61;
   RZ_Setpoint = -178;
   //LL POSE X is forward and backward toward target in field space
   AlignXController.setSetpoint(XP_Setpoint);

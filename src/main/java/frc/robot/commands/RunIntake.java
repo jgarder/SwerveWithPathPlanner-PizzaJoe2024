@@ -29,6 +29,7 @@ public class RunIntake extends Command{
         return true;
     } 
     if (m_PickupSpinner.IsNoteInPickup()) {
+      m_PickupSpinner.stopSpinner();
          return true;
     }  
     return false;

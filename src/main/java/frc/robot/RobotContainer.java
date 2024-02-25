@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ChainLifter;
 import frc.robot.commands.AlignSpeakerCMD;
@@ -64,7 +65,7 @@ public class RobotContainer {
 
   public final SmartDashboardHandler SDashBoardH = new SmartDashboardHandler(this);
   //
-
+  BooleanSupplier isNoteInIntakeboolSup = () -> pickupSpinner.m_forwardLimit.isPressed(); 
   public static class PizzaManager{
     public static PickupState LastKnownPickupState = PickupState.ZERO;
     public static boolean IsNoteInPickup = false;
@@ -78,6 +79,8 @@ public class RobotContainer {
     {
       return NoteInDeliveryHolder;
     }
+
+    
   }
 
 
@@ -91,9 +94,11 @@ public class RobotContainer {
   public Command C_PickupPizzaFromFloorWithoutWashing()
   {
     return //new RunDeliveryHoldIntake(deliveryHolder).alongWith(
-    new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm)
-    .andThen(new InstantCommand(()->{pickupSpinner.setIsnoteInPickup(false);},pickupSpinner))
-    .andThen(new RunIntake(pickupSpinner)).andThen(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(35);},pickupSpinner))
+    new InstantCommand(()->{pickupSpinner.setIsnoteInPickup(false);},pickupSpinner)
+    .andThen(new RunIntake(pickupSpinner).withInterruptBehavior(InterruptionBehavior.kCancelIncoming))
+    .andThen(new InstantCommand(()->{intakepassing = false;}))
+    .andThen(C_ReturnPickupHead().alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(5);},pickupSpinner).andThen(new WaitCommand(.5)).andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}))))//POST ROLL PICKUP INTAKE SPIN)
+    
     .andThen(new InstantCommand(()->{m_candleSubsystem.GreenLights();},m_candleSubsystem))
     // .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm))
     //   //.alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(50);}))
@@ -108,14 +113,34 @@ public class RobotContainer {
     //)
     ;
   }
+  public boolean intakepassing = false;
   public Command C_ReturnPickupToPassing()
   {
-    return new SequentialCommandGroup(new RunDeliveryHoldIntake(deliveryHolder,false,40),new UndoDeliveryHold(deliveryHolder).andThen(new RunDeliveryHoldIntake(deliveryHolder,false,40)))
-    .alongWith(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm).andThen(new WaitCommand(.175)) //small wait for debounce maybe take out and make grab deeper.
-    .andThen(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner))
-    .andThen(new WaitCommand(.75))//THIS WAIT COMMAND IS THE POST ROLL //.onlyWhile((pickupSpinner::getLimitSwitchEnabled))
+    // if (intakepassing) {
+    //   return new InstantCommand(()->{System.out.println("currently passing to the pickup");});
+    // }
+    intakepassing = true;
+    return C_ReturnPickupHead().andThen(C_CatchAndIndexNote().withInterruptBehavior(InterruptionBehavior.kCancelIncoming).alongWith(C_passNoteFromIntakeToDeliveryHolder())
+    
+    );
+  }
+  public Command C_passNoteFromIntakeToDeliveryHolder()
+  {
+ return  //small wait for debounce maybe take out and make grab deeper.
+    new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner)
+    .andThen(new WaitCommand(.85))//THIS WAIT COMMAND IS THE POST ROLL OUTPUT PASSING ROLL //.onlyWhile((pickupSpinner::getLimitSwitchEnabled))
     .andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}))
-    )
+    .andThen(new InstantCommand(()->{intakepassing = false;}));
+  }
+  public Command C_CatchAndIndexNote()
+  {
+      return new SequentialCommandGroup(new RunDeliveryHoldIntake(deliveryHolder,false,40),new UndoDeliveryHold(deliveryHolder),new RunDeliveryHoldIntake(deliveryHolder,false,30));
+  }
+  public Command C_ReturnPickupHead()
+  {
+
+     return new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm)
+    .andThen(new WaitCommand(.175)) //small wait for debounce maybe take out and make grab deeper.
     ;
   }
 
@@ -137,9 +162,12 @@ public class RobotContainer {
   private void configureBindings() {
     drivetrainManager.configureBindings();
     joystick.back().onTrue(new InstantCommand(()->{PizzaManager.AltControlModeEnabled = !PizzaManager.AltControlModeEnabled;}));
-    joystick.rightBumper().whileTrue(C_PickupPizzaFromFloorWithoutWashing().andThen(C_ReturnPickupToPassing())).onFalse(C_ReturnPickupToPassing());
-
     
+    joystick.rightBumper()
+    .onTrue(new SequentialCommandGroup(new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm).unless(isNoteInIntakeboolSup),C_PickupPizzaFromFloorWithoutWashing().unless(isNoteInIntakeboolSup),C_ReturnPickupToPassing()))
+    .onFalse(C_ReturnPickupHead().unless(isNoteInIntakeboolSup).andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();})));//.andThen(C_passNoteFromIntakeToDeliveryHolder().alongWith(C_CatchAndIndexNote().withInterruptBehavior(InterruptionBehavior.kCancelSelf)).onlyIf(isNoteInIntakeboolSup)).andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();})));
+
+    joystick.a().onTrue(C_CatchAndIndexNote());
     joystick.b().whileTrue((new RunDeliveryHoldIntake(deliveryHolder,true,999)).withTimeout(2));
     joystick.x().onTrue(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner).andThen(new RunDeliveryHoldIntake(deliveryHolder,false,40)))
     .onFalse(new InstantCommand(()->{pickupSpinner.stopSpinner();},pickupSpinner));// (pickuparm.runonce(() -> {pickuparm.setSetpointFloorPickup();}));
@@ -176,12 +204,14 @@ public class RobotContainer {
     (new RunDeliveryHoldIntake(deliveryHolder,true,999)).withTimeout(.25),
     C_ParkDeliveryHead()))
     .onFalse(C_ParkDeliveryHead());
-    
-       joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).and(()->!PizzaManager.AltControlModeEnabled)
-       .whileTrue(
-      new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_Trap);},deliveryLifter)
-      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Amp);},deliveryTilt)))
-       .onFalse(new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter).alongWith(C_TiltGotoPark()));
+
+    joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).and(()->!PizzaManager.AltControlModeEnabled)
+    .whileTrue(new InstantCommand(()->{m_candleSubsystem.RainbowRoadLights();})).onFalse(new InstantCommand(()->{m_candleSubsystem.GreenLights();}));
+      //  joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).and(()->!PizzaManager.AltControlModeEnabled)
+      //  .whileTrue(
+      // new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_Trap);},deliveryLifter)
+      // .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Amp);},deliveryTilt)))
+      //  .onFalse(new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter).alongWith(C_TiltGotoPark()));
       //.whileTrue(new AlignSpeakerTest(drivetrainManager,LL3));
     
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).and(()->!PizzaManager.AltControlModeEnabled)
