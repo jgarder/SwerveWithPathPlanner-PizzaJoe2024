@@ -139,14 +139,18 @@ public class DeliveryHolder extends SubsystemBase {
       m_Timer.start();
       requestingIndex = true;
       SmartDashboard.putString("IndexStage","Requested");
-      
+      pickedupNote = false;
     }
+    boolean pickedupNote = false;
     public void indexNote()
     {
       
-      if(m_Timer.get() > 5){
-        return;
-      } 
+       if(m_Timer.get() > 30){
+        requestingIndex = false;
+        m_forwardLimit.enableLimitSwitch(true);
+        stopSpinner();
+         return;
+       } 
         if (requestingIndex) {
           if(PizzaManager.pizzaStage == PizzaTracker.passed)
           {
@@ -159,8 +163,23 @@ public class DeliveryHolder extends SubsystemBase {
             m_forwardLimit.enableLimitSwitch(false);
             System.out.println("outdexiong");
             SmartDashboard.putString("IndexStage","OutDexing");
-            SetToWantedDutyCycle(-1);
+            SetToWantedDutyCycle(-.75);
             isUndoIndexFinished();
+          }
+          else if(PizzaManager.pizzaStage == PizzaTracker.intaking)
+          {
+            m_forwardLimit.enableLimitSwitch(false);
+            System.out.println("FrontIntaking");
+            SmartDashboard.putString("IndexStage","FrontIntaking");
+            SetToWantedDutyCycle(-.75);
+            if(IsNoteInDeliveryHold())
+            {
+              pickedupNote = true;
+            }
+            if(pickedupNote)
+            {
+              isUndoIndexFinished();
+            }
           }
           else if(PizzaManager.pizzaStage == PizzaTracker.NoteOutDexed)
           {

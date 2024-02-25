@@ -23,8 +23,12 @@ public class RunIntake extends Command{
   }
 
   double PickupTimeoutSeoncds = 10.0;
+  double forcedruntime = .25;
   @Override
   public boolean isFinished() {
+    if(m_Timer.get() < forcedruntime){
+        return false;
+    }  
     if(m_Timer.get() > PickupTimeoutSeoncds){
         return true;
     } 

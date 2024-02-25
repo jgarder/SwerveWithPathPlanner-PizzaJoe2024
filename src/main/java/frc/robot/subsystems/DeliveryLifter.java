@@ -185,9 +185,9 @@ public class DeliveryLifter extends SubsystemBase {
 
 
       public boolean HasNote = false;
-       double setpointTolerance = 2.5;
+       double setpointTolerance = 7;
       public boolean atSetpoint() {
-        if(Math.abs(WantedEncoderValue-CurrentLiftEncoderValue) < setpointTolerance){
+        if(Constants.isWithinAmount(WantedEncoderValue, CurrentLiftEncoderValue, setpointTolerance)){
           return true;
         }
         return false;

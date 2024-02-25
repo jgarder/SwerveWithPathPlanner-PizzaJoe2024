@@ -132,6 +132,7 @@ public class Constants {
       public static final double Lift_Position_Passing = 15;
       public static final double Lift_Position_Speaker = 0;
       public static final double Lift_Position_Amp = 50;
+      public static final double Lift_Position_HumanSource = 50;
       public static final double Lift_Position_TrapStart = 120;
       public static final double Lift_Position_Trap = 133;
       public static final double Lift_Position_TrapShoot = 133;
@@ -153,11 +154,13 @@ public class Constants {
 
       public static final double Tilt_Position_TrapStart = 11;
       public static final double Tilt_Position_Trap = 12;
+      public static final double Tilt_Position_HumanSource = 12;
       
 
       public static final double ShooterRpmOff = 0;
       public static final double ShooterRpmSpeakerClose = 3000;
       public static final double ShooterRpmAmp = 1000;
+      public static final double ShooterRpmHumanSource = -500;
     }
     
     public static class AllianceAprilTags{

@@ -150,7 +150,7 @@ public class PickupSpinner extends SubsystemBase{
     }
     int reduction = 15;
     public void IntakeRunCommand(int reduction) {
-      m_forwardLimit.enableLimitSwitch(false);
+      //m_forwardLimit.enableLimitSwitch(false);
       SetToWantedRpm(IntakeDutyCycle);
       //Motor_Encoder.setPosition(0);
       //setSetpoint(-reduction);

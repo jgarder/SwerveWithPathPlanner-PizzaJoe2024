@@ -10,8 +10,10 @@ public class UndoDeliveryHold extends Command{
     private final Timer m_Timer = new Timer();
     //private final boolean IgnorelimitSwitch;
     private double reduction = -20;
-    public UndoDeliveryHold(DeliveryHolder deliveryHolder){
+    double Timeout = 10;//.5
+    public UndoDeliveryHold(DeliveryHolder deliveryHolder,double timeout){
         m_DeliveryHolder = deliveryHolder;
+        Timeout = timeout;
         //IgnorelimitSwitch = ignoreLimitSwitch;
         //reduction = speed;
         addRequirements(m_DeliveryHolder);
@@ -34,7 +36,7 @@ public class UndoDeliveryHold extends Command{
    //m_DeliveryHolder.MovePosition(reduction);
   }
 
-  double Timeout = .5;
+  
   @Override
   public boolean isFinished() {
     if(m_Timer.get() > Timeout){
