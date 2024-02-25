@@ -28,6 +28,7 @@ import frc.robot.commands.MoveChainLiftToPosition;
 import frc.robot.commands.MovePickupToPosition;
 import frc.robot.commands.RunDeliveryHoldIntake;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.SpoolPizzaDeliveryToRPM;
 import frc.robot.commands.UndoDeliveryHold;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CANdleSystem;
@@ -157,7 +158,7 @@ public class RobotContainer {
   public Command C_ReadyCloseSpeakerShot()
   {
     return new InstantCommand(()->{deliveryLifter.setSetpointPassing();},deliveryLifter)
-      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Closest);},deliveryTilt),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose)));
+      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Closest);},deliveryTilt),new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmSpeakerClose));
   }
   private void configureBindings() {
     drivetrainManager.configureBindings();
@@ -200,7 +201,7 @@ public class RobotContainer {
     .whileTrue(new AlignSpeakerCMD(drivetrainManager,LL3,() -> joystick.getRawAxis(strafeAxis))
     .andThen(
       C_ReadyCloseSpeakerShot(),
-      new WaitCommand(1),
+      //new WaitCommand(1),
     (new RunDeliveryHoldIntake(deliveryHolder,true,999)).withTimeout(.25),
     C_ParkDeliveryHead()))
     .onFalse(C_ParkDeliveryHead());
