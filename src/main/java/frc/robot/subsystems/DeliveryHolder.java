@@ -40,9 +40,10 @@ public class DeliveryHolder extends SubsystemBase {
     private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
     private final SparkPIDController MotorControllerPid = Motor_Controller.getPIDController();
     public final SparkLimitSwitch m_forwardLimit = Motor_Controller.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
-
-    public DeliveryHolder()
+    public DeliveryShooter ThisShooter;
+    public DeliveryHolder(DeliveryShooter thisShooter)
     {
+      ThisShooter = thisShooter;
         //super(new PIDController(Constants.PickupHead.kP_lifter, Constants.PickupHead.kI_lifter, Constants.PickupHead.kD_lifter));//super class, must setup PID first
         //even though the default should be 0, lets tell the PID to goto 0 which is our starting position.
 
@@ -154,24 +155,26 @@ public class DeliveryHolder extends SubsystemBase {
         if (requestingIndex) {
           if(PizzaManager.pizzaStage == PizzaTracker.passed)
           {
-            System.out.println("intaking");
+            //System.out.println("intaking");
             SmartDashboard.putString("IndexStage","Intaking");
               IntakeRuntoHoldCommand(40,false);
           }
           else if(PizzaManager.pizzaStage == PizzaTracker.indexNeeded)
           {
             m_forwardLimit.enableLimitSwitch(false);
-            System.out.println("outdexiong");
+            //System.out.println("outdexiong");
             SmartDashboard.putString("IndexStage","OutDexing");
             SetToWantedDutyCycle(-.75);
+            
             isUndoIndexFinished();
           }
           else if(PizzaManager.pizzaStage == PizzaTracker.intaking)
           {
             m_forwardLimit.enableLimitSwitch(false);
-            System.out.println("FrontIntaking");
+            //System.out.println("FrontIntaking");
             SmartDashboard.putString("IndexStage","FrontIntaking");
-            SetToWantedDutyCycle(-.75);
+            SetToWantedDutyCycle(-.3);
+            ThisShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmHumanSource);
             if(IsNoteInDeliveryHold())
             {
               pickedupNote = true;
@@ -183,26 +186,27 @@ public class DeliveryHolder extends SubsystemBase {
           }
           else if(PizzaManager.pizzaStage == PizzaTracker.NoteOutDexed)
           {
-            System.out.println("secondindexing");
+            //System.out.println("secondindexing");
             SmartDashboard.putString("IndexStage","secondIndexnow");
               IntakeRuntoHoldCommand(40,false);
           }
           else if (PizzaManager.pizzaStage == PizzaTracker.Indexed) {
             double indexBacklash =-5;
             MovePosition(indexBacklash);
-            System.out.println("Now indexed");
+            //System.out.println("Now indexed");
             SmartDashboard.putString("IndexStage","Indexed");
             requestingIndex = false;
           }
         }
         else{}
     }
-    double Timeout = .5;
+    //double Timeout = .5;
   public boolean isUndoIndexFinished() {
     if (!IsNoteInDeliveryHold() ) {
-      System.out.println("No Note In Holder");
+      //System.out.println("No Note In Holder");
         PizzaManager.pizzaStage = PizzaTracker.NoteOutDexed;
         m_forwardLimit.enableLimitSwitch(true);
+        ThisShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff);
         stopSpinner();
         return true;
       }  

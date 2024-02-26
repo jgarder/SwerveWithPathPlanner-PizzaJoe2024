@@ -299,6 +299,21 @@ private void SetPidControlersToRedCenterSpeaker() {
 
   
 }
+private void SetPidControlersToRedSideA() {
+  XP_Setpoint = 6.97;//-6.63;
+  YP_Setpoint = 2.554;
+  RZ_Setpoint = -44.42;
+
+  rotationspeed = -1.2;//THIS IS A HACKED IN MULTIPLER! 
+  //LL POSE X is forward and backward toward target in field space
+  AlignXController.setSetpoint(XP_Setpoint);
+  //LL POSE Y Is left to right translation in field space
+  AlignPoseYController.setSetpoint(YP_Setpoint);
+  //LL pose RZ is our rotation relative to the target in field space
+  AlignRZController.setSetpoint(RZ_Setpoint);
+
+  
+}
 private void SetPidControlersToBlueCenterSpeaker() {
   XP_Setpoint = -6.707;//6.63;
   YP_Setpoint = 1.61;

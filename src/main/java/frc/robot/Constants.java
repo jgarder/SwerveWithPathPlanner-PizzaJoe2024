@@ -132,7 +132,7 @@ public class Constants {
       public static final double Lift_Position_Passing = 15;
       public static final double Lift_Position_Speaker = 0;
       public static final double Lift_Position_Amp = 50;
-      public static final double Lift_Position_HumanSource = 50;
+      public static final double Lift_Position_HumanSource = 65;//50;
       public static final double Lift_Position_TrapStart = 120;
       public static final double Lift_Position_Trap = 133;
       public static final double Lift_Position_TrapShoot = 133;
@@ -148,7 +148,7 @@ public class Constants {
       public static final double Tilt_Position_TrapLiftUp = 10.75;
       public static final double Tilt_Position_TrapLiftUpSHOOT = 28;
       public static final double Tilt_Position_Speaker_Closest = 8;
-      public static final double Tilt_Position_Speaker_SafePost = 10.85;
+      public static final double Tilt_Position_Speaker_SafePost = 11.75;//10.85;
       public static final double Tilt_Position_Speaker_Furthest = 10;
       public static final double Tilt_Position_Amp = 22;
 
@@ -158,8 +158,9 @@ public class Constants {
       
 
       public static final double ShooterRpmOff = 0;
-      public static final double ShooterRpmSpeakerClose = 3000;
-      public static final double ShooterRpmAmp = 1000;
+      public static final double ShooterRpmSpeakerClose = 4500;
+      public static final double ShooterRpmSpeakerPodium = 5500;
+      public static final double ShooterRpmAmp = 1500;
       public static final double ShooterRpmHumanSource = -500;
     }
     

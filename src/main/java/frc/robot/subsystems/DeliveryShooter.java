@@ -55,11 +55,11 @@ public class DeliveryShooter extends SubsystemBase {
         m_motor.setIdleMode(IdleMode.kCoast);
         m_motor_LowS.setIdleMode(IdleMode.kCoast);
         //set the ramp rate to controll sudden input changes (smooth input
-        m_motor.setClosedLoopRampRate(.1);
-        m_motor.setOpenLoopRampRate(.1);//small ramp rate becuase this will reverse instantly.
+        m_motor.setClosedLoopRampRate(.05);
+        m_motor.setOpenLoopRampRate(.05);//small ramp rate becuase this will reverse instantly.
 
-        m_motor_LowS.setClosedLoopRampRate(.1);
-        m_motor_LowS.setOpenLoopRampRate(.1);//small ramp rate becuase this will reverse instantly. 
+        m_motor_LowS.setClosedLoopRampRate(.05);
+        m_motor_LowS.setOpenLoopRampRate(.05);//small ramp rate becuase this will reverse instantly. 
         //current limit to keep motors safe from Fire (over current)
         m_motor.setSmartCurrentLimit(Constants.NeoBrushless.neo1650safelimitAmps);
         m_motor_LowS.setSmartCurrentLimit(Constants.NeoBrushless.neo1650safelimitAmps);
@@ -75,11 +75,11 @@ public class DeliveryShooter extends SubsystemBase {
         m_encoder_LowS = m_motor_LowS.getEncoder();
 
         // PID coefficients
-        kP = 0.000160; 
-        kI = 0.000001;
+        kP = 0.0000160; 
+        kI = 0.0000005;
         kD = 0.000001; 
         kIz = 0; 
-        kFF = 0.000015; 
+        kFF = 0.000055; 
         kMaxOutput = 1; 
         kMinOutput = -1;
         maxRPM = 5700;
