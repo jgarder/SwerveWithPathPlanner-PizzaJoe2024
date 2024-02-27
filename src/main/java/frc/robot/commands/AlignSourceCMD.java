@@ -33,7 +33,7 @@ import frc.robot.subsystems.DrivetrainManager;
 import frc.robot.subsystems.Limelight3Subsystem;
 
 
-public class AlignSpeakerCMD extends Command {
+public class AlignSourceCMD extends Command {
   
 
   /** Creates a new ArmStopCMD. */
@@ -64,13 +64,13 @@ public class AlignSpeakerCMD extends Command {
   private final PIDController AlignRZController = new PIDController(k_RZ_P,k_RZ_I,k_RZ_D);
 
   
-  double minXposeErrorToCorrect = .19;//.04;
-  double minYposeErrorToCorrect = .08;//.04;
-  double minRZErrorToCorrect = 1;//1;//.04;
+  double minXposeErrorToCorrect = .2;//.19;//.04;
+  double minYposeErrorToCorrect = .2;//.08;//.04;
+  double minRZErrorToCorrect = .9;//1;//.04;
 
   double min_xpose_command = 0.00;
   double min_Ypose_command = 0.0;
-  double min_RZ_command = 0;//0.004;
+  double min_RZ_command = .03;//0.004;
 
   double XP_buffer = 0;
   double YP_buffer = 0;
@@ -85,13 +85,13 @@ public class AlignSpeakerCMD extends Command {
   private DoubleSupplier strafeSup;
 public final SwerveRequest.RobotCentric drive;
 
-  public AlignSpeakerCMD(DrivetrainManager Thiss_Swerve, Limelight3Subsystem ThisLimelight, DoubleSupplier strafeSup) {
+  public AlignSourceCMD(DrivetrainManager Thiss_Swerve, Limelight3Subsystem ThisLimelight, DoubleSupplier strafeSup) {
     drivetrainManager = Thiss_Swerve;
     limelight3Subsystem = ThisLimelight;
     this.strafeSup = strafeSup;
 
      drive = new SwerveRequest.RobotCentric()
-      .withDeadband(drivetrainManager.MaxSpeed * 0.1).withRotationalDeadband(drivetrainManager.MaxAngularRate * 0.1) // Add a 10% deadband
+      //.withDeadband(drivetrainManager.MaxSpeed * 0.1).withRotationalDeadband(drivetrainManager.MaxAngularRate * 0.1) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
     addRequirements(drivetrainManager,limelight3Subsystem); 
@@ -120,23 +120,10 @@ public final SwerveRequest.RobotCentric drive;
     RZ_Setpoint = 0;
     //get our alliance red or blue
     CurrentAlliance = DriverStation.getAlliance();
-    //get the target number
-    int targetID = limelight3Subsystem.getTargetID();
-
-    
-
 
     XP_buffer = 0;
     YP_buffer = 0;
     RZ_buffer = 0;
-
-    // More complex path with holonomic rotation. Non-zero starting velocity of 2 m/s. Max velocity of 4 m/s and max accel of 3 m/s^2
-  // PathPlannerTrajectory traj3 = PathPlanner.generatePath(
-  // new PathConstraints(4, 3), 
-  // new PathPoint(new Translation2d(1.0, 1.0), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(0), 0), // position, heading(direction of travel), holonomic rotation, velocity override
-  // new PathPoint(new Translation2d(3.0, 3.0), Rotation2d.fromDegrees(45), Rotation2d.fromDegrees(-90)), // position, heading(direction of travel), holonomic rotation
-  // new PathPoint(new Translation2d(5.0, 3.0), Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(-30)) // position, heading(direction of travel), holonomic rotation
-  // );
 
   }
   int pipeline = 0;
@@ -149,8 +136,9 @@ public final SwerveRequest.RobotCentric drive;
   boolean WeSeeourSubstationTag = false;
   boolean WeSeeourCommunityTag = false;
   double Xspeed = 1.0;//5.0 * Constants.Swerve.maxSpeed;
-  double Yspeed = 1.0;//5.0 * Constants.Swerve.maxSpeed;
-  double rotationspeed = .01;//1.0 * Constants.Swerve.maxAngularVelocity;
+  double Yspeed = .5;//5.0 * Constants.Swerve.maxSpeed;
+  double rotationspeed = -1.1;//.01;//1.0 * Constants.Swerve.maxAngularVelocity;
+
   @Override
   public void execute() {
     //System.out.println(strafeSup.getAsDouble());
@@ -159,7 +147,8 @@ public final SwerveRequest.RobotCentric drive;
       System.out.println("LIMELIGHT IS DEAD");
       return;
     }
-    boolean WeSeeourSubstationTagThisTime = false;
+
+  boolean WeSeeourSubstationTagThisTime = false;
   boolean WeSeeourCommunityTagThisTime = false;
    //make sure we are in april tag pipeline before checking
    //
@@ -170,21 +159,21 @@ public final SwerveRequest.RobotCentric drive;
    //get if the closest target is for our team(ignore others obviously)
    
    double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
-  if(!CurrentAlliance.isPresent()){return;}
-   if ( (CurrentAlliance.get() == Alliance.Red) && targetID == Constants.AllianceAprilTags.Red.SpeakerCenter)//substation
+    if(!CurrentAlliance.isPresent()){return;}
+   if ( (CurrentAlliance.get() == Alliance.Red) && targetID == Constants.AllianceAprilTags.Red.SourceRight)//substation
    {  
      //System.out.println("Setting up for red team");
       xymulti = -1.0;
-      SetPidControlersToRedCenterSpeaker();
+      SetPidControlersToRedRSource();
     //flip flag sayign we see a substation
     WeSeeourSubstationTag = true;
     WeSeeourSubstationTagThisTime = true;
    }
-   else if ( (CurrentAlliance.get() == Alliance.Blue) && targetID == Constants.AllianceAprilTags.Blue.SpeakerCenter)//substation
+   else if ( (CurrentAlliance.get() == Alliance.Blue) && targetID == Constants.AllianceAprilTags.Blue.SourceRight)//substation
    {
       //System.out.println("Setting up for blue team");
       xymulti = 1.0;
-      SetPidControlersToBlueCenterSpeaker();
+      SetPidControlersToBlueRSource();
     //flip flag sayign we see a substation
     WeSeeourSubstationTag = true;
     WeSeeourSubstationTagThisTime = true;
@@ -192,6 +181,7 @@ public final SwerveRequest.RobotCentric drive;
    else{
     //System.out.println("Cannot setup for speaker here no speaker tag");
    }
+
    if(!WeSeeourCommunityTagThisTime & !WeSeeourSubstationTagThisTime){
       debounceloops++;
        //if substation is at X area size then switch our speed to substation movde
@@ -202,14 +192,7 @@ public final SwerveRequest.RobotCentric drive;
           drivetrainManager.drivetrain.setControl(drive.withVelocityX(0 * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
           .withVelocityY(0 * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
           .withRotationalRate(-strafeVal * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
-    );
-    //   s_Swerve.drive(
-    //     new Translation2d(0,strafeVal), 
-    //     0  , 
-    //     !robotCentric, 
-    //   true
-    // ); 
-          
+    );   
        }
     System.out.println("returning no tags seen");  
     return;
@@ -257,8 +240,8 @@ public final SwerveRequest.RobotCentric drive;
         //     .withVelocityY(YposeAxis) // Drive left with negative X (left)
         //     .withRotationalRate(RZposeAxis) // Drive counterclockwise with negative X (left)
         // ).ignoringDisable(false); 
-        drivetrainManager.drivetrain.setControl(drive.withVelocityX(-XposeAxis * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
-            .withVelocityY(-YposeAxis * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
+        drivetrainManager.drivetrain.setControl(drive.withVelocityX(-YposeAxis * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
+            .withVelocityY(XposeAxis * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(-RZposeAxis * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
         );
     // s_Swerve.drive(
@@ -284,12 +267,13 @@ public final SwerveRequest.RobotCentric drive;
     SmartDashboard.putNumber("Xpose_Offset", Xpose_Offset);
   }
 
-private void SetPidControlersToRedCenterSpeaker() {
-  XP_Setpoint = 6.70;//-6.63;
-  YP_Setpoint = 1.28;
-  RZ_Setpoint = 0.2;
+private void SetPidControlersToRedRSource() {
+  XP_Setpoint = 6.35;//-6.63;
+  YP_Setpoint = -3.22;
+  RZ_Setpoint = -60;
 
-  rotationspeed = -1.2;//THIS IS A HACKED IN MULTIPLER! 
+  Xspeed = -1.0;
+  Yspeed = -.6;
   //LL POSE X is forward and backward toward target in field space
   AlignXController.setSetpoint(XP_Setpoint);
   //LL POSE Y Is left to right translation in field space
@@ -299,26 +283,13 @@ private void SetPidControlersToRedCenterSpeaker() {
 
   
 }
-private void SetPidControlersToRedSideA() {
-  XP_Setpoint = 6.97;//-6.63;
-  YP_Setpoint = 2.554;
-  RZ_Setpoint = -44.42;
+private void SetPidControlersToBlueRSource() {
+  XP_Setpoint = -7.58;//6.63;
+  YP_Setpoint = -2.53;
+  RZ_Setpoint = -120;
 
-  rotationspeed = -1.2;//THIS IS A HACKED IN MULTIPLER! 
-  //LL POSE X is forward and backward toward target in field space
-  AlignXController.setSetpoint(XP_Setpoint);
-  //LL POSE Y Is left to right translation in field space
-  AlignPoseYController.setSetpoint(YP_Setpoint);
-  //LL pose RZ is our rotation relative to the target in field space
-  AlignRZController.setSetpoint(RZ_Setpoint);
-
-  
-}
-private void SetPidControlersToBlueCenterSpeaker() {
-  XP_Setpoint = -6.707;//6.63;
-  YP_Setpoint = 1.61;
-  RZ_Setpoint = -178;
-  double rotationspeed = .01;
+  Xspeed = 1.0;
+  Yspeed = .6;
   //LL POSE X is forward and backward toward target in field space
   AlignXController.setSetpoint(XP_Setpoint);
   //LL POSE Y Is left to right translation in field space
@@ -326,7 +297,6 @@ private void SetPidControlersToBlueCenterSpeaker() {
   //LL pose RZ is our rotation relative to the target in field space
   AlignRZController.setSetpoint(RZ_Setpoint);
 }
-
 private void FillBuffers()
 {
   double RZCurrent = limelight3Subsystem.getRZ() *-1.0;//rotation Y targetspace is ROtation Z field space?
@@ -442,15 +412,17 @@ private double GetYPoseAdjust(double Ypose, double min_PoseY_command) {
         //minRZErrorToCorrect = .2;//.04;
         if(Math.abs(Xpose_Offset) < minXposeErrorToCorrect && 
           Math.abs(Ypose_Offset) < minYposeErrorToCorrect  &&( 
-        Math.abs(RZ_Offset) < minRZErrorToCorrect || RZ_Offset < minRZErrorToCorrect -360 ))
+        Math.abs(RZ_Offset) < minRZErrorToCorrect || RZ_Offset < minRZErrorToCorrect -180 ))
         {
           if(timesgood > goodneeded)
           {
             timesgood = 0;
+            //Stop movement if we are there.
             drivetrainManager.drivetrain.setControl(drive.withVelocityX(0 * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
             .withVelocityY(0 * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(0 * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
-           );
+            );
+            //
             return true;
           }
           else

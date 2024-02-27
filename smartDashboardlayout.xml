@@ -1,5 +1,29 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Bypass Limelight" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.CheckBox">
+		<location x="1216" y="68"/>
+	</widget>
+	<widget field="IndexStage" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="21" y="242"/>
+	</widget>
+	<widget field="PoseWPIBLueRoll" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1421" y="452"/>
+	</widget>
+	<widget field="PoseWPIBLuePitch" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1415" y="522"/>
+	</widget>
+	<widget field="PoseWPIBLueYaw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1419" y="498"/>
+	</widget>
+	<widget field="PoseWPIBLuez" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1436" y="475"/>
+	</widget>
+	<widget field="PoseWPIBLuey" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1433" y="432"/>
+	</widget>
+	<widget field="PoseWPIBLueX" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1433" y="411"/>
+	</widget>
 	<widget field="islowerWithinRange" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1114" y="200"/>
 	</widget>

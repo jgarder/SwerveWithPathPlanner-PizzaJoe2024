@@ -62,11 +62,11 @@ public class ChainLifterS extends SubsystemBase {
         Motor_Controller.setIdleMode(IdleMode.kBrake);
         
         //set the ramp rate to controll sudden input changes (smooth input
-        Motor_Controller.setClosedLoopRampRate(.1);
-        Motor_Controller.setOpenLoopRampRate(.1);//small ramp rate becuase this will reverse instantly. 
+        Motor_Controller.setClosedLoopRampRate(.05);
+        Motor_Controller.setOpenLoopRampRate(.05);//small ramp rate becuase this will reverse instantly. 
         
         //current limit to keep motors safe from Fire (over current)
-        Motor_Controller.setSmartCurrentLimit(30);
+        Motor_Controller.setSmartCurrentLimit(35);
 
         //limit everything on this motor controller to 500ms except the status 0 frame which is 10ms and does faults and applied output. 
         Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);  //Default Rate: 20ms ,Motor Velocity,Motor Temperature,Motor VoltageMotor Current

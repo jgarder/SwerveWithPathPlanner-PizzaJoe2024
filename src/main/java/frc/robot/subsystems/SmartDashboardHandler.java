@@ -1,10 +1,14 @@
 package frc.robot.subsystems;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.PizzaManager;
 
 public class SmartDashboardHandler extends SubsystemBase{
 
@@ -12,11 +16,15 @@ private final SendableChooser<String> m_chooser = new SendableChooser<>();
 RobotContainer thisrobot;
 public static final double defaultspeedMulti = .25;
 public static final double defaultRotationMulti = .25;
+
   public SmartDashboardHandler(RobotContainer mainbrain) {
     thisrobot = mainbrain;
 
+    // Build an auto chooser. This will use Commands.none() as the default option.
+    
+
     bootupPersistents();
-    BuildAutonomousChooser();
+    //BuildAutonomousChooser();
     //thisrobot.m_pdh.clearStickyFaults();
     //BuildConeCubeChooser();
   }
@@ -33,23 +41,28 @@ public static final double defaultRotationMulti = .25;
             SmartDashboard.putNumber("Jow Rotation Multiplier", defaultRotationMulti);
             SmartDashboard.setPersistent("Jow Rotation Multiplier");
         }
+      if(!SmartDashboard.containsKey("Bypass Limelight"))
+      {
+          SmartDashboard.putBoolean("Bypass Limelight", false);
+          SmartDashboard.setPersistent("Bypass Limelight");
+      }
   }
 
-  public String getChosenAutoString()
-  {
-    return m_chooser.getSelected();
-  }
-  public static final String kDefaultAuto = "Default";
-  public static final String kCalibrateYesAuto = "Shoot Note Dont Move";
-  private void BuildAutonomousChooser() {
-    // build Autonomous selector. 
-    m_chooser.setDefaultOption("No Auto", kDefaultAuto);
-    m_chooser.addOption("Shoot Note Dont Move", kCalibrateYesAuto);
-    //m_chooser.addOption("Charge Pad Spin Move", kChargePadSpin);
-    SmartDashboard.putData("Auto choices", m_chooser);
-    //SmartDashboard.setPersistent("Auto choices");
+  // public String getChosenAutoString()
+  // {
+  //   return m_chooser.getSelected();
+  // }
+//   public static final String kDefaultAuto = "Default";
+//   public static final String kCalibrateYesAuto = "Shoot Note Dont Move";
+//   private void BuildAutonomousChooser() {
+//     // build Autonomous selector. 
+//     m_chooser.setDefaultOption("No Auto", kDefaultAuto);
+//     m_chooser.addOption("Shoot Note Dont Move", kCalibrateYesAuto);
+//     //m_chooser.addOption("Charge Pad Spin Move", kChargePadSpin);
+//     SmartDashboard.putData("Auto choices", m_chooser);
+//     //SmartDashboard.setPersistent("Auto choices");
     
-}
+// }
 
     @Override
     public void periodic() {
@@ -60,11 +73,15 @@ public static final double defaultRotationMulti = .25;
 
     public void getdataToDashboard()
     {
+      if (DriverStation.getAlliance().isPresent()) {
+        SmartDashboard.putString("Alliance", DriverStation.getAlliance().toString());
+      }
         SmartDashboard.putBoolean("teleOpEnable", DriverStation.isTeleopEnabled());
         SmartDashboard.putBoolean("AutonEnable", DriverStation.isAutonomousEnabled());
-        SmartDashboard.putString("Alliance", DriverStation.getAlliance().toString());
+        //SmartDashboard.putString("Alliance", DriverStation.getAlliance().toString());
         SmartDashboard.putBoolean("Pickup Spinner OverTemp", !thisrobot.pickupSpinner.isMotorOvertemp());
         
+        PizzaManager.LimeLightBypassed =  SmartDashboard.getBoolean("Bypass Limelight", false);
     }
     
     private static final int NUM_PDH_CHANNELS =24;

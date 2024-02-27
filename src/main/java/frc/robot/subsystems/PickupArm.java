@@ -29,7 +29,7 @@ public class PickupArm extends PIDSubsystem{
     {
         super(new PIDController(Constants.PickupHead.kP_lifter, Constants.PickupHead.kI_lifter, Constants.PickupHead.kD_lifter));//super class, must setup PID first
         //even though the default should be 0, lets tell the PID to goto 0 which is our starting position.
-        Motor_Encoder.setPosition(Constants.PickupHead.minValue_Lifter);
+        Motor_Encoder.setPosition(Constants.PickupHead.minValue_PickupArm);
         setSetpoint(0);
         //should the motor controller be inverted? 0 is folded in and 44 (or max) is folded out.
         Motor_Controller.setInverted(false);
@@ -37,8 +37,8 @@ public class PickupArm extends PIDSubsystem{
         //Enable the soft limits and set the values
         Motor_Controller.enableSoftLimit(SoftLimitDirection.kForward, true);
         Motor_Controller.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        Motor_Controller.setSoftLimit(SoftLimitDirection.kForward, (float)Constants.PickupHead.maxValue_Lifter);
-        Motor_Controller.setSoftLimit(SoftLimitDirection.kReverse, (float)Constants.PickupHead.minValue_Lifter);
+        Motor_Controller.setSoftLimit(SoftLimitDirection.kForward, (float)Constants.PickupHead.maxValue_PickupArm);
+        Motor_Controller.setSoftLimit(SoftLimitDirection.kReverse, (float)Constants.PickupHead.minValue_PickupArm);
 
         //set the idle mode to brake so it doesnt move when we dont want it to, or coast if we want it to coast after "stopping"
         Motor_Controller.setIdleMode(IdleMode.kBrake);
@@ -144,12 +144,12 @@ public class PickupArm extends PIDSubsystem{
         
         Motor_Controller.enableSoftLimit(SoftLimitDirection.kReverse, true);
         enable();//reactivate the pidcontroller of this subsystem
-        Motor_Encoder.setPosition(Constants.PickupHead.minValue_Lifter);
+        Motor_Encoder.setPosition(Constants.PickupHead.minValue_PickupArm);
       }
 
       public void setSetpointZero() {
         enable();
-        setSetpoint(Constants.PickupHead.minValue_Lifter);
+        setSetpoint(Constants.PickupHead.minValue_PickupArm);
         pickupState = pickupState.ZERO;
       }
     public void setSetpointVerticle() {

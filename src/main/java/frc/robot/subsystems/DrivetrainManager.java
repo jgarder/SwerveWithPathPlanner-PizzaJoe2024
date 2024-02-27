@@ -5,12 +5,14 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.Constants;
 import frc.robot.Telemetry;
 import frc.robot.generated.TunerConstants;
+import com.pathplanner.lib.auto.NamedCommands;
 
 public class DrivetrainManager extends SubsystemBase{
     
@@ -26,13 +28,16 @@ public class DrivetrainManager extends SubsystemBase{
     //private CommandSwerveDrivetrain drivetrain;
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
     private final Telemetry logger = new Telemetry(MaxSpeed);
+  
 
       /* Path follower */
-    public Command runAuto = drivetrain.getAutoPath("Tests");
+    public Command runAuto;
     
 
     public DrivetrainManager(CommandXboxController Joystick) {
         joystick = Joystick;
+
+
         //drivetrain = Drivetrain;
     }
     

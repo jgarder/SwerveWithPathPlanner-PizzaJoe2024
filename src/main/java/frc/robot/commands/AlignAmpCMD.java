@@ -417,6 +417,11 @@ private double GetYPoseAdjust(double Ypose, double min_PoseY_command) {
           if(timesgood > goodneeded)
           {
             timesgood = 0;
+                 //Stop movement if we are there.
+                 drivetrainManager.drivetrain.setControl(drive.withVelocityX(0 * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
+                 .withVelocityY(0 * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
+                 .withRotationalRate(0 * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
+                 );
             return true;
           }
           else

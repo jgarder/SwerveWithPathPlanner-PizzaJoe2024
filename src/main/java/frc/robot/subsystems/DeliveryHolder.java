@@ -164,7 +164,7 @@ public class DeliveryHolder extends SubsystemBase {
             m_forwardLimit.enableLimitSwitch(false);
             //System.out.println("outdexiong");
             SmartDashboard.putString("IndexStage","OutDexing");
-            SetToWantedDutyCycle(-.75);
+            SetToWantedDutyCycle(-.3);
             
             isUndoIndexFinished();
           }

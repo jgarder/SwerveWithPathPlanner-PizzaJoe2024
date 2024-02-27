@@ -76,14 +76,14 @@ public class Constants {
     public static class ChainLifter
     {
         public static final double Lift_minValue = 0;
-        public static final double Lift_maxValue = 430;
+        public static final double Lift_maxValue = 340;//430;
         
 
         public static final double Lift_Position_Zero = 0;
-        public static final double Lift_Position_PullDown =5;
-        public static final double Lift_Position_unfolding = 50;
-        public static final double Lift_Position_CenterAndTrap = 429;
-        public static final double Lift_Position_Edge = 429;
+        public static final double Lift_Position_PullDown =4;
+        public static final double Lift_Position_unfolding = 30;
+        public static final double Lift_Position_CenterAndTrap = 340;
+        public static final double Lift_Position_Edge = 340;
 
 
     }
@@ -108,15 +108,17 @@ public class Constants {
         public static final double spinnerSlewRate = 0.1;
         public static final double lifterSlewRate = 0.1;
 
+        //PickupArm 
+        public static final double maxValue_PickupArm = 46;
+        public static final double minValue_PickupArm = 0;
         public static final double PickupZero = 0;
         public static final double PickupPassing = -1;
-        public static final double PickupFloorPickup = 46;
+        public static final double PickupFloorPickup = 44;
         public static final double PickupSourcePickup = 13;
         public static final double PickupVertical = 16;
         
         //soft limits min/max values
-        public static final double maxValue_Lifter = 44;
-        public static final double minValue_Lifter = 0;
+     
         public static final double maxValue_Spinner = 0;
         public static final double minValue_Spinner = 0;
 
@@ -161,7 +163,7 @@ public class Constants {
       public static final double ShooterRpmSpeakerClose = 4500;
       public static final double ShooterRpmSpeakerPodium = 5500;
       public static final double ShooterRpmAmp = 1500;
-      public static final double ShooterRpmHumanSource = -500;
+      public static final double ShooterRpmHumanSource = -750;//-500;
     }
     
     public static class AllianceAprilTags{
