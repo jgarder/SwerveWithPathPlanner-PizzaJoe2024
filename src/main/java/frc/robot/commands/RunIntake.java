@@ -30,6 +30,7 @@ public class RunIntake extends Command{
         return false;
     }  
     if(m_Timer.get() > PickupTimeoutSeoncds){
+        m_PickupSpinner.stopSpinner();
         return true;
     } 
     if (m_PickupSpinner.IsNoteInPickup()) {
