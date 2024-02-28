@@ -15,6 +15,20 @@ public class Constants {
 
   }
 
+  public static class ChassisPid
+  {
+    public static final double k_PoseX_P = 1.20;
+    public static final double k_PoseX_I = 0.02;
+    public static final double k_PoseX_D = 0.0020;
+
+    public static final double k_PoseY_P = 1.20;
+    public static final double k_PoseY_I = 0.02;
+    public static final double k_PoseY_D = 0.002; 
+
+    public static final double k_RZ_P = .05;
+    public static final double k_RZ_I = 0.00;
+    public static final double k_RZ_D = 0.00;
+  }
   public static class CANBus
   {
     //NEO CANBUS

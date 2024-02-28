@@ -84,6 +84,8 @@ public class RobotContainer {
   BooleanSupplier isNoteInDeliveryHolderboolSup = () -> deliveryHolder.m_forwardLimit.isPressed(); 
   BooleanSupplier IsLimeLightBypassed = () -> PizzaManager.LimeLightBypassed; 
   public static class PizzaManager{
+    public static double speedMulti = 1.0;
+    public static double RotationMulti = .45;
     public static boolean LimelightTelemetryUpdateRequested = true;
     public static boolean LimeLightBypassed = false;
     public static PickupState LastKnownPickupState = PickupState.ZERO;
@@ -278,8 +280,8 @@ public class RobotContainer {
   //Right Trigger To activate the human pickup
   joystick.rightTrigger().whileTrue(
     new SequentialCommandGroup(
-          new AlignSourceCMD(drivetrainManager,LL3,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed),
-        new ForwardBump(drivetrainManager,SourceBumpTimeout).unless(IsLimeLightBypassed)
+          new AlignSourceCMD(drivetrainManager,LL3,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
+        //new ForwardBump(drivetrainManager,SourceBumpTimeout).unless(IsLimeLightBypassed)
         ).andThen(HumanSourcePickup())
     
   )

@@ -120,7 +120,7 @@ private final NetworkTableEntry botpose_wpiblueNTE;
    int targetID = getTargetID();
    //get if the closest target is for our team(ignore others obviously)
    boolean WeSeeourSubstationTag = false;
-   if(!CurrentAlliance.isPresent()){System.out.println("no alliance!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); return;}
+   if(!CurrentAlliance.isPresent()){System.out.println("no alliance!!"); return;}
    if ( (CurrentAlliance.get() == Alliance.Red) && targetID == Constants.AllianceAprilTags.Red.SourceRight)
    {
       WeSeeourSubstationTag = true;

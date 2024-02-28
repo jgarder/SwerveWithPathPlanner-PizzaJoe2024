@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -14,8 +15,7 @@ public class SmartDashboardHandler extends SubsystemBase{
 
 private final SendableChooser<String> m_chooser = new SendableChooser<>();
 RobotContainer thisrobot;
-public static final double defaultspeedMulti = .25;
-public static final double defaultRotationMulti = .25;
+
 
   public SmartDashboardHandler(RobotContainer mainbrain) {
     thisrobot = mainbrain;
@@ -28,23 +28,25 @@ public static final double defaultRotationMulti = .25;
     //thisrobot.m_pdh.clearStickyFaults();
     //BuildConeCubeChooser();
   }
-
+  public String XYSpeedName = "Jow Speed Multiplier";
+  public String ZrotMultiplierName = "Jow Rotation Multiplier";
+  public String LimelightbypassName = "Bypass Limelight";
   private void bootupPersistents() {
 
-    if(!SmartDashboard.containsKey("Jow Speed Multiplier"))
+    if(!SmartDashboard.containsKey(XYSpeedName))
         {
-            SmartDashboard.putNumber("Jow Speed Multiplier", defaultspeedMulti);
-            SmartDashboard.setPersistent("Jow Speed Multiplier");
+            SmartDashboard.putNumber(XYSpeedName, PizzaManager.speedMulti);
+            SmartDashboard.setPersistent(XYSpeedName);
         }
-        if(!SmartDashboard.containsKey("Jow Rotation Multiplier"))
+        if(!SmartDashboard.containsKey(ZrotMultiplierName))
         {
-            SmartDashboard.putNumber("Jow Rotation Multiplier", defaultRotationMulti);
-            SmartDashboard.setPersistent("Jow Rotation Multiplier");
+            SmartDashboard.putNumber(ZrotMultiplierName, PizzaManager.RotationMulti);
+            SmartDashboard.setPersistent(ZrotMultiplierName);
         }
-      if(!SmartDashboard.containsKey("Bypass Limelight"))
+      if(!SmartDashboard.containsKey(LimelightbypassName))
       {
-          SmartDashboard.putBoolean("Bypass Limelight", false);
-          SmartDashboard.setPersistent("Bypass Limelight");
+          SmartDashboard.putBoolean(LimelightbypassName, false);
+          SmartDashboard.setPersistent(LimelightbypassName);
       }
   }
 
@@ -81,7 +83,9 @@ public static final double defaultRotationMulti = .25;
         //SmartDashboard.putString("Alliance", DriverStation.getAlliance().toString());
         SmartDashboard.putBoolean("Pickup Spinner OverTemp", !thisrobot.pickupSpinner.isMotorOvertemp());
         
-        PizzaManager.LimeLightBypassed =  SmartDashboard.getBoolean("Bypass Limelight", false);
+        PizzaManager.LimeLightBypassed =  SmartDashboard.getBoolean(LimelightbypassName, false);
+        PizzaManager.RotationMulti = MathUtil.clamp(SmartDashboard.getNumber(ZrotMultiplierName, PizzaManager.RotationMulti),0,1);
+        PizzaManager.speedMulti = MathUtil.clamp(SmartDashboard.getNumber(XYSpeedName, PizzaManager.speedMulti),0,1);
     }
     
     private static final int NUM_PDH_CHANNELS =24;

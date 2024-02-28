@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.Constants;
 import frc.robot.Telemetry;
+import frc.robot.RobotContainer.PizzaManager;
 import frc.robot.generated.TunerConstants;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -18,7 +19,7 @@ public class DrivetrainManager extends SubsystemBase{
     
     
   public double MaxSpeed = 9;//6; // 6 meters per second desired top speed
-  public double MaxAngularRate = 1.8 * Math.PI; // 3/4 of a rotation per second max angular velocity
+  public double MaxAngularRate = 2.5 * Math.PI; //1.8 ==  3/4 of a rotation per second max angular velocity
 
   public double MaxSpeedPid = 2;//6; // 6 meters per second desired top speed
   public double MaxAngularRatePid = 1.0 * Math.PI; // 3/4 of a rotation per second max angular velocity
@@ -49,10 +50,10 @@ public class DrivetrainManager extends SubsystemBase{
     public void configureBindings()
     {
         drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> FCdrive.withVelocityX(speedLimiterY.calculate(-joystick.getLeftY()) * MaxSpeed) // Drive forward with
+        drivetrain.applyRequest(() -> FCdrive.withVelocityX(speedLimiterY.calculate(-joystick.getLeftY()) * (MaxSpeed*PizzaManager.speedMulti)) // Drive forward with
                                                                                            // negative Y (forward)
-            .withVelocityY(speedLimiterX.calculate(-joystick.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(speedLimiterRotation.calculate(-joystick.getRightX()) * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            .withVelocityY(speedLimiterX.calculate(-joystick.getLeftX()) * (MaxSpeed*PizzaManager.speedMulti)) // Drive left with negative X (left)
+            .withRotationalRate(speedLimiterRotation.calculate(-joystick.getRightX()) * (MaxAngularRate*PizzaManager.RotationMulti)) // Drive counterclockwise with negative X (left)
         ).ignoringDisable(true));
 
         //stuff below should be tested when drivetrain is complete    
