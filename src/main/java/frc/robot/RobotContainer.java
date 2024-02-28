@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ChainLifter;
 import frc.robot.RobotContainer.PizzaManager.PizzaTracker;
 import frc.robot.commands.AlignAmpCMD;
+import frc.robot.commands.AlignSourceCMD;
 import frc.robot.commands.AlignSpeakerCMD;
 import frc.robot.commands.AlignSpeakerTest;
 import frc.robot.commands.ForwardBump;
@@ -247,6 +248,7 @@ public class RobotContainer {
     ;
   }
   public double AmpBumpTimeout = .45;
+  public double SourceBumpTimeout = .6;
   public Command AmpBump()
   {
     return new ForwardBump(drivetrainManager,AmpBumpTimeout);//new SequentialCommandGroup(new ForwardBump(drivetrainManager,.45));   
@@ -275,8 +277,11 @@ public class RobotContainer {
 
   //Right Trigger To activate the human pickup
   joystick.rightTrigger().whileTrue(
-    //HumanSourcePickup()
-    AmpBump()
+    new SequentialCommandGroup(
+          new AlignSourceCMD(drivetrainManager,LL3,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed),
+        new ForwardBump(drivetrainManager,SourceBumpTimeout).unless(IsLimeLightBypassed)
+        ).andThen(HumanSourcePickup())
+    
   )
   .onFalse(C_ParkDeliveryHead());
 

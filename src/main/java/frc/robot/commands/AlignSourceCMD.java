@@ -50,9 +50,9 @@ public class AlignSourceCMD extends Command {
   private final PIDController AlignXController = new PIDController(k_PoseX_P,k_PoseX_I,k_PoseX_D);
 
   //LL POSE Y Is left to right translation in field space
-  double k_PoseY_P = 1.00;
+  double k_PoseY_P = 1.20;
   double k_PoseY_I = 0.02;
-  double k_PoseY_D = 0.000; 
+  double k_PoseY_D = 0.002; 
   private static final TrapezoidProfile.Constraints Z_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 2);
   private final PIDController AlignPoseYController = new PIDController(k_PoseY_P,k_PoseY_I,k_PoseY_D);
   
@@ -64,12 +64,12 @@ public class AlignSourceCMD extends Command {
   private final PIDController AlignRZController = new PIDController(k_RZ_P,k_RZ_I,k_RZ_D);
 
   
-  double minXposeErrorToCorrect = .2;//.19;//.04;
-  double minYposeErrorToCorrect = .2;//.08;//.04;
+  double minXposeErrorToCorrect = .08;//.2;//.19;//.04;
+  double minYposeErrorToCorrect = .08;//.2;//.08;//.04;
   double minRZErrorToCorrect = .9;//1;//.04;
 
-  double min_xpose_command = 0.00;
-  double min_Ypose_command = 0.0;
+  double min_xpose_command = 0.03;
+  double min_Ypose_command = 0.03;
   double min_RZ_command = .03;//0.004;
 
   double XP_buffer = 0;
@@ -100,7 +100,6 @@ public final SwerveRequest.RobotCentric RobotCentricdrive;
   }
 
   Optional<Alliance> CurrentAlliance;
-  double xymulti = -1.0;
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
@@ -138,7 +137,7 @@ public final SwerveRequest.RobotCentric RobotCentricdrive;
   boolean WeSeeourCommunityTag = false;
   double Xspeed = 1.0;//5.0 * Constants.Swerve.maxSpeed;
   double Yspeed = .5;//5.0 * Constants.Swerve.maxSpeed;
-  double rotationspeed = -1.1;//.01;//1.0 * Constants.Swerve.maxAngularVelocity;
+  double rotationspeed = 1.1;//.01;//1.0 * Constants.Swerve.maxAngularVelocity;
 
   @Override
   public void execute() {
@@ -164,7 +163,6 @@ public final SwerveRequest.RobotCentric RobotCentricdrive;
    if ( (CurrentAlliance.get() == Alliance.Red) && targetID == Constants.AllianceAprilTags.Red.SourceRight)//substation
    {  
      //System.out.println("Setting up for red team");
-      xymulti = -1.0;
       SetPidControlersToRedRSource();
     //flip flag sayign we see a substation
     WeSeeourSubstationTag = true;
@@ -173,7 +171,6 @@ public final SwerveRequest.RobotCentric RobotCentricdrive;
    else if ( (CurrentAlliance.get() == Alliance.Blue) && targetID == Constants.AllianceAprilTags.Blue.SourceRight)//substation
    {
       //System.out.println("Setting up for blue team");
-      xymulti = 1.0;
       SetPidControlersToBlueRSource();
     //flip flag sayign we see a substation
     WeSeeourSubstationTag = true;
@@ -236,14 +233,18 @@ public final SwerveRequest.RobotCentric RobotCentricdrive;
     double YposeAxis = Ypose_adjust * Yspeed;
     double XposeAxis = xpose_adjust * Xspeed;
     double RZposeAxis = RZAdjust * rotationspeed;
+    if(isRotInTarget())
+    {
+      RZposeAxis = 0;
+    }
     //System.out.println("requesting swerve now"); 
         //   drivetrainManager.drivetrain.applyRequest(() -> drivetrainManager.drive.withVelocityX(XposeAxis) // Drive forward with // negative Y (forward)
         //     .withVelocityY(YposeAxis) // Drive left with negative X (left)
         //     .withRotationalRate(RZposeAxis) // Drive counterclockwise with negative X (left)
         // ).ignoringDisable(false); 
-        drivetrainManager.drivetrain.setControl(RobotCentricdrive.withVelocityX(-YposeAxis * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
-            .withVelocityY(XposeAxis * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(-RZposeAxis * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
+        drivetrainManager.drivetrain.setControl(drivetrainManager.FCdrive.withVelocityX(XposeAxis * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
+            .withVelocityY(YposeAxis * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(RZposeAxis * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
         );
     // s_Swerve.drive(
     //          new Translation2d(XposeAxis,YposeAxis), 
@@ -273,8 +274,8 @@ private void SetPidControlersToRedRSource() {
   YP_Setpoint = -3.22;
   RZ_Setpoint = -60;
 
-  Xspeed = -1.0;
-  Yspeed = -.6;
+  Xspeed = 1.0;
+  Yspeed = 1.0;
   //LL POSE X is forward and backward toward target in field space
   AlignXController.setSetpoint(XP_Setpoint);
   //LL POSE Y Is left to right translation in field space
@@ -285,12 +286,12 @@ private void SetPidControlersToRedRSource() {
   
 }
 private void SetPidControlersToBlueRSource() {
-  XP_Setpoint = -7.58;//6.63;
-  YP_Setpoint = -2.53;
-  RZ_Setpoint = -120;
+  XP_Setpoint = 14.7;//6.63;
+  YP_Setpoint = .87;
+  RZ_Setpoint = -60;
 
   Xspeed = 1.0;
-  Yspeed = .6;
+  Yspeed = 1.0;
   //LL POSE X is forward and backward toward target in field space
   AlignXController.setSetpoint(XP_Setpoint);
   //LL POSE Y Is left to right translation in field space
@@ -300,9 +301,9 @@ private void SetPidControlersToBlueRSource() {
 }
 private void FillBuffers()
 {
-  double RZCurrent = limelight3Subsystem.getRZ() *-1.0;//rotation Y targetspace is ROtation Z field space?
-  double xpose = limelight3Subsystem.getXPos() ;
-  double Ypose = limelight3Subsystem.getYPos();
+  double RZCurrent = limelight3Subsystem.getRZPosWpiBlue();//rotation Y targetspace is ROtation Z field space?
+  double xpose = limelight3Subsystem.getXPosWpiBlue() ;
+  double Ypose = limelight3Subsystem.getYPosWpiBlue();
   if(Ypose != 0.00 & xpose != 0.00 & RZCurrent != 0.00) 
   {
     XP_buffer = xpose;
@@ -330,7 +331,7 @@ private double GetYPoseAdjust(double Ypose, double min_PoseY_command) {
  // {
   //  ypose_adjust = 0;
   //}
-  return ypose_adjust *xymulti;
+  return ypose_adjust ;
 }
 
   //LL POSE X is forward and backward toward target in field space
@@ -353,7 +354,7 @@ private double GetYPoseAdjust(double Ypose, double min_PoseY_command) {
     //  xpose_adjust = 0;
     //}
     //if(fwdReverse_error == 0){return 0;}
-    return xpose_adjust *xymulti;
+    return xpose_adjust ;
   }
 
   //LL pose RZ is our rotation relative to the target in field space
@@ -365,11 +366,11 @@ private double GetYPoseAdjust(double Ypose, double min_PoseY_command) {
     //{
       if (RZ < 0)
       {
-        RZ_adjust = AlignRZController.calculate(RZ*-1.0) - min_spin_command;
+        RZ_adjust = AlignRZController.calculate(RZ) - min_spin_command;
       }
       else
       {
-        RZ_adjust = AlignRZController.calculate(RZ)*-1.0 + min_spin_command;
+        RZ_adjust = AlignRZController.calculate(RZ) + min_spin_command;
       }
       
       //our own tolerance script. 
@@ -412,8 +413,7 @@ private double GetYPoseAdjust(double Ypose, double min_PoseY_command) {
         //minYposeErrorToCorrect = .02;//.04;
         //minRZErrorToCorrect = .2;//.04;
         if(Math.abs(Xpose_Offset) < minXposeErrorToCorrect && 
-          Math.abs(Ypose_Offset) < minYposeErrorToCorrect  &&( 
-        Math.abs(RZ_Offset) < minRZErrorToCorrect || RZ_Offset < minRZErrorToCorrect -180 ))
+          Math.abs(Ypose_Offset) < minYposeErrorToCorrect  && isRotInTarget())
         {
           if(timesgood > goodneeded)
           {
@@ -446,5 +446,9 @@ private double GetYPoseAdjust(double Ypose, double min_PoseY_command) {
     //   return true;
     // }
       return false;
+  }
+
+  private boolean isRotInTarget() {
+    return Math.abs(RZ_Offset) < minRZErrorToCorrect || RZ_Offset < minRZErrorToCorrect -180;
   }
 }

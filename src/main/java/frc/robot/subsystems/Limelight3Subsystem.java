@@ -475,6 +475,15 @@ public static double[] getBotPose_wpiBlue(String limelightName) {
     SmartDashboard.putNumber("LL TargetID", Math.floor(getTargetID()*roundingpower)/roundingpower);
     return limelight;
   }
+  public double getXPosWpiBlue() {
+      return  botpose_wpiblueNTE.getDoubleArray(defaultArray)[0];
+  }
+    public double getYPosWpiBlue() {
+      return  botpose_wpiblueNTE.getDoubleArray(defaultArray)[1];
+  }
+    public double getRZPosWpiBlue() {
+      return  botpose_wpiblueNTE.getDoubleArray(defaultArray)[5];
+  }
 
   /**
      * This function uses the Limelight's Solve3D function to compute the distance from the target in inches. The limelight must be in Solve3D mode with High-Res enabled.

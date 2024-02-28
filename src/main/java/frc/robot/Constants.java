@@ -163,7 +163,7 @@ public class Constants {
       public static final double ShooterRpmSpeakerClose = 4500;
       public static final double ShooterRpmSpeakerPodium = 5500;
       public static final double ShooterRpmAmp = 1500;
-      public static final double ShooterRpmHumanSource = -750;//-500;
+      public static final double ShooterRpmHumanSource = -1550;//-500;
     }
     
     public static class AllianceAprilTags{
