@@ -28,7 +28,7 @@ public class DrivetrainManager extends SubsystemBase{
     //private CommandSwerveDrivetrain drivetrain;
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain; // My drivetrain
     private final Telemetry logger = new Telemetry(MaxSpeed);
-  
+
 
       /* Path follower */
     public Command runAuto;
@@ -49,7 +49,7 @@ public class DrivetrainManager extends SubsystemBase{
     public void configureBindings()
     {
         drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(speedLimiterY.calculate(-joystick.getLeftY()) * MaxSpeed) // Drive forward with
+        drivetrain.applyRequest(() -> FCdrive.withVelocityX(speedLimiterY.calculate(-joystick.getLeftY()) * MaxSpeed) // Drive forward with
                                                                                            // negative Y (forward)
             .withVelocityY(speedLimiterX.calculate(-joystick.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(speedLimiterRotation.calculate(-joystick.getRightX()) * MaxAngularRate) // Drive counterclockwise with negative X (left)
@@ -75,7 +75,7 @@ public class DrivetrainManager extends SubsystemBase{
 
     public void move(double x,double y,double r)
     {
-      drivetrain.applyRequest(() -> drive.withVelocityX(-.1 * MaxSpeed) // Drive forward with                                                                                        // negative Y (forward)
+      drivetrain.applyRequest(() -> FCdrive.withVelocityX(-.1 * MaxSpeed) // Drive forward with                                                                                        // negative Y (forward)
             .withVelocityY(-.1 * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(0 * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ).ignoringDisable(false);
@@ -85,10 +85,15 @@ public class DrivetrainManager extends SubsystemBase{
 
 
 
-  public final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+  public final SwerveRequest.FieldCentric FCdrive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
+  public final SwerveRequest.RobotCentric RobotCentricdrive = new SwerveRequest.RobotCentric()
+  //.withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+  .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
+
+
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();

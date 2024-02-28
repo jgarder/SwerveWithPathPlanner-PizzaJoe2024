@@ -1,5 +1,17 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="PoseTran" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1267" y="481"/>
+	</widget>
+	<widget field="PoseRot" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1270" y="457"/>
+	</widget>
+	<widget field="Posey" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1281" y="434"/>
+	</widget>
+	<widget field="Posex" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1282" y="412"/>
+	</widget>
 	<widget field="Bypass Limelight" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.CheckBox">
 		<location x="1216" y="68"/>
 	</widget>

@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -32,6 +33,7 @@ import frc.robot.RobotContainer.PizzaManager.PizzaTracker;
 import frc.robot.commands.AlignAmpCMD;
 import frc.robot.commands.AlignSpeakerCMD;
 import frc.robot.commands.AlignSpeakerTest;
+import frc.robot.commands.ForwardBump;
 import frc.robot.commands.MoveChainLiftToPosition;
 import frc.robot.commands.MoveDLifterToPosition;
 import frc.robot.commands.MovePickupToPosition;
@@ -244,6 +246,13 @@ public class RobotContainer {
     //.onlyIf(()->PizzaManager.NoteInDeliveryHolder)
     ;
   }
+  public double AmpBumpTimeout = .45;
+  public Command AmpBump()
+  {
+    return new ForwardBump(drivetrainManager,AmpBumpTimeout);//new SequentialCommandGroup(new ForwardBump(drivetrainManager,.45));   
+    
+  }
+  /////////////////////////////////////////////////////////////
 
   private void configureBindings() {
     drivetrainManager.configureBindings();
@@ -265,7 +274,11 @@ public class RobotContainer {
     ).onFalse(C_ParkDeliveryHead());
 
   //Right Trigger To activate the human pickup
-  joystick.rightTrigger().whileTrue(HumanSourcePickup()).onFalse(C_ParkDeliveryHead());
+  joystick.rightTrigger().whileTrue(
+    //HumanSourcePickup()
+    AmpBump()
+  )
+  .onFalse(C_ParkDeliveryHead());
 
   /////PODIUM SHOT TEST
     // joystick.rightTrigger().whileTrue(
@@ -275,15 +288,34 @@ public class RobotContainer {
   /////
 
 
-
-    //left bumper will bring joe into the amp position 
+    //OLD left bumper will bring joe into the amp position 
     joystick.leftBumper().whileTrue(
-      new InstantCommand(()->{deliveryLifter.setSetpointAmp();},deliveryLifter)
-            .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Amp);},deliveryTilt),
-            new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmAmp))
-            ).onlyIf(()->PizzaManager.NoteInDeliveryHolder)
+        new SequentialCommandGroup(
+          new AlignAmpCMD(drivetrainManager,LL3,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed),
+        new ForwardBump(drivetrainManager,AmpBumpTimeout).unless(IsLimeLightBypassed)
+        )
+        .andThen(
+            new ParallelCommandGroup(
+              new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_Amp,deliveryLifter),
+              new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Amp);},deliveryTilt),
+              new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmAmp)
+            )
+              .andThen( 
+                (new ShootDeliveryHold(deliveryHolder)),
+              C_ParkDeliveryHead()
+              //.onlyIf(()->PizzaManager.NoteInDeliveryHolder)
+              )
+            )
             ).onFalse(C_ParkDeliveryHead());
-    
+    /////
+    //OLD left bumper will bring joe into the amp position 
+    // joystick.leftBumper().whileTrue(
+    //   new InstantCommand(()->{deliveryLifter.setSetpointAmp();},deliveryLifter)
+    //         .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Amp);},deliveryTilt),
+    //         new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmAmp))
+    //         ).onlyIf(()->PizzaManager.NoteInDeliveryHolder)
+    //         ).onFalse(C_ParkDeliveryHead());
+    /////
     //HUMAN SOURCE TEST
     //DoubleSupplier sup = () -> joystick.getRawAxis(strafeAxis);
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).and(()->!PizzaManager.AltControlModeEnabled)

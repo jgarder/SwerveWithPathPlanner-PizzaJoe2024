@@ -83,17 +83,18 @@ public class AlignSpeakerCMD extends Command {
   double RZ_Setpoint = 0;
 
   private DoubleSupplier strafeSup;
-public final SwerveRequest.RobotCentric drive;
+public final SwerveRequest.RobotCentric RobotCentricdrive;
 
   public AlignSpeakerCMD(DrivetrainManager Thiss_Swerve, Limelight3Subsystem ThisLimelight, DoubleSupplier strafeSup) {
     drivetrainManager = Thiss_Swerve;
     limelight3Subsystem = ThisLimelight;
     this.strafeSup = strafeSup;
 
-     drive = new SwerveRequest.RobotCentric()
-      .withDeadband(drivetrainManager.MaxSpeed * 0.1).withRotationalDeadband(drivetrainManager.MaxAngularRate * 0.1) // Add a 10% deadband
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
-                                                               // driving in open loop
+      RobotCentricdrive = Thiss_Swerve.RobotCentricdrive;
+    //new SwerveRequest.RobotCentric()
+    //   .withDeadband(drivetrainManager.MaxSpeed * 0.1).withRotationalDeadband(drivetrainManager.MaxAngularRate * 0.1) // Add a 10% deadband
+    //   .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
+    //                                                            // driving in open loop
     addRequirements(drivetrainManager,limelight3Subsystem); 
 
   }
@@ -199,7 +200,7 @@ public final SwerveRequest.RobotCentric drive;
        if(debounceloops >= loopsoffbeforestopping)
        {
         System.out.println("Stopping no tags see debounced");
-          drivetrainManager.drivetrain.setControl(drive.withVelocityX(0 * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
+          drivetrainManager.drivetrain.setControl(RobotCentricdrive.withVelocityX(0 * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
           .withVelocityY(0 * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
           .withRotationalRate(-strafeVal * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
     );
@@ -257,7 +258,7 @@ public final SwerveRequest.RobotCentric drive;
         //     .withVelocityY(YposeAxis) // Drive left with negative X (left)
         //     .withRotationalRate(RZposeAxis) // Drive counterclockwise with negative X (left)
         // ).ignoringDisable(false); 
-        drivetrainManager.drivetrain.setControl(drive.withVelocityX(-XposeAxis * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
+        drivetrainManager.drivetrain.setControl(RobotCentricdrive.withVelocityX(-XposeAxis * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
             .withVelocityY(-YposeAxis * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(-RZposeAxis * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
         );
@@ -447,7 +448,7 @@ private double GetYPoseAdjust(double Ypose, double min_PoseY_command) {
           if(timesgood > goodneeded)
           {
             timesgood = 0;
-            drivetrainManager.drivetrain.setControl(drive.withVelocityX(0 * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
+            drivetrainManager.drivetrain.setControl(RobotCentricdrive.withVelocityX(0 * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
             .withVelocityY(0 * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(0 * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
            );
