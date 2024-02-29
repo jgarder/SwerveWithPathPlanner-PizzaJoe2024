@@ -43,6 +43,29 @@ public class Constants {
     public static final double maxRZvelocity = 5;
 
   }
+  public static class TargetLocations
+  {
+    public static class Red
+    {
+       public static final double Xspeed = -1.0;//used to invert results with -1 or 1;
+       public static final double Yspeed = -1.0;//used to invert results with -1 or 1;
+       public static final double rotationspeed = 1.0;//used to invert results with -1 or 1;
+
+      public static final double SpeakerCenter_XP_Setpoint = 15.0;
+      public static final double SpeakerCenter_YP_Setpoint = 5.5;
+      public static final double SpeakerCenter_RZ_Setpoint = 0;
+    }
+    public static class Blue
+    {
+      public static final double Xspeed = 1.0;//used to invert results with -1 or 1;
+       public static final double Yspeed = 1.0;//used to invert results with -1 or 1;
+       public static final double rotationspeed = 1.0;//used to invert results with -1 or 1;
+
+      public static final double SpeakerCenter_XP_Setpoint = 1.5;
+      public static final double SpeakerCenter_YP_Setpoint = 5.6;
+      public static final double SpeakerCenter_RZ_Setpoint = 180;
+    }
+  }
   public static class CANBus
   {
     //NEO CANBUS

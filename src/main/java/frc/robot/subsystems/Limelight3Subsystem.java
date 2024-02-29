@@ -52,17 +52,31 @@ public class Limelight3Subsystem extends SubsystemBase {
     private NetworkTableEntry pipeline;//Table to switch pipelines
     private NetworkTableEntry solvePNP;
     private NetworkTableEntry FieldSpace;
-    private final NetworkTableEntry botposeNTE;
-private final NetworkTableEntry botpose_wpiredNTE;
-private final NetworkTableEntry botpose_wpiblueNTE;
+    //private final NetworkTableEntry botposeNTE;
+    private final NetworkTableEntry botpose_wpiredNTE;
+    private final NetworkTableEntry botpose_wpiblueNTE;
     double[] defaultArray = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     //double[] FieldSpaceArray = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+
+      //get our alliance red or blue
+    Optional<Alliance> CurrentAlliance = DriverStation.getAlliance();
+    CommandXboxController ControllerUsedToScore;
+
+    public static int kpipelineAprilTags = 0;
+    public static int kpipelineRetroflectiveHighRung = 1;
+    public static int kpipelineRetroflectiveLowerRung = 2;
+
+    //Create variables
+    double targetD;
+    boolean hasTarget;
+
+
   /** Creates a new Limelight3Subsystem. */
   public Limelight3Subsystem(CommandXboxController controllerUsedToScore) {
     this.ControllerUsedToScore = controllerUsedToScore;
 
     limelight = NetworkTableInstance.getDefault().getTable("limelight");//Instantiate the tables
-    botposeNTE = limelight.getEntry("botpose"); // bot pose (x, y, z, roll, pitch, yaw, total latency (not used currently))
+    //botposeNTE = limelight.getEntry("botpose"); // bot pose (x, y, z, roll, pitch, yaw, total latency (not used currently))
     botpose_wpiredNTE = limelight.getEntry("botpose_wpired");
     botpose_wpiblueNTE = limelight.getEntry("botpose_wpiblue");
         tx = limelight.getEntry("tx");//x angle offset
@@ -82,23 +96,15 @@ private final NetworkTableEntry botpose_wpiblueNTE;
         solvePNP = limelight.getEntry("camerapose_targetspace");//("camtran");// this is old. need to find out : is this camera translation in target space?
         FieldSpace = limelight.getEntry("botpose");//("camtran");// this is old. need to find out : is this camera translation in target space?
 
-      }
-      public double[] getAllianceBotPose() {
-        if (DriverStation.getAlliance().equals(Optional.of(Alliance.Blue))) {
-          return botpose_wpiblueNTE.getDoubleArray(new double[6]);
-        } else {
-          return botpose_wpiredNTE.getDoubleArray(new double[6]);
-        }
-      }
-  CommandXboxController ControllerUsedToScore;
-
-  public static int kpipelineAprilTags = 0;
-  public static int kpipelineRetroflectiveHighRung = 1;
-  public static int kpipelineRetroflectiveLowerRung = 2;
-
-  //Create variables
-	double targetD;
-	boolean hasTarget;
+    }
+  public double[] getAllianceBotPose() {
+    if (DriverStation.getAlliance().equals(Optional.of(Alliance.Blue))) {
+      return botpose_wpiblueNTE.getDoubleArray(new double[6]);
+    } else {
+      return botpose_wpiredNTE.getDoubleArray(new double[6]);
+    }
+  }
+  
 
   public int getTargetID()
   {
@@ -108,33 +114,10 @@ private final NetworkTableEntry botpose_wpiblueNTE;
   public void periodic() {
     // This method will be called once per scheduler run
     getdataToDashboard();
-   // VibeOnZero();
-   
-   //get our alliance red or blue
-   Optional<Alliance> CurrentAlliance = DriverStation.getAlliance();
-   //make sure we are in april tag pipeline before checking
-   //
-   //get if we have any targets
-   boolean HasTarget = hasValidTarget();
-   //get the target number
-   int targetID = getTargetID();
-   //get if the closest target is for our team(ignore others obviously)
-   boolean WeSeeourSubstationTag = false;
-   if(!CurrentAlliance.isPresent()){System.out.println("no alliance!!"); return;}
-   if ( (CurrentAlliance.get() == Alliance.Red) && targetID == Constants.AllianceAprilTags.Red.SourceRight)
-   {
-      WeSeeourSubstationTag = true;
-   }
-   if ( (CurrentAlliance.get() == Alliance.Blue) && targetID == Constants.AllianceAprilTags.Blue.SourceRight)
-   {
-      WeSeeourSubstationTag = true;
-   }
-   if(WeSeeourSubstationTag){
-       //if substation is at X area size then switch our speed to substation movde
-       //when we are at X area set bool to true. 
 
-   }
-   //if our closest target is a score april (red 123, blue 678)
+   if(!CurrentAlliance.isPresent()){CurrentAlliance = DriverStation.getAlliance();}
+  
+   if(!CurrentAlliance.isPresent()){System.out.println("no alliance!!"); return;}
     
   }
 
@@ -190,7 +173,6 @@ private final NetworkTableEntry botpose_wpiblueNTE;
           }
       }
   
-      private static ObjectMapper mapper;
 
     /**
      * Print JSON Parse time to the console in milliseconds
@@ -394,58 +376,11 @@ public static double[] getBotPose_wpiBlue(String limelightName) {
     }
     /////
 
-  public boolean iscurrentTagAtSubstationPickupSize()
-  {
-    double tagAreaSizeForPickup = 1.71;//28.5"
-    double currentsize = ta.getDouble(0.0);
-    double tagAreaSizeWhenTooClose = 2.50;//21"
-    
-    if( currentsize > tagAreaSizeForPickup)
-    {
-      if (currentsize < tagAreaSizeWhenTooClose)
-      {
-        return true;
-      }  
-    }
-    return false;
-  }
 
   public NetworkTable getlatestinfo() {
     return limelight; 
   }
-  public void VibeOnZero() {
-    
-
-    
-    double kXClosenessForRumble = 5.0;
-    double kYClosenessForRumble = 1.0;
-    double kTagAreaofScreenBeforeRumbleOn = .4;
-    if(getArea() > kTagAreaofScreenBeforeRumbleOn)
-    {
-      if(Math.abs(getXOffset()) < kXClosenessForRumble && Math.abs(getXOffset()) > 0.0)
-      {
-       // ControllerUsedToScore.setRumble(RumbleType.kRightRumble, .3);
-      }
-      else
-      {
-        //ControllerUsedToScore.setRumble(RumbleType.kRightRumble, 0);
-      }
-      if(Math.abs(getYOffset()) < kYClosenessForRumble && Math.abs(getYOffset()) > 0.0)
-      {
-       // ControllerUsedToScore.setRumble(RumbleType.kLeftRumble, .2);
-      }
-      else {
-        //ControllerUsedToScore.setRumble(RumbleType.kLeftRumble, 0);
-      }
-    } 
-    else 
-    {
-      //ControllerUsedToScore.setRumble(RumbleType.kBothRumble, 0);
-    }
-    //SmartDashboard.putNumber("LimelightX", x);
-    //SmartDashboard.putNumber("LimelightY", y);
-    //SmartDashboard.putNumber("LimelightSkew", getSkew());
-  }
+  
   public NetworkTable getdataToDashboard()
   {
     //NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -552,15 +487,7 @@ public static double[] getBotPose_wpiBlue(String limelightName) {
   public boolean hasValidTarget() {
     return tv.getDouble(0) == 1.0;//return true if true false if false.
   }
-  // public boolean getHasTarget() {
-	// 	targetD = latestInfo.getEntry("tv").getDouble(0);
-	// 	if(targetD == 0) {
-	// 		hasTarget = false;
-	// 	}else if(targetD == 1) {
-	// 		hasTarget = true;
-	// 	}
-	// 	return hasTarget;
-	// }
+
   public double getLatency() {
     return tl.getDouble(0.0);
   }
