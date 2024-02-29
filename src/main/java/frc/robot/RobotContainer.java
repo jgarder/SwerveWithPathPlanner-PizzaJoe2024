@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ChainLifter;
 import frc.robot.RobotContainer.PizzaManager.PizzaTracker;
 import frc.robot.commands.AlignAmpCMD;
+import frc.robot.commands.AlignAmpCMD2;
 import frc.robot.commands.AlignSourceCMD;
 import frc.robot.commands.AlignSpeakerCMD;
 import frc.robot.commands.AlignSpeakerCMD;
@@ -299,8 +300,8 @@ public class RobotContainer {
     //OLD left bumper will bring joe into the amp position 
     joystick.leftBumper().whileTrue(
         new SequentialCommandGroup(
-          new AlignAmpCMD(drivetrainManager,LL3,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed),
-        new ForwardBump(drivetrainManager,AmpBumpTimeout).unless(IsLimeLightBypassed)
+          new AlignAmpCMD2(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
+        //new ForwardBump(drivetrainManager,AmpBumpTimeout).unless(IsLimeLightBypassed)
         )
         .andThen(
             new ParallelCommandGroup(

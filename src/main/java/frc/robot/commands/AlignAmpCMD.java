@@ -269,8 +269,8 @@ public final SwerveRequest.RobotCentric RobotCentricdrive;
   }
 
 private void SetPidControlersToRedAmp() {
-  XP_Setpoint = 6.42;//-6.63;
-  YP_Setpoint = 3.36;
+  XP_Setpoint = 14.74;//-6.63;
+  YP_Setpoint = 7.56;
   RZ_Setpoint = 90;
 
   Xspeed = -1.0;
@@ -285,8 +285,8 @@ private void SetPidControlersToRedAmp() {
   
 }
 private void SetPidControlersToBlueAmp() {
-  XP_Setpoint = -6.42;//6.63;
-  YP_Setpoint = 3.36;
+  XP_Setpoint = 1.83;
+  YP_Setpoint = 7.58;
   RZ_Setpoint = 90;
 
   Xspeed = 1.0;

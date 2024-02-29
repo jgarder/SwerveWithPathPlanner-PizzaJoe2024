@@ -87,7 +87,7 @@ public class DrivetrainManager extends SubsystemBase{
 
 
   public final SwerveRequest.FieldCentric FCdrive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+      .withDeadband(MaxSpeed * 0.09).withRotationalDeadband(MaxAngularRate * 0.09) // Add a 10% deadband
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
   public final SwerveRequest.RobotCentric RobotCentricdrive = new SwerveRequest.RobotCentric()

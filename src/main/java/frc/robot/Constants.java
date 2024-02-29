@@ -35,7 +35,7 @@ public class Constants {
 
     public static final double min_xpose_command = 0.1;
     public static final double min_Ypose_command = 0.1;
-    public static final double min_RZ_command = .1;
+    public static final double min_RZ_command = .01;
 
     //if we are really far away lets keep pid from going insane.
     public static final double maxYvelocity = .75;
