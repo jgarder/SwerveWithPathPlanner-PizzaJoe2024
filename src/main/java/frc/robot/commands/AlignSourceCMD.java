@@ -7,28 +7,14 @@ package frc.robot.commands;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix.motorcontrol.IFollower;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerTrajectory;
-import com.pathplanner.lib.path.PathPoint;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.CommandSwerveDrivetrain;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
-//import frc.robot.Constants;
-import frc.robot.subsystems.*;
 import frc.robot.subsystems.DrivetrainManager;
 import frc.robot.subsystems.Limelight3Subsystem;
 
@@ -44,21 +30,19 @@ public class AlignSourceCMD extends Command {
   private final PIDController AlignXController = new PIDController(Constants.ChassisPid.k_PoseX_P,Constants.ChassisPid.k_PoseX_I,Constants.ChassisPid.k_PoseX_D);
   private final PIDController AlignPoseYController = new PIDController(Constants.ChassisPid.k_PoseY_P,Constants.ChassisPid.k_PoseY_I,Constants.ChassisPid.k_PoseY_D);
   private final PIDController AlignRZController = new PIDController(Constants.ChassisPid.k_RZ_P,Constants.ChassisPid.k_RZ_I,Constants.ChassisPid.k_RZ_D);
-
-
   
-  double minXposeErrorToCorrect = .04;
-  double minYposeErrorToCorrect = .04;
-  double minRZErrorToCorrect = 1;
+  double minXposeErrorToCorrect = Constants.ChassisPid.minXposeErrorToCorrect;
+  double minYposeErrorToCorrect = Constants.ChassisPid.minYposeErrorToCorrect;
+  double minRZErrorToCorrect = Constants.ChassisPid.minRZErrorToCorrect;
 
-  double min_xpose_command = 0.1;
-  double min_Ypose_command = 0.1;
-  double min_RZ_command = .1;
+  double min_xpose_command = Constants.ChassisPid.min_xpose_command;
+  double min_Ypose_command = Constants.ChassisPid.min_Ypose_command;
+  double min_RZ_command = Constants.ChassisPid.min_RZ_command;
 
   //if we are really far away lets keep pid from going insane.
-  double maxYvelocity = .75;
-  double maxXvelocity = .75;
-  double maxRZvelocity = 5;
+  double maxYvelocity = Constants.ChassisPid.maxYvelocity;
+  double maxXvelocity = Constants.ChassisPid.maxXvelocity;
+  double maxRZvelocity = Constants.ChassisPid.maxRZvelocity;
 
   double XP_buffer = 0;
   double YP_buffer = 0;
@@ -68,21 +52,18 @@ public class AlignSourceCMD extends Command {
   double YP_Setpoint = 0;
   double RZ_Setpoint = 0;
 
-
-
-  double Xspeed = 1.0;
-  double Yspeed = 1.0;
-  double rotationspeed = 1.0;
+  double Xspeed = 1.0;//used in various years to invert the field in various ways for mirroring. 
+  double Yspeed = 1.0;//used in various years to invert the field in various ways for mirroring.
+  double rotationspeed = 1.0;//used in various years to invert the field in various ways for mirroring.
 
 private DoubleSupplier strafeSup;
 public final SwerveRequest.RobotCentric RobotCentricdrive;
 
-  public AlignSourceCMD(DrivetrainManager Thiss_Swerve, Limelight3Subsystem ThisLimelight, DoubleSupplier strafeSup) {
+  public AlignSourceCMD(DrivetrainManager Thiss_Swerve, DoubleSupplier strafeSup) {
     drivetrainManager = Thiss_Swerve;
-    limelight3Subsystem = ThisLimelight;
     this.strafeSup = strafeSup;
     RobotCentricdrive = Thiss_Swerve.RobotCentricdrive;
-    addRequirements(drivetrainManager,limelight3Subsystem); 
+    addRequirements(drivetrainManager); 
 
   }
 
@@ -170,19 +151,19 @@ public final SwerveRequest.RobotCentric RobotCentricdrive;
             .withRotationalRate(RZposeAxis * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
         );
 
-    SmartDashboard.putNumber("R_Curr", RZ_buffer);
-    SmartDashboard.putNumber("R_PID", RZposeAxis);
+    // SmartDashboard.putNumber("R_Curr", RZ_buffer);
+    // SmartDashboard.putNumber("R_PID", RZposeAxis);
     
    
-    SmartDashboard.putNumber("Y_Curr", YP_buffer);
-    SmartDashboard.putNumber("Y_PID", YposeAxis);
+    // SmartDashboard.putNumber("Y_Curr", YP_buffer);
+    // SmartDashboard.putNumber("Y_PID", YposeAxis);
 
-    SmartDashboard.putNumber("X_Curr", XP_buffer);
-    SmartDashboard.putNumber("X_PID", XposeAxis);
+    // SmartDashboard.putNumber("X_Curr", XP_buffer);
+    // SmartDashboard.putNumber("X_PID", XposeAxis);
 
-    SmartDashboard.putNumber("RZ_Offset", RZ_Offset);
-    SmartDashboard.putNumber("Ypose_Offset", Ypose_Offset);
-    SmartDashboard.putNumber("Xpose_Offset", Xpose_Offset);
+    // SmartDashboard.putNumber("RZ_Offset", RZ_Offset);
+    // SmartDashboard.putNumber("Ypose_Offset", Ypose_Offset);
+    // SmartDashboard.putNumber("Xpose_Offset", Xpose_Offset);
 
     SmartDashboard.putBoolean("isRotInTarget", isRotInTarget());
     SmartDashboard.putBoolean("IsYInTarget", IsYInTarget());

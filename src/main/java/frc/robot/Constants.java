@@ -28,6 +28,20 @@ public class Constants {
     public static final double k_RZ_P = .05;
     public static final double k_RZ_I = 0.00;
     public static final double k_RZ_D = 0.00;
+
+    public static final double minXposeErrorToCorrect = .04;
+    public static final double minYposeErrorToCorrect = .04;
+    public static final double minRZErrorToCorrect = 1;
+
+    public static final double min_xpose_command = 0.1;
+    public static final double min_Ypose_command = 0.1;
+    public static final double min_RZ_command = .1;
+
+    //if we are really far away lets keep pid from going insane.
+    public static final double maxYvelocity = .75;
+    public static final double maxXvelocity = .75;
+    public static final double maxRZvelocity = 5;
+
   }
   public static class CANBus
   {

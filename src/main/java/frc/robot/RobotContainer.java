@@ -33,6 +33,7 @@ import frc.robot.RobotContainer.PizzaManager.PizzaTracker;
 import frc.robot.commands.AlignAmpCMD;
 import frc.robot.commands.AlignSourceCMD;
 import frc.robot.commands.AlignSpeakerCMD;
+import frc.robot.commands.AlignSpeakerCMD;
 import frc.robot.commands.AlignSpeakerTest;
 import frc.robot.commands.ForwardBump;
 import frc.robot.commands.MoveChainLiftToPosition;
@@ -239,7 +240,7 @@ public class RobotContainer {
     return new SequentialCommandGroup(new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm).unless(isNoteInIntakeboolSup),C_PickupPizzaFromFloorWithoutWashing().unless(isNoteInIntakeboolSup),C_ReturnPickupToPassing());
   }
   private Command AlignAndShootCenterSpeaker() {
-    return new AlignSpeakerCMD(drivetrainManager,LL3,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
+    return new AlignSpeakerCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
     .andThen(
       C_ReadyCloseSpeakerShot(),
       //new WaitCommand(100),
@@ -280,7 +281,7 @@ public class RobotContainer {
   //Right Trigger To activate the human pickup
   joystick.rightTrigger().whileTrue(
     new SequentialCommandGroup(
-          new AlignSourceCMD(drivetrainManager,LL3,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
+          new AlignSourceCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
         //new ForwardBump(drivetrainManager,SourceBumpTimeout).unless(IsLimeLightBypassed)
         ).andThen(HumanSourcePickup())
     
