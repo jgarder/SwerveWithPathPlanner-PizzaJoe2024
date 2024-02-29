@@ -71,13 +71,20 @@ public class PickupSpinner extends SubsystemBase{
         Motor_Controller.enableVoltageCompensation(Constants.nominalBatteryVoltage);
 
         //limit everything on this motor controller to 500ms except the status 0 frame which is 10ms and does faults and applied output. 
-        Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);  //Default Rate: 20ms ,Motor Velocity,Motor Temperature,Motor VoltageMotor Current
-        Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);  //Default Rate: 20ms ,Motor Position
-        Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500); //Default Rate: 50ms ,Analog Sensor Voltage ,Analog Sensor Velocity ,Analog Sensor Position
-        Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500); //Default Rate: 20ms, Alternate Encoder Velocity,Alternate Encoder Position
-        Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Position,Duty Cycle Absolute Encoder Absolute Angle
-        Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Velocity,Duty Cycle Absolute Encoder Frequency
-        
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);  //Default Rate: 20ms ,Motor Velocity,Motor Temperature,Motor VoltageMotor Current
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);  //Default Rate: 20ms ,Motor Position
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500); //Default Rate: 50ms ,Analog Sensor Voltage ,Analog Sensor Velocity ,Analog Sensor Position
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500); //Default Rate: 20ms, Alternate Encoder Velocity,Alternate Encoder Position
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Position,Duty Cycle Absolute Encoder Absolute Angle
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Velocity,Duty Cycle Absolute Encoder Frequency
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);  //Default Rate: 20ms ,Motor Velocity,Motor Temperature,Motor VoltageMotor Current
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);  //Default Rate: 20ms ,Motor Velocity,Motor Temperature,Motor VoltageMotor Current
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);  //Default Rate: 20ms ,Motor Position
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 50); //Default Rate: 50ms ,Analog Sensor Voltage ,Analog Sensor Velocity ,Analog Sensor Position
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 20); //Default Rate: 20ms, Alternate Encoder Velocity,Alternate Encoder Position
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Position,Duty Cycle Absolute Encoder Absolute Angle
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Velocity,Duty Cycle Absolute Encoder Frequency
+
         SmartDashboard.putBoolean(MotorName + " Forward Limit Enabled", m_forwardLimit.isLimitSwitchEnabled());
 
         // PID coefficients
@@ -221,23 +228,28 @@ public class PickupSpinner extends SubsystemBase{
          // enable/disable limit switches based on value read from SmartDashboard
     SmartDashboard.putBoolean(MotorName + " Forward Limit Triggered", m_forwardLimit.isPressed());
 
-      double p = SmartDashboard.getNumber(MotorName + " P Gain", 0);
-      double i = SmartDashboard.getNumber(MotorName + " I Gain", 0);
-      double d = SmartDashboard.getNumber(MotorName + " D Gain", 0);
-      double iz = SmartDashboard.getNumber(MotorName + " I Zone", 0);
-      double ff = SmartDashboard.getNumber(MotorName + " Feed Forward", 0);
-        
-        if((p != kP)) { MotorControllerPid.setP(p); kP = p; }
-      if((i != kI)) { MotorControllerPid.setI(i); kI = i; }
-      if((d != kD)) { MotorControllerPid.setD(d); kD = d; }
-      if((iz != kIz)) { MotorControllerPid.setIZone(iz); kIz = iz; }
-      if((ff != kFF)) { MotorControllerPid.setFF(ff); kFF = ff; }
+      PidTune(MotorName);
 
     super.periodic();// This is a PidSubsystem, we have orridden the periodic method to get encoder data... So we need to call the super periodic method to get the PID stuff to work.
 
 
   }
-      public boolean isMotorOvertemp()
+
+    private void PidTune(String PidName) {
+      double p = SmartDashboard.getNumber(PidName + " P Gain", 0);
+      double i = SmartDashboard.getNumber(PidName + " I Gain", 0);
+      double d = SmartDashboard.getNumber(PidName + " D Gain", 0);
+      //double iz = SmartDashboard.getNumber(PidName + " I Zone", 0);
+      //double ff = SmartDashboard.getNumber(PidName + " Feed Forward", 0);
+        
+      if((p != kP)) { MotorControllerPid.setP(p); kP = p; }
+      if((i != kI)) { MotorControllerPid.setI(i); kI = i; }
+      if((d != kD)) { MotorControllerPid.setD(d); kD = d; }
+      //if((iz != kIz)) { MotorControllerPid.setIZone(iz); kIz = iz; }
+      //if((ff != kFF)) { MotorControllerPid.setFF(ff); kFF = ff; }
+    }
+
+    public boolean isMotorOvertemp()
     {
       if(MotorTemp >TempCForOverTemp)
       {

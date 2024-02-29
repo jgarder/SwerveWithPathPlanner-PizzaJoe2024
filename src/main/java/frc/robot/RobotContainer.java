@@ -30,7 +30,6 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ChainLifter;
 import frc.robot.RobotContainer.PizzaManager.PizzaTracker;
-import frc.robot.commands.AlignAmpCMD;
 import frc.robot.commands.AlignAmpCMD2;
 import frc.robot.commands.AlignSourceCMD;
 import frc.robot.commands.AlignSpeakerCMD;
@@ -45,6 +44,7 @@ import frc.robot.commands.RunIntake;
 import frc.robot.commands.ShootDeliveryHold;
 import frc.robot.commands.SpoolPizzaDeliveryToRPM;
 import frc.robot.commands.UndoDeliveryHold;
+import frc.robot.commands.WaitForIndexCMD;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CANdleSystem;
 import frc.robot.subsystems.ChainLifterS;
@@ -197,6 +197,10 @@ public class RobotContainer {
     return  new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter)
       .alongWith(C_TiltGotoPark(),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff)));
   }
+  public Command ReadyShootPreEmptive()
+  {
+    return new InstantCommand(()->{ deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose);});
+  }
 
   public Command C_TiltGotoPark()
   {
@@ -242,12 +246,13 @@ public class RobotContainer {
   }
   private Command AlignAndShootCenterSpeaker() {
     return new AlignSpeakerCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
-    .andThen(
+    .andThen(new WaitForIndexCMD(deliveryHolder),
       C_ReadyCloseSpeakerShot(),
       //new WaitCommand(100),
     (new ShootDeliveryHold(deliveryHolder)),
-    C_ParkDeliveryHead(),
-    new WaitCommand(.5))
+    C_ParkDeliveryHead()
+    //new WaitCommand(.5)
+    )
     //.onlyIf(()->PizzaManager.NoteInDeliveryHolder)
     ;
   }
@@ -269,7 +274,8 @@ public class RobotContainer {
     .onFalse(C_ReturnPickupHead().unless(isNoteInIntakeboolSup).andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();})));//.andThen(C_passNoteFromIntakeToDeliveryHolder().alongWith(C_CatchAndIndexNote().withInterruptBehavior(InterruptionBehavior.kCancelSelf)).onlyIf(isNoteInIntakeboolSup)).andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();})));
 
     joystick.a().onTrue(C_CatchAndIndexNote());
-    joystick.b().onTrue(new ShootDeliveryHold(deliveryHolder));
+    //joystick.b().onTrue(new ShootDeliveryHold(deliveryHolder));
+    joystick.b().onTrue(new InstantCommand(()->{SmartDashboard.putBoolean(SDashBoardH.LimelightbypassName, true);})).onFalse(new InstantCommand(()->{SmartDashboard.putBoolean(SDashBoardH.LimelightbypassName, false);}));
     joystick.x().onTrue(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner).andThen(new RunDeliveryHoldIntake(deliveryHolder,false,40)))
     .onFalse(new InstantCommand(()->{pickupSpinner.stopSpinner();},pickupSpinner));// (pickuparm.runonce(() -> {pickuparm.setSetpointFloorPickup();}));
     joystick.y().whileTrue(new InstantCommand(()->{pickupSpinner.RunPickup();}).repeatedly()).onFalse(new InstantCommand(()->{pickupSpinner.stopSpinner();},pickupSpinner)); //.until(()->{pickupSpinner.m_forwardLimit.isPressed();})
@@ -277,7 +283,7 @@ public class RobotContainer {
 
     //left trigger will bring joe into the speaker position
     joystick.leftTrigger().whileTrue(AlignAndShootCenterSpeaker()
-    ).onFalse(C_ParkDeliveryHead());
+    ).onFalse(C_ParkDeliveryHead().andThen(new InstantCommand(()->{deliveryHolder.forceCancelIndex();})));
 
   //Right Trigger To activate the human pickup
   joystick.rightTrigger().whileTrue(
@@ -330,15 +336,15 @@ public class RobotContainer {
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).and(()->!PizzaManager.AltControlModeEnabled)
     .whileTrue(HumanSourcePickup()).onFalse(C_ParkDeliveryHead());
     //
-    //
-    joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).and(()->!PizzaManager.AltControlModeEnabled)
-        .whileTrue(new AlignAmpCMD(drivetrainManager,LL3,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
-    .andThen(
-      C_ReadyCloseAmpShot(),
-      //new WaitCommand(1),
-    (new ShootDeliveryHold(deliveryHolder)),
-    C_ParkDeliveryHead()))
-    .onFalse(C_ParkDeliveryHead());
+    //OLD ALIGNMENT TEST AMP
+    // joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).and(()->!PizzaManager.AltControlModeEnabled)
+    //     .whileTrue(new AlignAmpCMD2(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
+    // .andThen(
+    //   C_ReadyCloseAmpShot(),
+    //   //new WaitCommand(1),
+    // (new ShootDeliveryHold(deliveryHolder)),
+    // C_ParkDeliveryHead()))
+    // .onFalse(C_ParkDeliveryHead());
     //
     // .whileTrue(new AlignSpeakerCMD(drivetrainManager,LL3,() -> joystick.getRawAxis(strafeAxis))
     // .andThen(
@@ -465,6 +471,8 @@ public class RobotContainer {
       NamedCommands.registerCommand("AlignAndShootCenterSpeaker", AlignAndShootCenterSpeaker());
       NamedCommands.registerCommand("C_CatchAndIndexNote", C_CatchAndIndexNote());
       NamedCommands.registerCommand("PickupRoutine", PickupRoutine());
+      NamedCommands.registerCommand("ReadyShootPreEmptive", ReadyShootPreEmptive());
+      
       //Now build the autos 
       drivetrainManager.runAuto = drivetrainManager.drivetrain.getAutoPath("SP_C_2Piece");
   }

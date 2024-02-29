@@ -17,30 +17,30 @@ public class Constants {
 
   public static class ChassisPid
   {
-    public static final double k_PoseX_P = 1.20;
-    public static final double k_PoseX_I = 0.02;
-    public static final double k_PoseX_D = 0.0020;
+    public static final double k_PoseX_P = .5;//1.20;
+    public static final double k_PoseX_I = 0.000001;//0.02;
+    public static final double k_PoseX_D = 0.15;//0.0020;
 
-    public static final double k_PoseY_P = 1.20;
-    public static final double k_PoseY_I = 0.02;
-    public static final double k_PoseY_D = 0.002; 
+    public static final double k_PoseY_P = .5;//1.20;
+    public static final double k_PoseY_I = 0.000001;//0.02;
+    public static final double k_PoseY_D = 0.15;//0.002; 
 
-    public static final double k_RZ_P = .05;
-    public static final double k_RZ_I = 0.00;
-    public static final double k_RZ_D = 0.00;
+    public static final double k_RZ_P = 0.04;//.05;
+    public static final double k_RZ_I = 0;//0.00;
+    public static final double k_RZ_D = 0.01;//0.00;
 
-    public static final double minXposeErrorToCorrect = .04;
-    public static final double minYposeErrorToCorrect = .04;
-    public static final double minRZErrorToCorrect = 1;
+    public static final double minXposeErrorToCorrect = .06;
+    public static final double minYposeErrorToCorrect = .06;
+    public static final double minRZErrorToCorrect = 2;//1.25;
 
-    public static final double min_xpose_command = 0.1;
-    public static final double min_Ypose_command = 0.1;
-    public static final double min_RZ_command = .01;
+    public static final double min_xpose_command = 0.060;
+    public static final double min_Ypose_command = 0.060;
+    public static final double min_RZ_command = .085;
 
     //if we are really far away lets keep pid from going insane.
     public static final double maxYvelocity = .75;
     public static final double maxXvelocity = .75;
-    public static final double maxRZvelocity = 5;
+    public static final double maxRZvelocity = 3;
 
   }
   public static class TargetLocations
@@ -54,6 +54,10 @@ public class Constants {
       public static final double SpeakerCenter_XP_Setpoint = 15.0;
       public static final double SpeakerCenter_YP_Setpoint = 5.5;
       public static final double SpeakerCenter_RZ_Setpoint = 0;
+
+      public static final double SourceRight_XP_Setpoint = .67;
+      public static final double SourceRight_YP_Setpoint = 1.224;
+      public static final double SourceRight_RZ_Setpoint = -120;
     }
     public static class Blue
     {
@@ -64,6 +68,10 @@ public class Constants {
       public static final double SpeakerCenter_XP_Setpoint = 1.5;
       public static final double SpeakerCenter_YP_Setpoint = 5.6;
       public static final double SpeakerCenter_RZ_Setpoint = 180;
+
+      public static final double SourceRight_XP_Setpoint = 14.81;
+      public static final double SourceRight_YP_Setpoint = .60;
+      public static final double SourceRight_RZ_Setpoint = -60;
     }
   }
   public static class CANBus
@@ -211,7 +219,7 @@ public class Constants {
       
 
       public static final double ShooterRpmOff = 0;
-      public static final double ShooterRpmSpeakerClose = 4500;
+      public static final double ShooterRpmSpeakerClose = 4750;//4500;
       public static final double ShooterRpmSpeakerPodium = 5500;
       public static final double ShooterRpmAmp = 1500;
       public static final double ShooterRpmHumanSource = -1550;//-500;

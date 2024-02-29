@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -78,13 +79,20 @@ public class DeliveryHolder extends SubsystemBase {
         Motor_Controller.setSmartCurrentLimit(Constants.NeoBrushless.neo1650safelimitAmps);
 
         //limit everything on this motor controller to 500ms except the status 0 frame which is 10ms and does faults and applied output. 
-        Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);  //Default Rate: 20ms ,Motor Velocity,Motor Temperature,Motor VoltageMotor Current
-        Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);  //Default Rate: 20ms ,Motor Position
-        Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 250); //Default Rate: 50ms ,Analog Sensor Voltage ,Analog Sensor Velocity ,Analog Sensor Position
-        Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 250); //Default Rate: 20ms, Alternate Encoder Velocity,Alternate Encoder Position
-        Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Position,Duty Cycle Absolute Encoder Absolute Angle
-        Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Velocity,Duty Cycle Absolute Encoder Frequency
-           
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);  //Default Rate: 20ms ,Motor Velocity,Motor Temperature,Motor VoltageMotor Current
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);  //Default Rate: 20ms ,Motor Position
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 250); //Default Rate: 50ms ,Analog Sensor Voltage ,Analog Sensor Velocity ,Analog Sensor Position
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 250); //Default Rate: 20ms, Alternate Encoder Velocity,Alternate Encoder Position
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Position,Duty Cycle Absolute Encoder Absolute Angle
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Velocity,Duty Cycle Absolute Encoder Frequency
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);  //Default Rate: 20ms ,Motor Velocity,Motor Temperature,Motor VoltageMotor Current
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);  //Default Rate: 20ms ,Motor Velocity,Motor Temperature,Motor VoltageMotor Current
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);  //Default Rate: 20ms ,Motor Position
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 50); //Default Rate: 50ms ,Analog Sensor Voltage ,Analog Sensor Velocity ,Analog Sensor Position
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 20); //Default Rate: 20ms, Alternate Encoder Velocity,Alternate Encoder Position
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Position,Duty Cycle Absolute Encoder Absolute Angle
+        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Velocity,Duty Cycle Absolute Encoder Frequency
+  
         
         // display PID coefficients on SmartDashboard
         SmartDashboard.putNumber(MotorName + " P Gain", kP_lifter);
@@ -206,11 +214,22 @@ public class DeliveryHolder extends SubsystemBase {
       //System.out.println("No Note In Holder");
         PizzaManager.pizzaStage = PizzaTracker.NoteOutDexed;
         m_forwardLimit.enableLimitSwitch(true);
-        ThisShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff);
+        if (DriverStation.isTeleopEnabled())//the autonomous preempts the RPM for shots and indexes. complicated but this hack works.  
+        {
+          ThisShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff);
+        }
+        
         stopSpinner();
         return true;
       }  
     return false;
+  }
+  public void forceCancelIndex()
+  {
+      requestingIndex = false;
+      m_forwardLimit.enableLimitSwitch(true);
+      ThisShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff);
+      stopSpinner();
   }
 
 

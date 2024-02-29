@@ -29,6 +29,8 @@ public class SpoolPizzaDeliveryToRPM extends Command{
   }
 
   double PickupTimeoutSeoncds = 10.0;
+  private final Timer m_SettleTimer = new Timer();
+  double SettleTimeAtCorrectRPM = .05;
   @Override
   public boolean isFinished() {
     if(m_Timer.get() > PickupTimeoutSeoncds){
@@ -41,8 +43,16 @@ public class SpoolPizzaDeliveryToRPM extends Command{
     SmartDashboard.putBoolean("isUpperWithinRange", isUpperWithinRange);
     SmartDashboard.putBoolean("islowerWithinRange", islowerWithinRange);
     if (islowerWithinRange & isUpperWithinRange) {
-         return true;
-    }  
+        if(m_SettleTimer.get() > SettleTimeAtCorrectRPM)
+        {
+        return true;
+        }
+    } 
+    else 
+        {
+          m_SettleTimer.reset();
+          m_SettleTimer.start();
+        } 
     return false;
   }
 }
