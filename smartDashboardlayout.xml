@@ -1,5 +1,26 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="AlignXY D Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="42"/>
+	</widget>
+	<widget field="AlignXY I Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="21"/>
+	</widget>
+	<widget field="AlignXY P Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="0"/>
+	</widget>
+	<widget field="RZ_Offset2" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="225" y="379"/>
+	</widget>
+	<widget field="IsXInTarget" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1171" y="93"/>
+	</widget>
+	<widget field="IsYInTarget" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1173" y="114"/>
+	</widget>
+	<widget field="isRotInTarget" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1163" y="136"/>
+	</widget>
 	<widget field="PoseTran" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1267" y="481"/>
 	</widget>
@@ -16,7 +37,7 @@
 		<location x="1216" y="68"/>
 	</widget>
 	<widget field="IndexStage" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="21" y="242"/>
+		<location x="619" y="52"/>
 	</widget>
 	<widget field="PoseWPIBLueRoll" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1421" y="452"/>
@@ -68,6 +89,7 @@
 	</widget>
 	<widget field="RZ_Offset" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="235" y="356"/>
+		<height>20</height>
 	</widget>
 	<widget field="LL TargetID" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1295" y="253"/>

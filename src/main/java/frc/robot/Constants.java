@@ -223,7 +223,7 @@ public class Constants {
       public static final double Tilt_Position_Park = 0;
       public static final double Tilt_Position_Passing = 5;
       public static final double Tilt_Position_TrapLift = 2;//7.75;
-      public static final double Tilt_Position_TrapDodge = 3;//7.75;
+      public static final double Tilt_Position_TrapDodge = 6;//7.75;
       public static final double Tilt_Position_TrapLiftHitHook = 7.75;
       public static final double Tilt_Position_TrapLiftUp = 10.75;
       public static final double Tilt_Position_TrapLiftUpSHOOT = 28;

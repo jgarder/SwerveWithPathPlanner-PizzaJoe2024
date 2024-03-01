@@ -447,6 +447,12 @@ public class RobotContainer {
 
   public void configureTrapButtons()
   {
+    //going DOWN
+    joystick.pov(Constants.XboxControllerMap.kPOVDirectionDOWN).and(()->PizzaManager.AltControlModeEnabled)
+    .onTrue(new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_Zero, ChainLift)//.alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Park);}))
+    .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm)
+    .alongWith(C_ParkDeliveryHead(),new InstantCommand(()->{deliveryHolder.m_forwardLimit.enableLimitSwitch(true);}))
+    ));
     
     //going DOWN
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionDOWN).and(()->PizzaManager.AltControlModeEnabled)
