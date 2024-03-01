@@ -49,9 +49,11 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+
 
 import com.ctre.phoenix.led.*;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
@@ -244,13 +246,32 @@ public class CANdleSystem extends SubsystemBase {
                 m_candle.clearAnimation(i);
             }
         }
+
+        if(m_timer.get() > 2)
+        {
+            OFFLights();
+            m_timer.reset();
+            m_timer.stop();
+        }
     }
 
     @Override
     public void simulationPeriodic() {
         // This method will be called once per scheduler run during simulation
     }
-
+    Timer m_timer = new Timer();
+    public void TimeOffLight()
+    {
+        m_timer.reset();
+        m_timer.start();
+    }
+    public void OFFLights()
+    {
+       
+        clearAnimation();
+        m_candle.setLEDs(0, 0, 0, 0, 0, LEDS_PER_ANIMATION + 8);
+    
+    }
     public void GreenLights()
     {
         clearAnimation();
@@ -278,6 +299,10 @@ public class CANdleSystem extends SubsystemBase {
         for(int i = 0; i < 10; ++i) {
                 m_candle.clearAnimation(i);
         }
+    }
+    public void StrobeBlueLights()
+    {
+        m_toAnimate = new StrobeAnimation(0, 0, 255, 0, 0.01, LEDS_PER_ANIMATION, m_candleChannel * LEDS_PER_ANIMATION + 8);
     }
     public void StrobeGreenLights()
     {

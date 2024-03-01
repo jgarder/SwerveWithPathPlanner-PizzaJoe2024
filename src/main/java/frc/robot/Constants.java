@@ -55,12 +55,12 @@ public class Constants {
       public static final double SpeakerCenter_YP_Setpoint = 5.5;
       public static final double SpeakerCenter_RZ_Setpoint = 0;
 
-      public static final double SourceRight_XP_Setpoint = .67;
-      public static final double SourceRight_YP_Setpoint = 1.224;
+      public static final double SourceRight_XP_Setpoint = .60;
+      public static final double SourceRight_YP_Setpoint = 1.197;
       public static final double SourceRight_RZ_Setpoint = -120;
 
-      public static final double Amp_XP_Setpoint = 14.74;
-      public static final double Amp_YP_Setpoint = 7.56;
+      public static final double Amp_XP_Setpoint = 14.74;//14.74;
+      public static final double Amp_YP_Setpoint = 7.62;
       public static final double Amp_RZ_Setpoint = 90;
     }
     public static class Blue
@@ -80,6 +80,10 @@ public class Constants {
       public static final double Amp_XP_Setpoint = 1.84;
       public static final double Amp_YP_Setpoint = 7.58;
       public static final double Amp_RZ_Setpoint = 90;
+
+      public static final double StageAMPSIDE_XP_Setpoint = 4.39;//4.52; //(blue stage left)
+      public static final double StageAMPSIDE_YP_Setpoint = 4.80;//4.87; //(blue stage left)
+      public static final double StageAMPSIDE_RZ_Setpoint = -62;//-60; //(blue stage left)
     }
   }
   public static class CANBus
@@ -149,6 +153,7 @@ public class Constants {
         public static final double Lift_Position_Zero = 0;
         public static final double Lift_Position_PullDown =4;
         public static final double Lift_Position_unfolding = 30;
+        public static final double Lift_Position_ForDeliveryKick = 270;
         public static final double Lift_Position_CenterAndTrap = 340;
         public static final double Lift_Position_Edge = 340;
 
@@ -201,7 +206,7 @@ public class Constants {
       public static final double Lift_Position_Passing = 15;
       public static final double Lift_Position_Speaker = 0;
       public static final double Lift_Position_Amp = 50;
-      public static final double Lift_Position_HumanSource = 85;//65;//50;
+      public static final double Lift_Position_HumanSource = 100;//85;//65;//50;
       public static final double Lift_Position_TrapStart = 120;
       public static final double Lift_Position_Trap = 133;
       public static final double Lift_Position_TrapShoot = 133;
@@ -213,7 +218,9 @@ public class Constants {
       public static final double Tilt_Position_Zero = 0;
       public static final double Tilt_Position_Park = 0;
       public static final double Tilt_Position_Passing = 5;
-      public static final double Tilt_Position_TrapLift = 7.75;
+      public static final double Tilt_Position_TrapLift = 2;//7.75;
+      public static final double Tilt_Position_TrapDodge = 3;//7.75;
+      public static final double Tilt_Position_TrapLiftHitHook = 7.75;
       public static final double Tilt_Position_TrapLiftUp = 10.75;
       public static final double Tilt_Position_TrapLiftUpSHOOT = 28;
       public static final double Tilt_Position_Speaker_Closest = 8;
@@ -221,8 +228,8 @@ public class Constants {
       public static final double Tilt_Position_Speaker_Furthest = 10;
       public static final double Tilt_Position_Amp = 22;
 
-      public static final double Tilt_Position_TrapStart = 11;
-      public static final double Tilt_Position_Trap = 12;
+      //public static final double Tilt_Position_TrapStart = 11;
+      //public static final double Tilt_Position_Trap = 12;
       public static final double Tilt_Position_HumanSource = 16;//12;
       
 
@@ -230,7 +237,7 @@ public class Constants {
       public static final double ShooterRpmSpeakerClose = 4750;//4500;
       public static final double ShooterRpmSpeakerPodium = 5500;
       public static final double ShooterRpmAmp = 1500;
-      public static final double ShooterRpmHumanSource = -2250;//-1550;//-500;
+      public static final double ShooterRpmHumanSource = -1550;//-2250;//-1550;//-500;
     }
     
     public static class AllianceAprilTags{

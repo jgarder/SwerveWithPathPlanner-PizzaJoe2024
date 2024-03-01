@@ -35,6 +35,10 @@ import frc.robot.commands.AlignSourceCMD;
 import frc.robot.commands.AlignSpeakerCMD;
 import frc.robot.commands.AlignSpeakerCMD;
 import frc.robot.commands.AlignSpeakerTest;
+import frc.robot.commands.AlignStageCMD;
+import frc.robot.commands.FlashBlueLights;
+import frc.robot.commands.FlashGreenLights;
+import frc.robot.commands.FlashRainbowLights;
 import frc.robot.commands.ForwardBump;
 import frc.robot.commands.MoveChainLiftToPosition;
 import frc.robot.commands.MoveDLifterToPosition;
@@ -136,12 +140,13 @@ public class RobotContainer {
     return //new RunDeliveryHoldIntake(deliveryHolder).alongWith(
     new InstantCommand(()->{pickupSpinner.setIsnoteInPickup(false);},pickupSpinner)
     .andThen(new RunIntake(pickupSpinner).withInterruptBehavior(InterruptionBehavior.kCancelIncoming))
+    .andThen(new InstantCommand(()->{m_candleSubsystem.StrobeBlueLights();},m_candleSubsystem))
     .andThen(new InstantCommand(()->{intakepassing = false;}))
     .andThen(C_ReturnPickupHead().alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(5);},pickupSpinner)
     .andThen(new WaitCommand(.4))//was .5
     .andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}))))//POST ROLL PICKUP INTAKE SPIN)
     
-    .andThen(new InstantCommand(()->{m_candleSubsystem.GreenLights();},m_candleSubsystem))
+    .andThen(new InstantCommand(()->{m_candleSubsystem.BlueLights();},m_candleSubsystem))
     // .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm))
     //   //.alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(50);}))
     //     //.alongWith(new RunDeliveryHoldIntake(deliveryHolder)))
@@ -196,7 +201,7 @@ public class RobotContainer {
   public Command C_ParkDeliveryHead()
   {
     return  new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter)
-      .alongWith(C_TiltGotoPark(),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff)));
+      .alongWith(C_TiltGotoPark(),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff))).andThen(new InstantCommand(()->{m_candleSubsystem.TimeOffLight();}).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
   }
   public Command ReadyShootPreEmptive()
   {
@@ -239,28 +244,36 @@ public class RobotContainer {
 
   private SequentialCommandGroup HumanSourcePickup() {
     return new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_HumanSource,deliveryLifter)
-    .alongWith(new InstantCommand(()->{deliveryHolder.RequestIndex();})
-    .andThen(new InstantCommand(()->{PizzaManager.pizzaStage = PizzaTracker.intaking;})),
+    .alongWith(
+    new InstantCommand(()->{deliveryHolder.RequestIndex();}),
+    new InstantCommand(()->{PizzaManager.pizzaStage = PizzaTracker.intaking;}),
     new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_HumanSource, deliveryTilt),
     //new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_HumanSource);},deliveryTilt),
-    new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmHumanSource),
-    new WaitCommand(20)
-    ).until(isNoteInDeliveryHolderboolSup)
-    .andThen(    
-      C_ParkDeliveryHead(),
+    new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmHumanSource)
+    )
+    .andThen(
+      new FlashGreenLights(m_candleSubsystem, 20)
+      //new WaitCommand(20)
+      ).until(isNoteInDeliveryHolderboolSup)
+    .andThen(
+      C_ParkDeliveryHead().alongWith(new InstantCommand(()->{m_candleSubsystem.StrobeBlueLights();})),
       new WaitCommand(.5),
-      new InstantCommand(()->{deliveryHolder.RequestIndex();}));
+      new InstantCommand(()->{deliveryHolder.RequestIndex();}),
+      new WaitCommand(2)
+      //new InstantCommand(()->{m_candleSubsystem.OFFLights();})
+      );
   }
 
   private SequentialCommandGroup PickupRoutine() {
     return new SequentialCommandGroup(new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm).unless(isNoteInIntakeboolSup),C_PickupPizzaFromFloorWithoutWashing().unless(isNoteInIntakeboolSup),C_ReturnPickupToPassing());
   }
   private Command AlignAndShootCenterSpeaker() {
-    return new AlignSpeakerCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
+    return new AlignSpeakerCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed).alongWith(new InstantCommand(()->{m_candleSubsystem.RainbowRoadLights();},m_candleSubsystem))
     .andThen(new WaitForIndexCMD(deliveryHolder),
       C_ReadyCloseSpeakerShot(),
       //new WaitCommand(100),
     (new ShootDeliveryHold(deliveryHolder)),
+    new InstantCommand(()->{m_candleSubsystem.StrobeBlueLights();}),
     C_ParkDeliveryHead()
     //new WaitCommand(.5)
     )
@@ -282,7 +295,7 @@ public class RobotContainer {
     
     joystick.rightBumper()
     .onTrue(PickupRoutine())
-    .onFalse(C_ReturnPickupHead().unless(isNoteInIntakeboolSup).andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();})));//.andThen(C_passNoteFromIntakeToDeliveryHolder().alongWith(C_CatchAndIndexNote().withInterruptBehavior(InterruptionBehavior.kCancelSelf)).onlyIf(isNoteInIntakeboolSup)).andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();})));
+    .onFalse(C_ReturnPickupHead().unless(isNoteInIntakeboolSup).andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}),new InstantCommand(()->{m_candleSubsystem.OFFLights();})));//.andThen(C_passNoteFromIntakeToDeliveryHolder().alongWith(C_CatchAndIndexNote().withInterruptBehavior(InterruptionBehavior.kCancelSelf)).onlyIf(isNoteInIntakeboolSup)).andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();})));
 
     joystick.a().onTrue(C_CatchAndIndexNote());
     //joystick.b().onTrue(new ShootDeliveryHold(deliveryHolder));
@@ -315,24 +328,28 @@ public class RobotContainer {
 
 
     //OLD left bumper will bring joe into the amp position 
-    joystick.leftBumper().whileTrue(
-        new SequentialCommandGroup(
-          new AlignAmpCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
+    joystick.leftBumper()
+    .whileTrue(
+        new ParallelCommandGroup(
+        new AlignAmpCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed),
+        new InstantCommand(()->{m_candleSubsystem.RainbowRoadLights();},m_candleSubsystem)  
         //new ForwardBump(drivetrainManager,AmpBumpTimeout).unless(IsLimeLightBypassed)
         )
         .andThen(
-            new ParallelCommandGroup(
+              new ParallelCommandGroup(
               new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_Amp,deliveryLifter),
               new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Amp);},deliveryTilt),
               new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmAmp)
-            )
+              )
               .andThen( 
                 (new ShootDeliveryHold(deliveryHolder)),
+                new InstantCommand(()->{m_candleSubsystem.StrobeBlueLights();},m_candleSubsystem),
               C_ParkDeliveryHead()
               //.onlyIf(()->PizzaManager.NoteInDeliveryHolder)
               )
             )
-            ).onFalse(C_ParkDeliveryHead());
+    )
+    .onFalse(C_ParkDeliveryHead());
     /////
     //OLD left bumper will bring joe into the amp position 
     // joystick.leftBumper().whileTrue(
@@ -389,8 +406,8 @@ public class RobotContainer {
     // joystick.pov(Constants.XboxControllerMap.kPOVDirectionDOWN).and(()->!PizzaManager.AltControlModeEnabled).whileTrue(new InstantCommand(()->{ChainLift.AlterSetpointposition(-10);}));
     // ////////
     //////////////////
-    joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).and(()->!PizzaManager.AltControlModeEnabled)
-    .whileTrue(drivetrainManager.runAuto);
+    //joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).and(()->!PizzaManager.AltControlModeEnabled)
+    //.whileTrue(drivetrainManager.runAuto);
     //////////////
     // joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).and(()->!PizzaManager.AltControlModeEnabled)
     // .whileTrue(C_CatchAndIndexNote()
@@ -430,6 +447,7 @@ public class RobotContainer {
 
   public void configureTrapButtons()
   {
+    
     //going DOWN
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionDOWN).and(()->PizzaManager.AltControlModeEnabled)
     .onTrue(new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_Zero, ChainLift)//.alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Park);}))
@@ -438,26 +456,49 @@ public class RobotContainer {
     ));
     
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).and(()->PizzaManager.AltControlModeEnabled)
-    .onTrue(new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_PullDown, ChainLift)
-      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUp);})
-      .andThen(new WaitCommand(1.0))
+    .onTrue(
+      new InstantCommand(() -> {deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapDodge);})
+      .andThen(
+        new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_PullDown, ChainLift)
+        
+      .alongWith(
+          new SequentialCommandGroup(
+              new WaitCommand(.75), 
+              new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUp);})
+              )
+          
+      .andThen(new WaitCommand(1.0),new InstantCommand(()->{deliveryHolder.RequestIndex();}))
       .andThen(new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm))
       .andThen(new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_Trap);},deliveryLifter))
       .andThen(new WaitCommand(2.0))
-      .andThen(new MovePickupToPosition(Constants.PickupHead.PickupVertical, pickuparm)))
+      .andThen(new MovePickupToPosition(Constants.PickupHead.PickupVertical, pickuparm))
+      )
+      )
       );
 
 
+    //alignment is not in the alt controlled mode!
+     joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).and(()->!PizzaManager.AltControlModeEnabled)
+    .whileTrue(new AlignStageCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed));
+    //unfold and get ready for lift
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).and(()->PizzaManager.AltControlModeEnabled)
-    .onTrue(new MovePickupToPosition(Constants.PickupHead.PickupVertical, pickuparm)
-    .alongWith(new InstantCommand(()->{deliveryHolder.m_forwardLimit.enableLimitSwitch(false);deliveryHolder.MovePosition(50);},deliveryHolder),new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_TrapStart);},deliveryLifter))
+    .onTrue(
+      new MovePickupToPosition(Constants.PickupHead.PickupVertical, pickuparm)
+    .alongWith(new InstantCommand(()->{deliveryHolder.m_forwardLimit.enableLimitSwitch(false);deliveryHolder.MovePosition(160);},deliveryHolder),new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_TrapStart);},deliveryLifter))
     .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLift);}))
-    .andThen(new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_CenterAndTrap, ChainLift)));
+    .andThen(
+      new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_ForDeliveryKick, ChainLift),
+      new InstantCommand(() -> {deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftHitHook);}),
+      new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_CenterAndTrap, ChainLift))
+      );
     
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).and(()->PizzaManager.AltControlModeEnabled)
     .onTrue(new InstantCommand(() -> {deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUpSHOOT);})
     .alongWith(new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_TrapShoot);},deliveryLifter))
-    .alongWith(new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm).alongWith(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose))))
+    .alongWith(new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm)
+    .alongWith(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose)))
+    .andThen(new WaitCommand(.5),new ShootDeliveryHold(deliveryHolder))
+    )
     )
     .onFalse(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff))
     .alongWith(new InstantCommand(() -> {deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUp);}).andThen(new MovePickupToPosition(Constants.PickupHead.PickupVertical, pickuparm))));

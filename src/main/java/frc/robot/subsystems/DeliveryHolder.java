@@ -181,7 +181,7 @@ public class DeliveryHolder extends SubsystemBase {
             m_forwardLimit.enableLimitSwitch(false);
             //System.out.println("FrontIntaking");
             SmartDashboard.putString("IndexStage","FrontIntaking");
-            SetToWantedDutyCycle(-.3);
+            SetToWantedDutyCycle(-.15);//-.2 was working
             ThisShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmHumanSource);
             if(IsNoteInDeliveryHold())
             {
@@ -199,7 +199,6 @@ public class DeliveryHolder extends SubsystemBase {
               IntakeRuntoHoldCommand(40,false);
           }
           else if (PizzaManager.pizzaStage == PizzaTracker.Indexed) {
-            double indexBacklash =-5;
             MovePosition(indexBacklash);
             //System.out.println("Now indexed");
             SmartDashboard.putString("IndexStage","Indexed");
@@ -208,6 +207,7 @@ public class DeliveryHolder extends SubsystemBase {
         }
         else{}
     }
+    public double indexBacklash =-3.5;
     //double Timeout = .5;
   public boolean isUndoIndexFinished() {
     if (!IsNoteInDeliveryHold() ) {
