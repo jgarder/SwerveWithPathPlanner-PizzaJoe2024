@@ -486,7 +486,7 @@ public class RobotContainer {
       new MovePickupToPosition(Constants.PickupHead.PickupVertical, pickuparm)
     .alongWith(new InstantCommand(()->{
       deliveryHolder.m_forwardLimit.enableLimitSwitch(false);
-      deliveryHolder.MovePosition(20);},deliveryHolder),
+      deliveryHolder.MovePosition(30);},deliveryHolder),
       new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_TrapStart);},deliveryLifter))
     .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLift);}))
     .andThen(
