@@ -30,7 +30,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ChainLifter;
 import frc.robot.RobotContainer.PizzaManager.PizzaTracker;
-import frc.robot.commands.AlignAmpCMD2;
+import frc.robot.commands.AlignAmpCMD;
 import frc.robot.commands.AlignSourceCMD;
 import frc.robot.commands.AlignSpeakerCMD;
 import frc.robot.commands.AlignSpeakerCMD;
@@ -38,6 +38,7 @@ import frc.robot.commands.AlignSpeakerTest;
 import frc.robot.commands.ForwardBump;
 import frc.robot.commands.MoveChainLiftToPosition;
 import frc.robot.commands.MoveDLifterToPosition;
+import frc.robot.commands.MoveDTiltToPosition;
 import frc.robot.commands.MovePickupToPosition;
 import frc.robot.commands.RunDeliveryHoldIntake;
 import frc.robot.commands.RunIntake;
@@ -204,23 +205,31 @@ public class RobotContainer {
 
   public Command C_TiltGotoPark()
   {
-    return new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Passing);},deliveryTilt).andThen(new WaitCommand(20).until(()->deliveryLifter.CurrentLiftEncoderValue < 20)).andThen(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Park);},deliveryTilt));
+    return new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Passing, deliveryTilt).andThen(new WaitCommand(20).until(()->deliveryLifter.CurrentLiftEncoderValue < 20)).andThen(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Park);},deliveryTilt));
   }
   public Command C_ReadyCloseSpeakerShot()
   {
     return new InstantCommand(()->{deliveryLifter.setSetpointPassing();},deliveryLifter)
-      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Closest);},deliveryTilt),new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmSpeakerClose));
+      .alongWith(
+        new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Closest, deliveryTilt),
+        //new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Closest);},deliveryTilt)
+        new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmSpeakerClose)
+        );
   }
     public Command C_ReadyPodiumSpeakerShot()
   {
     return new InstantCommand(()->{deliveryLifter.setSetpointPassing();},deliveryLifter)
-      .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_SafePost);},deliveryTilt),
+      .alongWith(
+        new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_SafePost, deliveryTilt),
+        //new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_SafePost);},deliveryTilt),
       new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmSpeakerPodium));
   }
     public Command C_ReadyCloseAmpShot()
   {
     return new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_TrapStart,deliveryLifter)
-            .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Amp);},deliveryTilt),
+            .alongWith(
+              new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Amp, deliveryTilt),
+              //new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Amp);},deliveryTilt),
             new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmAmp)
             );
     // return new InstantCommand(()->{deliveryLifter.setSetpointPassing();},deliveryLifter)
@@ -230,8 +239,10 @@ public class RobotContainer {
 
   private SequentialCommandGroup HumanSourcePickup() {
     return new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_HumanSource,deliveryLifter)
-    .alongWith(new InstantCommand(()->{deliveryHolder.RequestIndex();}).andThen(new InstantCommand(()->{PizzaManager.pizzaStage = PizzaTracker.intaking;})),
-    new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_HumanSource);},deliveryTilt),
+    .alongWith(new InstantCommand(()->{deliveryHolder.RequestIndex();})
+    .andThen(new InstantCommand(()->{PizzaManager.pizzaStage = PizzaTracker.intaking;})),
+    new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_HumanSource, deliveryTilt),
+    //new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_HumanSource);},deliveryTilt),
     new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmHumanSource),
     new WaitCommand(20)
     ).until(isNoteInDeliveryHolderboolSup)
@@ -306,7 +317,7 @@ public class RobotContainer {
     //OLD left bumper will bring joe into the amp position 
     joystick.leftBumper().whileTrue(
         new SequentialCommandGroup(
-          new AlignAmpCMD2(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
+          new AlignAmpCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
         //new ForwardBump(drivetrainManager,AmpBumpTimeout).unless(IsLimeLightBypassed)
         )
         .andThen(

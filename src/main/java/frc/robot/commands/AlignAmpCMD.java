@@ -10,6 +10,7 @@ import java.util.function.DoubleSupplier;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,10 +19,8 @@ import frc.robot.Constants;
 import frc.robot.subsystems.DrivetrainManager;
 
 
-public class AlignAmpCMD2 extends Command {
+public class AlignAmpCMD extends Command {
   
-
-  /** Creates a new ArmStopCMD. */
   DrivetrainManager drivetrainManager;
   Optional<Alliance> CurrentAlliance;
   private DoubleSupplier strafeSup;
@@ -46,19 +45,21 @@ public class AlignAmpCMD2 extends Command {
 
   double XP_buffer = 0;
   double YP_buffer = 0;
-  double RZ_buffer = 0;
-
+  //double RZ_buffer = 0;
+  Rotation2d RZCurrent2d = new Rotation2d();
+  
   double XP_Setpoint = 0;
   double YP_Setpoint = 0;
   double RZ_Setpoint = 0;
+  Rotation2d RzTarget = new Rotation2d();
 
   double Xspeed = 1.0;
   double Yspeed = 1.0;
   double rotationspeed = 1.0;
 
+    public String Alignxyname = "AlignXY";
 
-
-  public AlignAmpCMD2(DrivetrainManager Thiss_Swerve, DoubleSupplier strafeSup) {
+  public AlignAmpCMD(DrivetrainManager Thiss_Swerve, DoubleSupplier strafeSup) {
     drivetrainManager = Thiss_Swerve;
     this.strafeSup = strafeSup;
     RobotCentricdrive = Thiss_Swerve.RobotCentricdrive;
@@ -69,76 +70,92 @@ public class AlignAmpCMD2 extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // AlignXController.reset();
-    // AlignPoseYController.reset();
-    // AlignRZController.reset();
-
-    // XP_Setpoint = 0;
-    // YP_Setpoint = 0;
-    // RZ_Setpoint = 0;
-    
-
-    // XP_buffer = 0;
-    // YP_buffer = 0;
-    // RZ_buffer = 0;
-
     //get our alliance red or blue
     CurrentAlliance = DriverStation.getAlliance();
+
+    PidTune(Alignxyname);
+    SmartDashboard.putNumber(Alignxyname + " P Gain", AlignXController.getP());
+    SmartDashboard.putNumber(Alignxyname + " I Gain", AlignXController.getI());
+    SmartDashboard.putNumber(Alignxyname + " D Gain", AlignXController.getD());
   }
 
-
-  @Override
-  public void execute() {
-
-    double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
-    if(!CurrentAlliance.isPresent()){return;}
+  private void SetupTargetPosition() {
     if ( (CurrentAlliance.get() == Alliance.Red) )//substation
     {  
-      //System.out.println("Setting up for red team");
-        SetPidControlersToRed_Amp();
+      XP_Setpoint = Constants.TargetLocations.Red.Amp_XP_Setpoint;
+      YP_Setpoint = Constants.TargetLocations.Red.Amp_YP_Setpoint;
+      RZ_Setpoint = Constants.TargetLocations.Red.Amp_RZ_Setpoint;
+      
+
+      Xspeed = Constants.TargetLocations.Red.Xspeed;
+      Yspeed = Constants.TargetLocations.Red.Yspeed;
+      rotationspeed = Constants.TargetLocations.Red.rotationspeed;
     }
     else if ( (CurrentAlliance.get() == Alliance.Blue))//substation
     {
-        //System.out.println("Setting up for blue team");
-        SetPidControlersToBlue_Amp();
+      XP_Setpoint = Constants.TargetLocations.Blue.Amp_XP_Setpoint;
+      YP_Setpoint = Constants.TargetLocations.Blue.Amp_YP_Setpoint;
+      RZ_Setpoint = Constants.TargetLocations.Blue.Amp_RZ_Setpoint;
+
+      Xspeed = Constants.TargetLocations.Blue.Xspeed;
+      Yspeed = Constants.TargetLocations.Blue.Yspeed;
+      rotationspeed = Constants.TargetLocations.Blue.rotationspeed;
+
     }
+    //setup target
+    RzTarget = Rotation2d.fromDegrees(RZ_Setpoint);
     //LL POSE X is forward and backward toward target in field space
     AlignXController.setSetpoint(XP_Setpoint);
     //LL POSE Y Is left to right translation in field space
     AlignPoseYController.setSetpoint(YP_Setpoint);
     //LL pose RZ is our rotation relative to the target in field space
-    AlignRZController.setSetpoint(RZ_Setpoint);
+    AlignRZController.setSetpoint(0); // we feed an offset to our controller and attempt to get to 0; HACK FIX?.
+  }
 
-    FillBuffers();
+  @Override
+  public void execute() {
+
+    if(!CurrentAlliance.isPresent()){return;}
+
+    //setup target location based on current alliance
+    SetupTargetPosition();
+    
+    //get latest pose from odometry (which is updated by limelight elsewhere)
+    GetLatestPoseToBuffer();
     
     //Add min command to keep things moving. 
-    double RZAdjust = GetRZPoseAdjust(RZ_buffer, min_RZ_command);
+    double RZAdjust = GetRZPoseAdjust(RZCurrent2d, min_RZ_command);
     double xpose_adjust = GetXPoseAdjust(XP_buffer, min_xpose_command);
     double Ypose_adjust =  GetYPoseAdjust(YP_buffer, min_Ypose_command );
-
-
+    
+    //if user wants to strafe let that in
+    double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
     if(strafeVal > minRZErrorToCorrect){
       RZAdjust = strafeVal;
     }
        
-
+    //clamp all results to a max (and negative max) top speed
     Ypose_adjust = MathUtil.clamp(Ypose_adjust, -maxYvelocity, maxYvelocity);
     xpose_adjust = MathUtil.clamp(xpose_adjust, -maxXvelocity, maxXvelocity);
     RZAdjust = MathUtil.clamp(RZAdjust, -maxRZvelocity, maxRZvelocity);
 
+    //invert any axis that needs inverting this year
     double YposeAxis = Ypose_adjust * Yspeed;
     double XposeAxis = xpose_adjust * Xspeed;
     double RZposeAxis = RZAdjust * rotationspeed;
+
+    //if any axis is within tolerance then stop jittering.
     if(isRotInTarget()) {RZposeAxis = 0;}
     if(IsXInTarget()){ xpose_adjust = 0;}
-    if(IsYInTarget()) { Ypose_adjust = 0;
-    }
-        drivetrainManager.drivetrain.setControl(drivetrainManager.FCdrive.withVelocityX(XposeAxis * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
-            .withVelocityY(YposeAxis * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(RZposeAxis * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
-        );
+    if(IsYInTarget()) { Ypose_adjust = 0;}
 
-    // SmartDashboard.putNumber("R_Curr", RZ_buffer);
+    //Drive the swerve drive with whatever Axis adjustments are needed.
+    drivetrainManager.drivetrain.setControl(drivetrainManager.FCdrive.withVelocityX(XposeAxis * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
+        .withVelocityY(YposeAxis * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
+        .withRotationalRate(RZposeAxis * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
+    );
+
+    // SmartDashboard.putNumber("R_Curr", RZCurrent2d.getDegrees());
     // SmartDashboard.putNumber("R_PID", RZposeAxis);
     
    
@@ -148,45 +165,50 @@ public class AlignAmpCMD2 extends Command {
     // SmartDashboard.putNumber("X_Curr", XP_buffer);
     // SmartDashboard.putNumber("X_PID", XposeAxis);
 
-    // SmartDashboard.putNumber("RZ_Offset", RZ_Offset);
+    // //SmartDashboard.putNumber("RZ_Offset", RZ_Offset);
     // SmartDashboard.putNumber("Ypose_Offset", Ypose_Offset);
     // SmartDashboard.putNumber("Xpose_Offset", Xpose_Offset);
+    // SmartDashboard.putNumber("RZ_Offset", RZ_Offset2.getDegrees());
 
     SmartDashboard.putBoolean("isRotInTarget", isRotInTarget());
     SmartDashboard.putBoolean("IsYInTarget", IsYInTarget());
     SmartDashboard.putBoolean("IsXInTarget", IsXInTarget());
+    
+    PidTune(Alignxyname);
   }
 
-private void SetPidControlersToRed_Amp() {
-  XP_Setpoint = 14.74;
-  YP_Setpoint = 7.56;
-  RZ_Setpoint = 90;
+  private void PidTune(String PidName) {
+    double p = SmartDashboard.getNumber(PidName + " P Gain", Constants.ChassisPid.k_PoseX_P);
+    double i = SmartDashboard.getNumber(PidName + " I Gain", Constants.ChassisPid.k_PoseX_I);
+    double d = SmartDashboard.getNumber(PidName + " D Gain", Constants.ChassisPid.k_PoseX_D);
+    //double iz = SmartDashboard.getNumber(PidName + " I Zone", 0);
+    //double ff = SmartDashboard.getNumber(PidName + " Feed Forward", 0);
+      
+    if((p != AlignXController.getP())) { AlignXController.setP(p); }
+    if((i != AlignXController.getI())) { AlignXController.setI(i); }
+    if((d != AlignXController.getD())) { AlignXController.setD(d); }
 
-  Xspeed = -1.0;
-  Yspeed = -1.0;
-  rotationspeed = 1.0; 
-}
-private void SetPidControlersToBlue_Amp() {
+    if((p != AlignPoseYController.getP())) { AlignPoseYController.setP(p); }
+    if((i != AlignPoseYController.getI())) { AlignPoseYController.setI(i); }
+    if((d != AlignPoseYController.getD())) { AlignPoseYController.setD(d); }
+    //if((iz != kIz)) { MotorControllerPid.setIZone(iz); kIz = iz; }
+    //if((ff != kFF)) { MotorControllerPid.setFF(ff); kFF = ff; }
+  }
+
+
   
-  XP_Setpoint = 1.83;
-  YP_Setpoint = 7.58;
-  RZ_Setpoint = 90;
 
-  Xspeed = 1.0;
-  Yspeed = 1.0;
-  rotationspeed = 1.0;
-}
-
-private void FillBuffers()
+private void GetLatestPoseToBuffer()
 {
-  double RZCurrent = drivetrainManager.drivetrain.getState().Pose.getRotation().getDegrees();//limelight3Subsystem.getRZPosWpiBlue();//rotation Y targetspace is ROtation Z field space?
+  RZCurrent2d = drivetrainManager.drivetrain.getState().Pose.getRotation();//limelight3Subsystem.getRZPosWpiBlue();//rotation Y targetspace is ROtation Z field space?
+  //double RZCurrent = drivetrainManager.drivetrain.getState().Pose.getRotation().getDegrees();//limelight3Subsystem.getRZPosWpiBlue();//rotation Y targetspace is ROtation Z field space?
   double xpose = drivetrainManager.drivetrain.getState().Pose.getX();//limelight3Subsystem.getXPosWpiBlue();
   double Ypose = drivetrainManager.drivetrain.getState().Pose.getY();//limelight3Subsystem.getYPosWpiBlue();
-  if(Ypose != 0.00 & xpose != 0.00 & RZCurrent != 0.00) 
+  if(Ypose != 0.00 & xpose != 0.00 & RZCurrent2d != null) 
   {
     XP_buffer = xpose;
     YP_buffer = Ypose;
-    RZ_buffer = RZCurrent;
+    //RZ_buffer = RZCurrent;
   }
   else{}
 }
@@ -219,15 +241,16 @@ private double GetYPoseAdjust(double Ypose, double min_PoseY_command) {
   }
 
   //LL pose RZ is our rotation relative to the target in field space
-  private double GetRZPoseAdjust(double RZ, double min_spin_command) {
+  private double GetRZPoseAdjust(Rotation2d RZ, double min_spin_command) {
+    var RZ_offset_FromTarget = RZ.minus(RzTarget);
     double RZ_adjust = 0;
-      if (RZ < RZ_Setpoint)
+      if (RZ_offset_FromTarget.getDegrees() < 0)
       {
-        RZ_adjust = AlignRZController.calculate(RZ) + min_spin_command;
+        RZ_adjust = AlignRZController.calculate(RZ_offset_FromTarget.getDegrees()) + min_spin_command;
       }
       else
       {
-        RZ_adjust = AlignRZController.calculate(RZ) - min_spin_command;
+        RZ_adjust = AlignRZController.calculate(RZ_offset_FromTarget.getDegrees()) - min_spin_command;
       }
       
     return RZ_adjust;
@@ -239,22 +262,26 @@ private double GetYPoseAdjust(double Ypose, double min_PoseY_command) {
 
   double Xpose_Offset = 0;
   double Ypose_Offset = 0;
-  double RZ_Offset = 0;
+  //double RZ_Offset = 0;
+  Rotation2d RZ_Offset2 = new Rotation2d();
   int timesgood = 0;
   int goodneeded = 5;
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
 
-    if(YP_buffer != 0.00 & XP_buffer != 0.00 & RZ_buffer != 0.00) 
+    if(YP_buffer != 0.00 & XP_buffer != 0.00 & RZCurrent2d != null) 
     {
         //SUBTRACT where we need to go, from where we are. this will give us the translations we need to make 
         Xpose_Offset = XP_buffer - XP_Setpoint;
         Ypose_Offset = YP_buffer - YP_Setpoint;
-        RZ_Offset = RZ_buffer - RZ_Setpoint;
+        
+          //RZ_Offset = RZ_buffer - RZ_Setpoint;
+          
+        RZ_Offset2 = RZCurrent2d.minus(RzTarget);
+        
 
-        if(IsXInTarget() && 
-          IsYInTarget()  && isRotInTarget())
+        if(IsXInTarget() && IsYInTarget()  && isRotInTarget())
         {
           if(timesgood > goodneeded)
           {
@@ -287,6 +314,6 @@ private double GetYPoseAdjust(double Ypose, double min_PoseY_command) {
   }
 
   private boolean isRotInTarget() {
-    return Math.abs(RZ_Offset) < minRZErrorToCorrect || RZ_Offset < minRZErrorToCorrect -180;
+    return Math.abs(RZ_Offset2.getDegrees()) < minRZErrorToCorrect ;
   }
 }

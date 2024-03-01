@@ -194,9 +194,9 @@ public class DeliveryTilt extends SubsystemBase {
       public boolean HasNote = false;
 
 
-    double setpointTolerance = 2.5;
+    double setpointTolerance = 2.0;
       public boolean atSetpoint() {        
-          if (Constants.isWithinPercentage(CurrentEncoderValue, WantedEncoderValue, setpointTolerance)) {
+          if (Constants.isWithinAmount(CurrentEncoderValue, WantedEncoderValue, setpointTolerance)) {
             return true;
           } else {
             return false; 

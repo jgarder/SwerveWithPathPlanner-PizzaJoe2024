@@ -84,6 +84,41 @@ public class AlignSourceCMD extends Command {
     SmartDashboard.putNumber(Alignxyname + " D Gain", AlignXController.getD());
   }
 
+    private void SetupTargetPosition() {
+    if ( (CurrentAlliance.get() == Alliance.Red) )//substation
+    {  
+      XP_Setpoint = Constants.TargetLocations.Red.SourceRight_XP_Setpoint;
+      YP_Setpoint = Constants.TargetLocations.Red.SourceRight_YP_Setpoint;
+      RZ_Setpoint = Constants.TargetLocations.Red.SourceRight_RZ_Setpoint;
+      
+
+      Xspeed = Constants.TargetLocations.Red.Xspeed;
+      Yspeed = Constants.TargetLocations.Red.Yspeed;
+      rotationspeed = Constants.TargetLocations.Red.rotationspeed;
+    }
+    else if ( (CurrentAlliance.get() == Alliance.Blue))//substation
+    {
+      XP_Setpoint = Constants.TargetLocations.Blue.SourceRight_XP_Setpoint;
+      YP_Setpoint = Constants.TargetLocations.Blue.SourceRight_YP_Setpoint;
+      RZ_Setpoint = Constants.TargetLocations.Blue.SourceRight_RZ_Setpoint;
+
+      Xspeed = Constants.TargetLocations.Blue.Xspeed;
+      Yspeed = Constants.TargetLocations.Blue.Yspeed;
+      rotationspeed = Constants.TargetLocations.Blue.rotationspeed;
+
+    }
+
+    //setup target
+    RzTarget = Rotation2d.fromDegrees(RZ_Setpoint);
+    //LL POSE X is forward and backward toward target in field space
+    AlignXController.setSetpoint(XP_Setpoint);
+    //LL POSE Y Is left to right translation in field space
+    AlignPoseYController.setSetpoint(YP_Setpoint);
+    //LL pose RZ is our rotation relative to the target in field space
+    AlignRZController.setSetpoint(0); // we feed an offset to our controller and attempt to get to 0; HACK FIX?.
+  }
+  
+
   @Override
   public void execute() {
 
@@ -168,39 +203,7 @@ public class AlignSourceCMD extends Command {
   }
 
 
-  private void SetupTargetPosition() {
-    if ( (CurrentAlliance.get() == Alliance.Red) )//substation
-    {  
-      XP_Setpoint = Constants.TargetLocations.Red.SourceRight_XP_Setpoint;
-      YP_Setpoint = Constants.TargetLocations.Red.SourceRight_YP_Setpoint;
-      RZ_Setpoint = Constants.TargetLocations.Red.SourceRight_RZ_Setpoint;
-      
 
-      Xspeed = Constants.TargetLocations.Red.Xspeed;
-      Yspeed = Constants.TargetLocations.Red.Yspeed;
-      rotationspeed = Constants.TargetLocations.Red.rotationspeed;
-    }
-    else if ( (CurrentAlliance.get() == Alliance.Blue))//substation
-    {
-      XP_Setpoint = Constants.TargetLocations.Blue.SourceRight_XP_Setpoint;
-      YP_Setpoint = Constants.TargetLocations.Blue.SourceRight_YP_Setpoint;
-      RZ_Setpoint = Constants.TargetLocations.Blue.SourceRight_RZ_Setpoint;
-
-      Xspeed = Constants.TargetLocations.Blue.Xspeed;
-      Yspeed = Constants.TargetLocations.Blue.Yspeed;
-      rotationspeed = Constants.TargetLocations.Blue.rotationspeed;
-
-    }
-
-    //setup target
-    RzTarget = Rotation2d.fromDegrees(RZ_Setpoint);
-    //LL POSE X is forward and backward toward target in field space
-    AlignXController.setSetpoint(XP_Setpoint);
-    //LL POSE Y Is left to right translation in field space
-    AlignPoseYController.setSetpoint(YP_Setpoint);
-    //LL pose RZ is our rotation relative to the target in field space
-    AlignRZController.setSetpoint(0); // we feed an offset to our controller and attempt to get to 0; HACK FIX?.
-  }
 
 private void GetLatestPoseToBuffer()
 {
