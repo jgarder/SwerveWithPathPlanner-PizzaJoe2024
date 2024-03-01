@@ -62,6 +62,10 @@ public class Constants {
       public static final double Amp_XP_Setpoint = 14.74;//14.74;
       public static final double Amp_YP_Setpoint = 7.62;
       public static final double Amp_RZ_Setpoint = 90;
+
+      public static final double StageAMPSIDE_XP_Setpoint = 12.1;//12.0;//4.52; //(Red stage Right)
+      public static final double StageAMPSIDE_YP_Setpoint = 4.87;//4.83;//4.87; //(Red stage Right)
+      public static final double StageAMPSIDE_RZ_Setpoint = -120;//-60; //(Red stage Right)
     }
     public static class Blue
     {
@@ -199,7 +203,7 @@ public class Constants {
     {
 
       public static final double Lift_minValue = 0;
-      public static final double Lift_maxValue = 133;
+      public static final double Lift_maxValue = 140;
       
 
       public static final double Lift_Position_Zero = 0;
@@ -208,8 +212,8 @@ public class Constants {
       public static final double Lift_Position_Amp = 50;
       public static final double Lift_Position_HumanSource = 100;//85;//65;//50;
       public static final double Lift_Position_TrapStart = 120;
-      public static final double Lift_Position_Trap = 133;
-      public static final double Lift_Position_TrapShoot = 133;
+      public static final double Lift_Position_Trap = 140;
+      public static final double Lift_Position_TrapShoot = 140;
 
       //TILT
       public static final double Tilt_minValue = 0;

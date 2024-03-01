@@ -484,7 +484,10 @@ public class RobotContainer {
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).and(()->PizzaManager.AltControlModeEnabled)
     .onTrue(
       new MovePickupToPosition(Constants.PickupHead.PickupVertical, pickuparm)
-    .alongWith(new InstantCommand(()->{deliveryHolder.m_forwardLimit.enableLimitSwitch(false);deliveryHolder.MovePosition(160);},deliveryHolder),new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_TrapStart);},deliveryLifter))
+    .alongWith(new InstantCommand(()->{
+      deliveryHolder.m_forwardLimit.enableLimitSwitch(false);
+      deliveryHolder.MovePosition(20);},deliveryHolder),
+      new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_TrapStart);},deliveryLifter))
     .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLift);}))
     .andThen(
       new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_ForDeliveryKick, ChainLift),
@@ -493,11 +496,11 @@ public class RobotContainer {
       );
     
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).and(()->PizzaManager.AltControlModeEnabled)
-    .onTrue(new InstantCommand(() -> {deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUpSHOOT);})
+    .onTrue(new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUpSHOOT, deliveryTilt)
     .alongWith(new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_TrapShoot);},deliveryLifter))
     .alongWith(new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm)
     .alongWith(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose)))
-    .andThen(new WaitCommand(.5),new ShootDeliveryHold(deliveryHolder))
+    .andThen(new WaitCommand(.1),new ShootDeliveryHold(deliveryHolder))//new ShootDeliveryHold(deliveryHolder))
     )
     )
     .onFalse(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff))

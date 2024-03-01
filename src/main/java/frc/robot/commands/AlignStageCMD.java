@@ -82,15 +82,14 @@ public class AlignStageCMD extends Command {
   private void SetupTargetPosition() {
     if ( (CurrentAlliance.get() == Alliance.Red) )//substation
     {  
-      return;
-    //  XP_Setpoint = Constants.TargetLocations.Red.StageAMPSIDE_XP_Setpoint;
-     // YP_Setpoint = Constants.TargetLocations.Red.StageAMPSIDE_YP_Setpoint;
-    //  RZ_Setpoint = Constants.TargetLocations.Red.StageAMPSIDE_RZ_Setpoint;
+      XP_Setpoint = Constants.TargetLocations.Red.StageAMPSIDE_XP_Setpoint;
+      YP_Setpoint = Constants.TargetLocations.Red.StageAMPSIDE_YP_Setpoint;
+      RZ_Setpoint = Constants.TargetLocations.Red.StageAMPSIDE_RZ_Setpoint;
       
 
-     // Xspeed = Constants.TargetLocations.Red.Xspeed;
-     // Yspeed = Constants.TargetLocations.Red.Yspeed;
-     // rotationspeed = Constants.TargetLocations.Red.rotationspeed;
+      Xspeed = Constants.TargetLocations.Red.Xspeed;
+      Yspeed = Constants.TargetLocations.Red.Yspeed;
+      rotationspeed = Constants.TargetLocations.Red.rotationspeed;
     }
     else if ( (CurrentAlliance.get() == Alliance.Blue))//substation
     {
