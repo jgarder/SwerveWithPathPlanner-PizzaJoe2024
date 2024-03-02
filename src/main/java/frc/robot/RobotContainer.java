@@ -142,8 +142,8 @@ public class RobotContainer {
     .andThen(new RunIntake(pickupSpinner).withInterruptBehavior(InterruptionBehavior.kCancelIncoming))
     .andThen(new InstantCommand(()->{m_candleSubsystem.StrobeBlueLights();},m_candleSubsystem))
     .andThen(new InstantCommand(()->{intakepassing = false;}))
-    .andThen(C_ReturnPickupHead().alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(5);},pickupSpinner)
-    .andThen(new WaitCommand(.4))//was .5
+    .andThen(C_ReturnPickupHead().alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(7);},pickupSpinner)
+    .andThen(new WaitCommand(.5))//was .5
     .andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}))))//POST ROLL PICKUP INTAKE SPIN)
     
     .andThen(new InstantCommand(()->{m_candleSubsystem.BlueLights();},m_candleSubsystem))

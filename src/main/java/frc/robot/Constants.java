@@ -209,7 +209,7 @@ public class Constants {
       public static final double Lift_Position_Zero = 0;
       public static final double Lift_Position_Passing = 15;
       public static final double Lift_Position_Speaker = 0;
-      public static final double Lift_Position_Amp = 50;
+      public static final double Lift_Position_Amp = 52;//50;
       public static final double Lift_Position_HumanSource = 100;//85;//65;//50;
       public static final double Lift_Position_TrapStart = 120;
       public static final double Lift_Position_Trap = 140;
