@@ -4,6 +4,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -41,20 +42,29 @@ public class DrivetrainManager extends SubsystemBase{
 
         //drivetrain = Drivetrain;
     }
-    
-    public static final double slewrateXY = 20;//3;
+    @Override
+    public void periodic() {
+            double VelocX = speedLimiterY.calculate(-joystick.getLeftY()) * (MaxSpeed*PizzaManager.speedMulti);
+      double VelocY =speedLimiterX.calculate(-joystick.getLeftX()) * (MaxSpeed*PizzaManager.speedMulti);
+      SmartDashboard.putNumber("VelocX", VelocX);
+      SmartDashboard.putNumber("VelocY", VelocY);
+    }
+    public static final double slewrateXY = 9;//7;//20;//3;
     public static final double slewrateRotation = 20;//2.7;
     SlewRateLimiter speedLimiterX = new SlewRateLimiter(slewrateXY);
     SlewRateLimiter speedLimiterY = new SlewRateLimiter(slewrateXY);
     SlewRateLimiter speedLimiterRotation = new SlewRateLimiter(slewrateRotation);
     public void configureBindings()
     {
+
+      //////////////////////////////////////
         drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> FCdrive.withVelocityX(speedLimiterY.calculate(-joystick.getLeftY()) * (MaxSpeed*PizzaManager.speedMulti)) // Drive forward with
                                                                                            // negative Y (forward)
             .withVelocityY(speedLimiterX.calculate(-joystick.getLeftX()) * (MaxSpeed*PizzaManager.speedMulti)) // Drive left with negative X (left)
             .withRotationalRate(speedLimiterRotation.calculate(-joystick.getRightX()) * (MaxAngularRate*PizzaManager.RotationMulti)) // Drive counterclockwise with negative X (left)
         ).ignoringDisable(true));
+        //////////////////////////////////
 
         //stuff below should be tested when drivetrain is complete    
         //joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));

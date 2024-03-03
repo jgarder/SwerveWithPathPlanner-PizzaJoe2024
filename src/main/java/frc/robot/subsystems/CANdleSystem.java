@@ -66,7 +66,7 @@ import com.ctre.phoenix.led.TwinkleOffAnimation.TwinkleOffPercent;
 public class CANdleSystem extends SubsystemBase {
     double speed = 0.2;
     double brightness = 0.5;
-    private final int LEDS_PER_ANIMATION = 255;
+    private final int LEDS_PER_ANIMATION = 500;
     private final CANdle m_candle = new CANdle(Constants.CANBus.CANdleCanBusID, Constants.CANBus.kRIOCANbusName);
     private int m_candleChannel = 0;
     private boolean m_clearAllAnims = false;

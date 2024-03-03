@@ -252,7 +252,7 @@ public class RobotContainer {
     new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmHumanSource)
     )
     .andThen(
-      new FlashGreenLights(m_candleSubsystem, 20)
+      new FlashRainbowLights(m_candleSubsystem, 20)
       //new WaitCommand(20)
       ).until(isNoteInDeliveryHolderboolSup)
     .andThen(
@@ -455,11 +455,11 @@ public class RobotContainer {
     ));
     
     //going DOWN
-    joystick.pov(Constants.XboxControllerMap.kPOVDirectionDOWN).and(()->PizzaManager.AltControlModeEnabled)
-    .onTrue(new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_Zero, ChainLift)//.alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Park);}))
-    .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm)
-    .alongWith(C_ParkDeliveryHead(),new InstantCommand(()->{deliveryHolder.m_forwardLimit.enableLimitSwitch(true);}))
-    ));
+    // joystick.pov(Constants.XboxControllerMap.kPOVDirectionDOWN).and(()->PizzaManager.AltControlModeEnabled)
+    // .onTrue(new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_Zero, ChainLift)//.alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Park);}))
+    // .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm)
+    // .alongWith(C_ParkDeliveryHead(),new InstantCommand(()->{deliveryHolder.m_forwardLimit.enableLimitSwitch(true);}))
+    // ));
     
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).and(()->PizzaManager.AltControlModeEnabled)
     .onTrue(
