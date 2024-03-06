@@ -22,8 +22,8 @@ public class DrivetrainManager extends SubsystemBase{
   public double MaxSpeed = 9;//6; // 6 meters per second desired top speed
   public double MaxAngularRate = 2.5 * Math.PI; //1.8 ==  3/4 of a rotation per second max angular velocity
 
-  public double MaxSpeedPid = 2;//6; // 6 meters per second desired top speed
-  public double MaxAngularRatePid = 1.0 * Math.PI; // 3/4 of a rotation per second max angular velocity
+  public double MaxSpeedPid = 9;//6; // 6 meters per second desired top speed
+  public double MaxAngularRatePid = 2.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
   
     private CommandXboxController joystick;
@@ -84,6 +84,19 @@ public class DrivetrainManager extends SubsystemBase{
 
     }
 
+    public void MoveRobotToTargetInFieldCoordinates(double YposeAxis, double XposeAxis, double RZposeAxis) {
+      drivetrain.setControl(FCdriveAuton.withVelocityX(XposeAxis * MaxSpeedPid) // Drive forward with // negative Y (forward)
+          .withVelocityY(YposeAxis * MaxSpeedPid) // Drive left with negative X (left)
+          .withRotationalRate(RZposeAxis * MaxAngularRatePid) // Drive counterclockwise with negative X (left)
+      );
+    }
+    public void StopDriveTrain() {
+      drivetrain.setControl(RobotCentricdrive.withVelocityX(0 * MaxSpeed) // Drive forward with // negative Y (forward)
+      .withVelocityY(0 * MaxSpeed) // Drive left with negative X (left)
+      .withRotationalRate(0 * MaxAngularRate) // Drive counterclockwise with negative X (left)
+      );
+    }
+
     public void move(double x,double y,double r)
     {
       drivetrain.applyRequest(() -> FCdrive.withVelocityX(-.1 * MaxSpeed) // Drive forward with                                                                                        // negative Y (forward)
@@ -93,7 +106,9 @@ public class DrivetrainManager extends SubsystemBase{
     }
       //
 
-
+    public final SwerveRequest.FieldCentric FCdriveAuton = new SwerveRequest.FieldCentric()
+      //.withDeadband(MaxSpeed * 0.09).withRotationalDeadband(MaxAngularRate * 0.09) // Add a 10% deadband
+      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
 
 
   public final SwerveRequest.FieldCentric FCdrive = new SwerveRequest.FieldCentric()

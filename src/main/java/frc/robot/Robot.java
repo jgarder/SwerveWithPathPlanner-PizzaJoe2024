@@ -20,6 +20,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    //enableLiveWindowInTest(true);
     m_robotContainer = new RobotContainer();
 
     m_robotContainer.drivetrainManager.drivetrain.getDaqThread().setThreadPriority(99);

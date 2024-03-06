@@ -26,14 +26,10 @@ double kMaxSpeed = 5;
   private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
   private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
-  public final SwerveRequest.RobotCentric drive;
   public AlignSpeakerTest(DrivetrainManager dtm, Limelight3Subsystem ll3){
     limelight3Subsystem = ll3;
     drivetrainManager=dtm;
-        drive = new SwerveRequest.RobotCentric()
-      .withDeadband(drivetrainManager.MaxSpeed * 0.1).withRotationalDeadband(drivetrainManager.MaxAngularRate * 0.1) // Add a 10% deadband
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
-                                                               // driving in open loop
+
         //addRequirements(m_DeliveryHolder);
     }
 
@@ -111,7 +107,10 @@ double kMaxSpeed = 5;
             * kMaxAngularSpeed;
 
     // while the A-button is pressed, overwrite some of the driving values with the output of our limelight methods
+      if(xSpeed > .02)
+      {
 
+      }
         final var rot_limelight = limelight_aim_proportional();
         rot = rot_limelight;
 
@@ -122,7 +121,7 @@ double kMaxSpeed = 5;
         fieldRelative = false;
 
 
-    drivetrainManager.drivetrain.setControl(drive.withVelocityX(xSpeed * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
+    drivetrainManager.drivetrain.setControl(drivetrainManager.RobotCentricdrive.withVelocityX(xSpeed * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
             .withVelocityY(ySpeed * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(rot * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
         );

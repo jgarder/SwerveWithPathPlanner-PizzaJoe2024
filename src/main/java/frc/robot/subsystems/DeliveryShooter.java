@@ -63,6 +63,9 @@ public class DeliveryShooter extends SubsystemBase {
         //current limit to keep motors safe from Fire (over current)
         m_motor.setSmartCurrentLimit(Constants.NeoBrushless.neo1650safelimitAmps);
         m_motor_LowS.setSmartCurrentLimit(Constants.NeoBrushless.neo1650safelimitAmps);
+
+        m_motor.enableVoltageCompensation(12);
+        m_motor_LowS.enableVoltageCompensation(12);
         /**
          * In order to use PID functionality for a controller, a SparkPIDController object
          * is constructed by calling the getPIDController() method on an existing

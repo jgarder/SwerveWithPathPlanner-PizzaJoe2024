@@ -153,10 +153,10 @@ public class PickupSpinner extends SubsystemBase{
             }   
       
         }
-        IntakeRunCommand(reduction);
+        IntakeRunCommand();
     }
-    int reduction = 15;
-    public void IntakeRunCommand(int reduction) {
+    //int reduction = 15;
+    public void IntakeRunCommand() {
       //m_forwardLimit.enableLimitSwitch(false);
       SetToWantedRpm(IntakeDutyCycle);
       //Motor_Encoder.setPosition(0);
@@ -171,7 +171,7 @@ public class PickupSpinner extends SubsystemBase{
         Motor_Encoder.setPosition(position);
     }
 
-      public double IntakeDutyCycle = -.75;//rpm used during note release
+      public double IntakeDutyCycle = -1;//rpm used during note release
       public double PassingDutyCycle = .75;//rpm used during note release
       public double LastSetRPM = 0;
     public void ReleaseNote(){

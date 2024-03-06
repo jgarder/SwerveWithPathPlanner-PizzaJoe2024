@@ -1,5 +1,8 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public class Constants {
 
   public static final double nominalBatteryVoltage = 12.0;
@@ -17,13 +20,13 @@ public class Constants {
 
   public static class ChassisPid
   {
-    public static final double k_PoseX_P = .5;//1.20;
-    public static final double k_PoseX_I = 0.000001;//0.02;
-    public static final double k_PoseX_D = 0.15;//0.0020;
+    public static final double k_PoseX_P = .4;//.5;//1.20;
+    public static final double k_PoseX_I = .0000005;//0.000001;//0.02;
+    public static final double k_PoseX_D = .06;//0.15;//0.0020;
 
-    public static final double k_PoseY_P = .5;//1.20;
-    public static final double k_PoseY_I = 0.000001;//0.02;
-    public static final double k_PoseY_D = 0.15;//0.002; 
+    public static final double k_PoseY_P = .4;//.5;//1.20;
+    public static final double k_PoseY_I = .0000005;//0.000001;//0.02;
+    public static final double k_PoseY_D = .06;//0.15;//0.002; 
 
     public static final double k_RZ_P = 0.04;//.05;
     public static final double k_RZ_I = 0;//0.00;
@@ -35,7 +38,7 @@ public class Constants {
 
     public static final double min_xpose_command = 0.060;
     public static final double min_Ypose_command = 0.060;
-    public static final double min_RZ_command = .085;
+    public static final double min_RZ_command = .055;
 
     //if we are really far away lets keep pid from going insane.
     public static final double maxYvelocity = .75;
@@ -51,7 +54,7 @@ public class Constants {
        public static final double Yspeed = -1.0;//used to invert results with -1 or 1;
        public static final double rotationspeed = 1.0;//used to invert results with -1 or 1;
 
-      public static final double SpeakerCenter_XP_Setpoint = 15.0;
+      public static final double SpeakerCenter_XP_Setpoint = 15.05;
       public static final double SpeakerCenter_YP_Setpoint = 5.5;
       public static final double SpeakerCenter_RZ_Setpoint = 0;
 
@@ -66,6 +69,13 @@ public class Constants {
       public static final double StageAMPSIDE_XP_Setpoint = 12.1;//12.0;//4.52; //(Red stage Right)
       public static final double StageAMPSIDE_YP_Setpoint = 4.87;//4.83;//4.87; //(Red stage Right)
       public static final double StageAMPSIDE_RZ_Setpoint = -120;//-60; //(Red stage Right)
+      public static final Pose2d ClimbChainStageAMPSIDE = new Pose2d(12.1, 4.87, Rotation2d.fromDegrees(-120));
+
+      public static final Pose2d TrapFloorStageAMPSIDE = new Pose2d(12.27, 5.07, Rotation2d.fromDegrees(-120));
+      public static final Pose2d TrapFloorStageSourceSIDE = new Pose2d(12.27, 5.07, Rotation2d.fromDegrees(-120));
+      // public static final double TrapFloorStageAMPSIDE_XP_Setpoint = 12.27;//12.0;//4.52; //(Red stage Right)
+      // public static final double TrapFloorStageAMPSIDE_YP_Setpoint = 5.07;//4.83;//4.87; //(Red stage Right)
+      // public static final double TrapFloorStageAMPSIDE_RZ_Setpoint = -120;//-60; //(Red stage Right)
     }
     public static class Blue
     {
@@ -73,16 +83,16 @@ public class Constants {
        public static final double Yspeed = 1.0;//used to invert results with -1 or 1;
        public static final double rotationspeed = 1.0;//used to invert results with -1 or 1;
 
-      public static final double SpeakerCenter_XP_Setpoint = 1.5;
-      public static final double SpeakerCenter_YP_Setpoint = 5.6;
-      public static final double SpeakerCenter_RZ_Setpoint = 180;
+      public static final double SpeakerCenter_XP_Setpoint = 1.45;//BC-CALI:1.38
+      public static final double SpeakerCenter_YP_Setpoint = 5.5;//BC-CALI:5.48
+      public static final double SpeakerCenter_RZ_Setpoint = 180;//BC-CALI:177
 
-      public static final double SourceRight_XP_Setpoint = 14.83;
-      public static final double SourceRight_YP_Setpoint = .577;
-      public static final double SourceRight_RZ_Setpoint = -60;
+      public static final double SourceRight_XP_Setpoint = 14.83;//14.63;//14.83;
+      public static final double SourceRight_YP_Setpoint = .577;//.29;//.577;
+      public static final double SourceRight_RZ_Setpoint = -60;//-60;
 
-      public static final double Amp_XP_Setpoint = 1.84;
-      public static final double Amp_YP_Setpoint = 7.58;
+      public static final double Amp_XP_Setpoint = 1.84;//BC-Cali:1.86
+      public static final double Amp_YP_Setpoint = 7.58;//BC-Cali:
       public static final double Amp_RZ_Setpoint = 90;
 
       public static final double StageAMPSIDE_XP_Setpoint = 4.39;//4.52; //(blue stage left)
@@ -210,7 +220,7 @@ public class Constants {
       public static final double Lift_Position_Passing = 15;
       public static final double Lift_Position_Speaker = 0;
       public static final double Lift_Position_Amp = 52;//50;
-      public static final double Lift_Position_HumanSource = 100;//85;//65;//50;
+      public static final double Lift_Position_HumanSource = 100;//100;//85;//65;//50;
       public static final double Lift_Position_TrapStart = 120;
       public static final double Lift_Position_Trap = 140;
       public static final double Lift_Position_TrapShoot = 140;
@@ -251,9 +261,9 @@ public class Constants {
         public static final int SpeakerCenter = 4;
         public static final int SpeakerOffset = 3;
         public static final int Amp = 5;
-        public static final int ChainSourceSide = 11;
-        public static final int ChainAmpSide = 12;
-        public static final int ChainBackSide = 13;
+        public static final int StageSourceSide = 11;
+        public static final int StageAmpSide = 12;
+        public static final int StageBackSide = 13;
       }
       public static class Blue {
         public static final int SourceLeft = 2;//from robots pov
@@ -261,9 +271,9 @@ public class Constants {
         public static final int SpeakerCenter = 7;
         public static final int SpeakerOffset = 8;
         public static final int Amp = 6;
-        public static final int ChainSourceSide = 16;
-        public static final int ChainAmpSide = 15;
-        public static final int ChainBackSide = 14;
+        public static final int StageSourceSide = 16;
+        public static final int StageAmpSide = 15;
+        public static final int StageBackSide = 14;
       }
 
     }

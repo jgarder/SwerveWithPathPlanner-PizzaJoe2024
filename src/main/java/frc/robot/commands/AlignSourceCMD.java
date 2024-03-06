@@ -121,7 +121,7 @@ public class AlignSourceCMD extends Command {
 
   @Override
   public void execute() {
-
+    //we cant align to an alliance tag if the DS has no alliance. 
     if(!CurrentAlliance.isPresent()){return;}
 
     //setup target location based on current alliance
@@ -129,11 +129,22 @@ public class AlignSourceCMD extends Command {
     
     //get latest pose from odometry (which is updated by limelight elsewhere)
     GetLatestPoseToBuffer();
-    
+
+    //SUBTRACT where we need to go, from where we are. this will give us the translations we need to make 
+    Xpose_Offset = XP_buffer - XP_Setpoint;
+    Ypose_Offset = YP_buffer - YP_Setpoint;       
+    //RZ_Offset = RZ_buffer - RZ_Setpoint;         
+    RZ_Offset2 = RZCurrent2d.minus(RzTarget);
+
     //Add min command to keep things moving. 
-    double RZAdjust = GetRZPoseAdjust(RZCurrent2d, min_RZ_command);
-    double xpose_adjust = GetXPoseAdjust(XP_buffer, min_xpose_command);
-    double Ypose_adjust =  GetYPoseAdjust(YP_buffer, min_Ypose_command );
+    double RZAdjust = AlignRZController.calculate(RZ_Offset2.getDegrees());//GetRZPoseAdjust(RZCurrent2d, min_RZ_command);
+    double xpose_adjust = AlignXController.calculate(XP_buffer);//GetXPoseAdjust(XP_buffer, min_xpose_command);
+    double Ypose_adjust = AlignPoseYController.calculate(YP_buffer);//GetYPoseAdjust(YP_buffer, min_Ypose_command );
+    
+    //Add in (or subtract extra) minimum command;
+    RZAdjust += (Math.signum(RZAdjust)*min_RZ_command);
+    xpose_adjust += (Math.signum(xpose_adjust)*min_xpose_command);
+    Ypose_adjust += (Math.signum(Ypose_adjust)*min_Ypose_command);
     
     //if user wants to strafe let that in
     double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
@@ -157,9 +168,9 @@ public class AlignSourceCMD extends Command {
     if(IsYInTarget()) { Ypose_adjust = 0;}
 
     //Drive the swerve drive with whatever Axis adjustments are needed.
-    drivetrainManager.drivetrain.setControl(drivetrainManager.FCdrive.withVelocityX(XposeAxis * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
-        .withVelocityY(YposeAxis * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
-        .withRotationalRate(RZposeAxis * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
+    drivetrainManager.drivetrain.setControl(drivetrainManager.FCdriveAuton.withVelocityX(XposeAxis * drivetrainManager.MaxSpeedPid) // Drive forward with // negative Y (forward)
+        .withVelocityY(YposeAxis * drivetrainManager.MaxSpeedPid) // Drive left with negative X (left)
+        .withRotationalRate(RZposeAxis * drivetrainManager.MaxAngularRatePid) // Drive counterclockwise with negative X (left)
     );
 
     // SmartDashboard.putNumber("R_Curr", RZCurrent2d.getDegrees());
@@ -219,49 +230,7 @@ private void GetLatestPoseToBuffer()
   }
   else{}
 }
-  //LL POSE Y Is left to right translation in field space
-private double GetYPoseAdjust(double Ypose, double min_PoseY_command) {
-  double ypose_adjust;
-    if (Ypose < YP_Setpoint)
-    {
-            ypose_adjust = AlignPoseYController.calculate(Ypose) + min_PoseY_command;
-    }
-    else
-    {
-            ypose_adjust = AlignPoseYController.calculate(Ypose) - min_PoseY_command;
-    }
-  return ypose_adjust ;
-}
-
-  //LL POSE X is forward and backward toward target in field space
-  private double GetXPoseAdjust(double Xpose, double min_Fwd_command) {
-    double xpose_adjust;
-      if (Xpose < XP_Setpoint)
-      {
-              xpose_adjust = AlignXController.calculate(Xpose) + min_Fwd_command;
-      }
-      else
-      {
-              xpose_adjust = AlignXController.calculate(Xpose) - min_Fwd_command;
-      }
-    return xpose_adjust ;
-  }
-
-  //LL pose RZ is our rotation relative to the target in field space
-  private double GetRZPoseAdjust(Rotation2d RZ, double min_spin_command) {
-    var RZ_offset_FromTarget = RZ.minus(RzTarget);
-    double RZ_adjust = 0;
-      if (RZ_offset_FromTarget.getDegrees() < 0)
-      {
-        RZ_adjust = AlignRZController.calculate(RZ_offset_FromTarget.getDegrees()) + min_spin_command;
-      }
-      else
-      {
-        RZ_adjust = AlignRZController.calculate(RZ_offset_FromTarget.getDegrees()) - min_spin_command;
-      }
-      
-    return RZ_adjust;
-  }
+  
 
   // Called once the command ends or is interrupted.
   @Override
@@ -274,15 +243,6 @@ private double GetYPoseAdjust(double Ypose, double min_PoseY_command) {
 
     if(YP_buffer != 0.00 & XP_buffer != 0.00 & RZCurrent2d != null) 
     {
-        //SUBTRACT where we need to go, from where we are. this will give us the translations we need to make 
-        Xpose_Offset = XP_buffer - XP_Setpoint;
-        Ypose_Offset = YP_buffer - YP_Setpoint;
-        
-          //RZ_Offset = RZ_buffer - RZ_Setpoint;
-          
-        RZ_Offset2 = RZCurrent2d.minus(RzTarget);
-        
-
         if(IsXInTarget() && IsYInTarget()  && isRotInTarget())
         {
           if(timesgood > goodneeded)

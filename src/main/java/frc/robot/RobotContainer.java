@@ -36,6 +36,7 @@ import frc.robot.commands.AlignSpeakerCMD;
 import frc.robot.commands.AlignSpeakerCMD;
 import frc.robot.commands.AlignSpeakerTest;
 import frc.robot.commands.AlignStageCMD;
+import frc.robot.commands.AlignTrapShootCMD;
 import frc.robot.commands.FlashBlueLights;
 import frc.robot.commands.FlashGreenLights;
 import frc.robot.commands.FlashRainbowLights;
@@ -142,8 +143,8 @@ public class RobotContainer {
     .andThen(new RunIntake(pickupSpinner).withInterruptBehavior(InterruptionBehavior.kCancelIncoming))
     .andThen(new InstantCommand(()->{m_candleSubsystem.StrobeBlueLights();},m_candleSubsystem))
     .andThen(new InstantCommand(()->{intakepassing = false;}))
-    .andThen(C_ReturnPickupHead().alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(7);},pickupSpinner)
-    .andThen(new WaitCommand(.5))//was .5
+    .andThen(C_ReturnPickupHead().alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand();},pickupSpinner)
+    .andThen(new WaitCommand(.4))//was .5
     .andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}))))//POST ROLL PICKUP INTAKE SPIN)
     
     .andThen(new InstantCommand(()->{m_candleSubsystem.BlueLights();},m_candleSubsystem))
@@ -241,16 +242,19 @@ public class RobotContainer {
     //   .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Closest);},deliveryTilt),
     //new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmSpeakerClose));
   }
+  private ParallelCommandGroup MoveIntoSourcePosition()
+  {
+     return new ParallelCommandGroup(
+      new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_HumanSource,deliveryLifter),
+      new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_HumanSource, deliveryTilt),
+      new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmHumanSource),
+      new InstantCommand(()->{deliveryHolder.RequestIndex();}),
+      new InstantCommand(()->{PizzaManager.pizzaStage = PizzaTracker.intaking;})
+      );
+  }
 
   private SequentialCommandGroup HumanSourcePickup() {
-    return new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_HumanSource,deliveryLifter)
-    .alongWith(
-    new InstantCommand(()->{deliveryHolder.RequestIndex();}),
-    new InstantCommand(()->{PizzaManager.pizzaStage = PizzaTracker.intaking;}),
-    new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_HumanSource, deliveryTilt),
-    //new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_HumanSource);},deliveryTilt),
-    new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmHumanSource)
-    )
+    return MoveIntoSourcePosition()
     .andThen(
       new FlashRainbowLights(m_candleSubsystem, 20)
       //new WaitCommand(20)
@@ -258,19 +262,25 @@ public class RobotContainer {
     .andThen(
       C_ParkDeliveryHead().alongWith(new InstantCommand(()->{m_candleSubsystem.StrobeBlueLights();})),
       new WaitCommand(.5),
-      new InstantCommand(()->{deliveryHolder.RequestIndex();}),
-      new WaitCommand(2)
+      new InstantCommand(()->{deliveryHolder.RequestIndex();})
+      //new WaitCommand(2)
       //new InstantCommand(()->{m_candleSubsystem.OFFLights();})
       );
   }
-
+  private Command JustShootIt()
+  {
+    return new SequentialCommandGroup(new WaitForIndexCMD(deliveryHolder),C_ReadyCloseSpeakerShot(),new ShootDeliveryHold(deliveryHolder),new InstantCommand(()->{m_candleSubsystem.StrobeBlueLights();}),  C_ParkDeliveryHead());
+  }
   private SequentialCommandGroup PickupRoutine() {
     return new SequentialCommandGroup(new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm).unless(isNoteInIntakeboolSup),C_PickupPizzaFromFloorWithoutWashing().unless(isNoteInIntakeboolSup),C_ReturnPickupToPassing());
   }
   private Command AlignAndShootCenterSpeaker() {
-    return new AlignSpeakerCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed).alongWith(new InstantCommand(()->{m_candleSubsystem.RainbowRoadLights();},m_candleSubsystem))
-    .andThen(new WaitForIndexCMD(deliveryHolder),
-      C_ReadyCloseSpeakerShot(),
+    return new AlignSpeakerCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
+    .alongWith(new InstantCommand(()->{m_candleSubsystem.RainbowRoadLights();},m_candleSubsystem),
+    new SequentialCommandGroup(new WaitForIndexCMD(deliveryHolder), C_ReadyCloseSpeakerShot())
+    )
+    .andThen(//new WaitForIndexCMD(deliveryHolder),
+      //C_ReadyCloseSpeakerShot(),
       //new WaitCommand(100),
     (new ShootDeliveryHold(deliveryHolder)),
     new InstantCommand(()->{m_candleSubsystem.StrobeBlueLights();}),
@@ -293,10 +303,7 @@ public class RobotContainer {
     drivetrainManager.configureBindings();
     joystick.back().onTrue(new InstantCommand(()->{PizzaManager.AltControlModeEnabled = !PizzaManager.AltControlModeEnabled;}));
     
-    joystick.rightBumper()
-    .onTrue(PickupRoutine())
-    .onFalse(C_ReturnPickupHead().unless(isNoteInIntakeboolSup).andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}),new InstantCommand(()->{m_candleSubsystem.OFFLights();})));//.andThen(C_passNoteFromIntakeToDeliveryHolder().alongWith(C_CatchAndIndexNote().withInterruptBehavior(InterruptionBehavior.kCancelSelf)).onlyIf(isNoteInIntakeboolSup)).andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();})));
-
+    
     joystick.a().onTrue(C_CatchAndIndexNote());
     //joystick.b().onTrue(new ShootDeliveryHold(deliveryHolder));
     joystick.b().onTrue(new InstantCommand(()->{SmartDashboard.putBoolean(SDashBoardH.LimelightbypassName, true);})).onFalse(new InstantCommand(()->{SmartDashboard.putBoolean(SDashBoardH.LimelightbypassName, false);}));
@@ -310,14 +317,22 @@ public class RobotContainer {
     ).onFalse(C_ParkDeliveryHead().andThen(new InstantCommand(()->{deliveryHolder.forceCancelIndex();})));
 
   //Right Trigger To activate the human pickup
-  joystick.rightTrigger().whileTrue(
+  joystick.rightTrigger().whileTrue(HumanSourcePickup()
+  .alongWith(
     new SequentialCommandGroup(
           new AlignSourceCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
         //new ForwardBump(drivetrainManager,SourceBumpTimeout).unless(IsLimeLightBypassed)
-        ).andThen(HumanSourcePickup())
+        )
+        )
+        .andThen(HumanSourcePickup())
     
   )
   .onFalse(C_ParkDeliveryHead());
+  
+  joystick.rightBumper()
+    .onTrue(PickupRoutine())
+    .onFalse(C_ReturnPickupHead().unless(isNoteInIntakeboolSup)
+    .andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}),new InstantCommand(()->{m_candleSubsystem.OFFLights();})));//.andThen(C_passNoteFromIntakeToDeliveryHolder().alongWith(C_CatchAndIndexNote().withInterruptBehavior(InterruptionBehavior.kCancelSelf)).onlyIf(isNoteInIntakeboolSup)).andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();})));
 
   /////PODIUM SHOT TEST
     // joystick.rightTrigger().whileTrue(
@@ -331,13 +346,14 @@ public class RobotContainer {
     joystick.leftBumper()
     .whileTrue(
         new ParallelCommandGroup(
-        new AlignAmpCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed),
+        new AlignAmpCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)),
+        new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_Amp,deliveryLifter),
         new InstantCommand(()->{m_candleSubsystem.RainbowRoadLights();},m_candleSubsystem)  
         //new ForwardBump(drivetrainManager,AmpBumpTimeout).unless(IsLimeLightBypassed)
-        )
+        ).unless(IsLimeLightBypassed)
         .andThen(
               new ParallelCommandGroup(
-              new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_Amp,deliveryLifter),
+              new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_Amp,deliveryLifter), 
               new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Amp);},deliveryTilt),
               new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmAmp)
               )
@@ -359,10 +375,12 @@ public class RobotContainer {
     //         ).onlyIf(()->PizzaManager.NoteInDeliveryHolder)
     //         ).onFalse(C_ParkDeliveryHead());
     /////
-    //HUMAN SOURCE TEST
-    //DoubleSupplier sup = () -> joystick.getRawAxis(strafeAxis);
+    //Align Trap Shoot Test
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).and(()->!PizzaManager.AltControlModeEnabled)
-    .whileTrue(HumanSourcePickup()).onFalse(C_ParkDeliveryHead());
+    .whileTrue(
+      new AlignTrapShootCMD(drivetrainManager,LL3, () -> joystick.getRawAxis(strafeAxis)).andThen(JustShootIt(),C_ParkDeliveryHead())
+    )
+    .onFalse(C_ParkDeliveryHead());;
     //
     //OLD ALIGNMENT TEST AMP
     // joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).and(()->!PizzaManager.AltControlModeEnabled)
@@ -533,6 +551,8 @@ public class RobotContainer {
       NamedCommands.registerCommand("C_CatchAndIndexNote", C_CatchAndIndexNote());
       NamedCommands.registerCommand("PickupRoutine", PickupRoutine());
       NamedCommands.registerCommand("ReadyShootPreEmptive", ReadyShootPreEmptive());
+      NamedCommands.registerCommand("JustShootIt",   JustShootIt());
+    
       
       //Now build the autos 
       drivetrainManager.runAuto = drivetrainManager.drivetrain.getAutoPath("SP_C_2Piece");
