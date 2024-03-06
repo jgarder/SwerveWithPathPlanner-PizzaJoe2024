@@ -54,28 +54,21 @@ public class Constants {
        public static final double Yspeed = -1.0;//used to invert results with -1 or 1;
        public static final double rotationspeed = 1.0;//used to invert results with -1 or 1;
 
-      public static final double SpeakerCenter_XP_Setpoint = 15.05;
-      public static final double SpeakerCenter_YP_Setpoint = 5.5;
-      public static final double SpeakerCenter_RZ_Setpoint = 0;
+      public static final Pose2d SpeakerCenter = new Pose2d(15.05, 5.5, Rotation2d.fromDegrees(0));
 
-      public static final double SourceRight_XP_Setpoint = .60;
-      public static final double SourceRight_YP_Setpoint = 1.197;
-      public static final double SourceRight_RZ_Setpoint = -120;
+      public static final Pose2d SourceRight = new Pose2d(.60, 1.197, Rotation2d.fromDegrees(-120));//#9
 
-      public static final double Amp_XP_Setpoint = 14.74;//14.74;
-      public static final double Amp_YP_Setpoint = 7.62;
-      public static final double Amp_RZ_Setpoint = 90;
+      public static final Pose2d Amp = new Pose2d(14.74, 7.62, Rotation2d.fromDegrees(90));//#5
 
       public static final double StageAMPSIDE_XP_Setpoint = 12.1;//12.0;//4.52; //(Red stage Right)
       public static final double StageAMPSIDE_YP_Setpoint = 4.87;//4.83;//4.87; //(Red stage Right)
       public static final double StageAMPSIDE_RZ_Setpoint = -120;//-60; //(Red stage Right)
       public static final Pose2d ClimbChainStageAMPSIDE = new Pose2d(12.1, 4.87, Rotation2d.fromDegrees(-120));
 
-      public static final Pose2d TrapFloorStageAMPSIDE = new Pose2d(12.27, 5.07, Rotation2d.fromDegrees(-120));
-      public static final Pose2d TrapFloorStageSourceSIDE = new Pose2d(12.27, 5.07, Rotation2d.fromDegrees(-120));
-      // public static final double TrapFloorStageAMPSIDE_XP_Setpoint = 12.27;//12.0;//4.52; //(Red stage Right)
-      // public static final double TrapFloorStageAMPSIDE_YP_Setpoint = 5.07;//4.83;//4.87; //(Red stage Right)
-      // public static final double TrapFloorStageAMPSIDE_RZ_Setpoint = -120;//-60; //(Red stage Right)
+      public static final Pose2d TrapFloorStageCenterSide = new Pose2d(10.4, 4.00, Rotation2d.fromDegrees(0));//13
+      public static final Pose2d TrapFloorStageAmpSide = new Pose2d(12.27, 5.07, Rotation2d.fromDegrees(-120));//12
+      public static final Pose2d TrapFloorStageSourceSide = new Pose2d(12.27, 2.92, Rotation2d.fromDegrees(120));//11
+    
     }
     public static class Blue
     {
@@ -83,21 +76,19 @@ public class Constants {
        public static final double Yspeed = 1.0;//used to invert results with -1 or 1;
        public static final double rotationspeed = 1.0;//used to invert results with -1 or 1;
 
-      public static final double SpeakerCenter_XP_Setpoint = 1.45;//BC-CALI:1.38
-      public static final double SpeakerCenter_YP_Setpoint = 5.5;//BC-CALI:5.48
-      public static final double SpeakerCenter_RZ_Setpoint = 180;//BC-CALI:177
+      public static final Pose2d SpeakerCenter = new Pose2d(1.45, 5.5, Rotation2d.fromDegrees(180));//BC-CALI:1.38,5.48,177
 
-      public static final double SourceRight_XP_Setpoint = 14.83;//14.63;//14.83;
-      public static final double SourceRight_YP_Setpoint = .577;//.29;//.577;
-      public static final double SourceRight_RZ_Setpoint = -60;//-60;
+      public static final Pose2d SourceRight = new Pose2d(14.83, .577, Rotation2d.fromDegrees(-60));//#1
 
-      public static final double Amp_XP_Setpoint = 1.84;//BC-Cali:1.86
-      public static final double Amp_YP_Setpoint = 7.58;//BC-Cali:
-      public static final double Amp_RZ_Setpoint = 90;
+      public static final Pose2d Amp = new Pose2d(1.84, 7.62, Rotation2d.fromDegrees(90));//#6
 
       public static final double StageAMPSIDE_XP_Setpoint = 4.39;//4.52; //(blue stage left)
       public static final double StageAMPSIDE_YP_Setpoint = 4.80;//4.87; //(blue stage left)
       public static final double StageAMPSIDE_RZ_Setpoint = -62;//-60; //(blue stage left)
+
+      public static final Pose2d TrapFloorStageCenterSide = new Pose2d(6.10, 4.00, Rotation2d.fromDegrees(-180));//14
+      public static final Pose2d TrapFloorStageAmpSide = new Pose2d(4.25, 5.07, Rotation2d.fromDegrees(-60));//15
+      public static final Pose2d TrapFloorSourceSide = new Pose2d(4.25, 2.92, Rotation2d.fromDegrees(60));//16
     }
   }
   public static class CANBus
@@ -263,7 +254,7 @@ public class Constants {
         public static final int Amp = 5;
         public static final int StageSourceSide = 11;
         public static final int StageAmpSide = 12;
-        public static final int StageBackSide = 13;
+        public static final int StageCenterSide = 13;
       }
       public static class Blue {
         public static final int SourceLeft = 2;//from robots pov
@@ -273,7 +264,7 @@ public class Constants {
         public static final int Amp = 6;
         public static final int StageSourceSide = 16;
         public static final int StageAmpSide = 15;
-        public static final int StageBackSide = 14;
+        public static final int StageCenterSide = 14;
       }
 
     }

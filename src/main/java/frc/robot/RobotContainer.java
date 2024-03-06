@@ -275,7 +275,7 @@ public class RobotContainer {
     return new SequentialCommandGroup(new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm).unless(isNoteInIntakeboolSup),C_PickupPizzaFromFloorWithoutWashing().unless(isNoteInIntakeboolSup),C_ReturnPickupToPassing());
   }
   private Command AlignAndShootCenterSpeaker() {
-    return new AlignSpeakerCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
+    return new AlignSpeakerCMD(drivetrainManager,LL3,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
     .alongWith(new InstantCommand(()->{m_candleSubsystem.RainbowRoadLights();},m_candleSubsystem),
     new SequentialCommandGroup(new WaitForIndexCMD(deliveryHolder), C_ReadyCloseSpeakerShot())
     )
@@ -320,7 +320,7 @@ public class RobotContainer {
   joystick.rightTrigger().whileTrue(HumanSourcePickup()
   .alongWith(
     new SequentialCommandGroup(
-          new AlignSourceCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
+          new AlignSourceCMD(drivetrainManager,LL3,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
         //new ForwardBump(drivetrainManager,SourceBumpTimeout).unless(IsLimeLightBypassed)
         )
         )
@@ -346,7 +346,7 @@ public class RobotContainer {
     joystick.leftBumper()
     .whileTrue(
         new ParallelCommandGroup(
-        new AlignAmpCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)),
+        new AlignAmpCMD(drivetrainManager,LL3,() -> joystick.getRawAxis(strafeAxis)),
         new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_Amp,deliveryLifter),
         new InstantCommand(()->{m_candleSubsystem.RainbowRoadLights();},m_candleSubsystem)  
         //new ForwardBump(drivetrainManager,AmpBumpTimeout).unless(IsLimeLightBypassed)

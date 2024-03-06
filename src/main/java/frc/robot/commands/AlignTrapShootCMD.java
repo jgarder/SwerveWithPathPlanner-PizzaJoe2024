@@ -66,11 +66,15 @@ public class AlignTrapShootCMD extends Command {
   { 
     if (targetID == Constants.AllianceAprilTags.Red.StageAmpSide) 
     {
-      TargetPose = Constants.TargetLocations.Red.TrapFloorStageAMPSIDE;
+      TargetPose = Constants.TargetLocations.Red.TrapFloorStageAmpSide;
     } 
     if (targetID == Constants.AllianceAprilTags.Red.StageSourceSide) 
     {
-      TargetPose = Constants.TargetLocations.Red.TrapFloorStageSourceSIDE;
+      TargetPose = Constants.TargetLocations.Red.TrapFloorStageSourceSide;
+    } 
+    if (targetID == Constants.AllianceAprilTags.Red.StageCenterSide) 
+    {
+      TargetPose = Constants.TargetLocations.Red.TrapFloorStageCenterSide;
     } 
 
 
@@ -80,7 +84,18 @@ public class AlignTrapShootCMD extends Command {
   }
   else if ( (CurrentAlliance.get() == Alliance.Blue))//substation
   {
-
+    if (targetID == Constants.AllianceAprilTags.Blue.StageAmpSide) 
+    {
+      TargetPose = Constants.TargetLocations.Blue.TrapFloorStageAmpSide;
+    } 
+    if (targetID == Constants.AllianceAprilTags.Blue.StageSourceSide) 
+    {
+      TargetPose = Constants.TargetLocations.Blue.TrapFloorSourceSide;
+    } 
+    if (targetID == Constants.AllianceAprilTags.Blue.StageCenterSide) 
+    {
+      TargetPose = Constants.TargetLocations.Blue.TrapFloorStageCenterSide;
+    } 
     Xspeed = Constants.TargetLocations.Blue.Xspeed;
     Yspeed = Constants.TargetLocations.Blue.Yspeed;
     rotationspeed = Constants.TargetLocations.Blue.rotationspeed;
