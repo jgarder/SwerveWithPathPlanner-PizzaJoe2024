@@ -5,6 +5,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 
 public class Constants {
 
+        /*
+	 * Talon FX has 2048 units per revolution
+	 * 
+	 * https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#sensor-resolution
+	 */
+	public static final int kTalonFXUnitsPerRevolution = 2048; /* this is constant for Talon FX */
+
   public static final double nominalBatteryVoltage = 12.0;
   public static final double stickDeadband = 0.10;
 
