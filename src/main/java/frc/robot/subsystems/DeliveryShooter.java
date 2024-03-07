@@ -23,7 +23,7 @@ public class DeliveryShooter extends SubsystemBase {
     /* Keep a neutral out so we can disable the motor */
     private final NeutralOut m_brake = new NeutralOut();
 
-    public final double maxRPM = 6250;
+    
     public double LastSetRPM = 0;
     public double WantedRPM = 0;
 

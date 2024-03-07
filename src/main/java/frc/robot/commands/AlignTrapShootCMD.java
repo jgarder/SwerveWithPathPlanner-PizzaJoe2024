@@ -65,18 +65,20 @@ public class AlignTrapShootCMD extends Command {
   int targetID = LLightSubsystem.getTargetID();
   if ( (CurrentAlliance.get() == Alliance.Red) )//substation
   { 
+    TargetPose = GetLatestPoseToBuffer();//default incase a tag is not seen. 
     if (targetID == Constants.AllianceAprilTags.Red.StageAmpSide) 
     {
       TargetPose = Constants.TargetLocations.Red.TrapFloorStageAmpSide;
     } 
-    if (targetID == Constants.AllianceAprilTags.Red.StageSourceSide) 
+    else if (targetID == Constants.AllianceAprilTags.Red.StageSourceSide) 
     {
       TargetPose = Constants.TargetLocations.Red.TrapFloorStageSourceSide;
     } 
-    if (targetID == Constants.AllianceAprilTags.Red.StageCenterSide) 
+    else if (targetID == Constants.AllianceAprilTags.Red.StageCenterSide) 
     {
       TargetPose = Constants.TargetLocations.Red.TrapFloorStageCenterSide;
-    } 
+    }
+    else end(true);
 
 
     Xspeed = Constants.TargetLocations.Red.Xspeed;
@@ -85,18 +87,20 @@ public class AlignTrapShootCMD extends Command {
   }
   else if ( (CurrentAlliance.get() == Alliance.Blue))//substation
   {
+    TargetPose = GetLatestPoseToBuffer();//default incase a tag is not seen. hack fix should just end?
     if (targetID == Constants.AllianceAprilTags.Blue.StageAmpSide) 
     {
       TargetPose = Constants.TargetLocations.Blue.TrapFloorStageAmpSide;
     } 
-    if (targetID == Constants.AllianceAprilTags.Blue.StageSourceSide) 
+    else if (targetID == Constants.AllianceAprilTags.Blue.StageSourceSide) 
     {
       TargetPose = Constants.TargetLocations.Blue.TrapFloorSourceSide;
     } 
-    if (targetID == Constants.AllianceAprilTags.Blue.StageCenterSide) 
+    else if (targetID == Constants.AllianceAprilTags.Blue.StageCenterSide) 
     {
       TargetPose = Constants.TargetLocations.Blue.TrapFloorStageCenterSide;
     } 
+    else end(true);
     Xspeed = Constants.TargetLocations.Blue.Xspeed;
     Yspeed = Constants.TargetLocations.Blue.Yspeed;
     rotationspeed = Constants.TargetLocations.Blue.rotationspeed;

@@ -95,7 +95,7 @@ public class Constants {
 
       public static final Pose2d TrapFloorStageCenterSide = new Pose2d(6.10, 4.00, Rotation2d.fromDegrees(-180));//14
       public static final Pose2d TrapFloorStageAmpSide = new Pose2d(4.25, 5.07, Rotation2d.fromDegrees(-60));//15
-      public static final Pose2d TrapFloorSourceSide = new Pose2d(4.25, 2.92, Rotation2d.fromDegrees(60));//16
+      public static final Pose2d TrapFloorSourceSide = new Pose2d(4.1910, 2.84, Rotation2d.fromDegrees(60));//16
     }
   }
   public static class CANBus
@@ -230,8 +230,8 @@ public class Constants {
       public static final double Tilt_Position_TrapLiftHitHook = 7.75;
       public static final double Tilt_Position_TrapLiftUp = 10.75;
       public static final double Tilt_Position_TrapLiftUpSHOOT = 28;
-      public static final double Tilt_Position_Speaker_Closest = 8;
-      public static final double Tilt_Position_Speaker_SafePost = 11.75;//10.85;
+      public static final double Tilt_Position_Speaker_Closest = 7.5;
+      public static final double Tilt_Position_Speaker_Podium = 11.4;//10.85;
       public static final double Tilt_Position_Speaker_Furthest = 10;
       public static final double Tilt_Position_Amp = 24;
 
@@ -239,10 +239,10 @@ public class Constants {
       //public static final double Tilt_Position_Trap = 12;
       public static final double Tilt_Position_HumanSource = 16;//12;
       
-
+      public static final double maxRPM = 6250;
       public static final double ShooterRpmOff = 0;
       public static final double ShooterRpmSpeakerClose = 4750;//4500;
-      public static final double ShooterRpmSpeakerPodium = 5500;
+      public static final double ShooterRpmSpeakerPodium = 6000;//5650;
       public static final double ShooterRpmAmp = 1500;
       public static final double ShooterRpmHumanSource = -1550;//-2250;//-1550;//-500;
     }

@@ -225,7 +225,7 @@ public class RobotContainer {
   {
     return new InstantCommand(()->{deliveryLifter.setSetpointPassing();},deliveryLifter)
       .alongWith(
-        new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_SafePost, deliveryTilt),
+        new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Podium, deliveryTilt),
         //new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_SafePost);},deliveryTilt),
       new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmSpeakerPodium));
   }
@@ -379,8 +379,14 @@ public class RobotContainer {
     .whileTrue(
       new AlignTrapShootCMD(drivetrainManager,LL3, () -> joystick.getRawAxis(strafeAxis)).andThen(JustShootIt(),C_ParkDeliveryHead())
     )
-    .onFalse(C_ParkDeliveryHead());;
+    .onFalse(C_ParkDeliveryHead());
     //
+    ///////////////////////
+  joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).and(()->!PizzaManager.AltControlModeEnabled)
+    .whileTrue(AlignWhereverShootSpeaker()
+    )
+    .onFalse(C_ParkDeliveryHead());
+    ///////////
     //OLD ALIGNMENT TEST AMP
     // joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).and(()->!PizzaManager.AltControlModeEnabled)
     //     .whileTrue(new AlignAmpCMD2(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
@@ -459,7 +465,16 @@ public class RobotContainer {
     configureTrapButtons();
   }
   
-
+public Command AlignWhereverShootSpeaker()
+{
+  return new AlignSpeakerTest(drivetrainManager,deliveryTilt,deliveryShooter,LL3, () -> joystick.getRawAxis(0), () -> joystick.getRawAxis(1))
+      .andThen(
+        new WaitForIndexCMD(deliveryHolder),
+        //C_ReadyCloseSpeakerShot(),
+        new ShootDeliveryHold(deliveryHolder),
+        C_ParkDeliveryHead()
+        );
+}
 
 
   public void configureTrapButtons()
@@ -551,6 +566,8 @@ public class RobotContainer {
       NamedCommands.registerCommand("PickupRoutine", PickupRoutine());
       NamedCommands.registerCommand("ReadyShootPreEmptive", ReadyShootPreEmptive());
       NamedCommands.registerCommand("JustShootIt",   JustShootIt());
+      NamedCommands.registerCommand("AlignWhereverShootSpeaker",   AlignWhereverShootSpeaker());
+
     
       
       //Now build the autos 
