@@ -146,9 +146,9 @@ public class AlignStageCMD extends Command {
     double RZposeAxis = RZAdjust * rotationspeed;
 
     //if any axis is within tolerance then stop jittering.
-    if(isRotInTarget()) {RZposeAxis = 0;}
-    if(IsXInTarget()){ xpose_adjust = 0;}
-    if(IsYInTarget()) { Ypose_adjust = 0;}
+    //if(isRotInTarget()) {RZposeAxis = 0;}
+    //if(IsXInTarget()){ xpose_adjust = 0;}
+    //if(IsYInTarget()) { Ypose_adjust = 0;}
 
     //Drive the swerve drive with whatever Axis adjustments are needed.
     drivetrainManager.drivetrain.setControl(drivetrainManager.FCdrive.withVelocityX(XposeAxis * drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)

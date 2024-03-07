@@ -57,6 +57,7 @@ public class AlignTrapShootCMD extends Command {
   int goodneeded = 5;
 
   public String Alignxyname = "AlignXY";
+  public String AlignRotname = "AlignRot";
 
   //////////////////////////////////////////////////////////// SETUP TARGET POSITIONS////////////////////////////////////////////
   //This is a top function because this is the logic for deciding what points are to be chosen and why. 
@@ -130,6 +131,10 @@ public class AlignTrapShootCMD extends Command {
     SmartDashboard.putNumber(Alignxyname + " P Gain", AlignXController.getP());
     SmartDashboard.putNumber(Alignxyname + " I Gain", AlignXController.getI());
     SmartDashboard.putNumber(Alignxyname + " D Gain", AlignXController.getD());
+    PidTuneRot(AlignRotname);
+    SmartDashboard.putNumber(AlignRotname + " P Gain", AlignRZController.getP());
+    SmartDashboard.putNumber(AlignRotname + " I Gain", AlignRZController.getI());
+    SmartDashboard.putNumber(AlignRotname + " D Gain", AlignRZController.getD());
     /////////////
   }
 
@@ -188,6 +193,7 @@ public class AlignTrapShootCMD extends Command {
     SmartDashboard.putBoolean("IsXInTarget", IsXInTarget());
     //pid tune if you want for debugging, not needed in competition. 
     PidTune(Alignxyname);
+    PidTuneRot(AlignRotname);
   }
 
 
@@ -267,5 +273,15 @@ public void end(boolean interrupted) {super.end(interrupted);}
     if((p != AlignPoseYController.getP())) { AlignPoseYController.setP(p); }
     if((i != AlignPoseYController.getI())) { AlignPoseYController.setI(i); }
     if((d != AlignPoseYController.getD())) { AlignPoseYController.setD(d); }
+  }
+  private void PidTuneRot(String PidName) {
+    double p = SmartDashboard.getNumber(PidName + " P Gain", Constants.ChassisPid.k_RZ_P);
+    double i = SmartDashboard.getNumber(PidName + " I Gain", Constants.ChassisPid.k_RZ_I);
+    double d = SmartDashboard.getNumber(PidName + " D Gain", Constants.ChassisPid.k_RZ_D);
+      
+    if((p != AlignRZController.getP())) { AlignRZController.setP(p); }
+    if((i != AlignRZController.getI())) { AlignRZController.setI(i); }
+    if((d != AlignRZController.getD())) { AlignRZController.setD(d); }
+
   }
 }

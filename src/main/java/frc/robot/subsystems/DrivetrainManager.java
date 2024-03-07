@@ -6,20 +6,17 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.CommandSwerveDrivetrain;
-import frc.robot.Constants;
 import frc.robot.Telemetry;
 import frc.robot.RobotContainer.PizzaManager;
 import frc.robot.generated.TunerConstants;
-import com.pathplanner.lib.auto.NamedCommands;
 
 public class DrivetrainManager extends SubsystemBase{
     
-    
-  public double MaxSpeed = 9;//6; // 6 meters per second desired top speed
+  public final double kMaxSpeed = 3.8; //closer the max speed is to the max speed in real life the more resolution the joystick will have for driver. 
+  public double MaxSpeed = kMaxSpeed;//9;//6; // 6 meters per second desired top speed
   public double MaxAngularRate = 2.5 * Math.PI; //1.8 ==  3/4 of a rotation per second max angular velocity
 
   public double MaxSpeedPid = 9;//6; // 6 meters per second desired top speed

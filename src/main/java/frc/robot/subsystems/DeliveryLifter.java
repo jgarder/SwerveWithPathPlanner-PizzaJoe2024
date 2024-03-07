@@ -154,12 +154,12 @@ public class DeliveryLifter extends SubsystemBase {
 
       public void resetEncoder() {
         SetSpeed(0);
-        Motor_Encoder.setPosition(Constants.PickupHead.minValue_PickupArm);
+        Motor_Encoder.setPosition(Constants.PizzaFloorPickupHead.minValue_PickupArm);
         setSetpointZero();
         
         Motor_Controller.enableSoftLimit(SoftLimitDirection.kReverse, true);
         //enable();//reactivate the pidcontroller of this subsystem
-        Motor_Encoder.setPosition(Constants.PickupHead.minValue_PickupArm);
+        Motor_Encoder.setPosition(Constants.PizzaFloorPickupHead.minValue_PickupArm);
       }
 
       public void setSetpoint(double setpoint) {

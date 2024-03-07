@@ -22,8 +22,7 @@ public class MovePickupToPosition extends Command{
   public void initialize() {
     m_Timer.reset();
     m_Timer.start();
-    m_pickuparm.setSetpoint(desiredSetpoint);
-    m_pickuparm.enable();
+    m_pickuparm.setSetpointToPosition(desiredSetpoint);
   }
 
   @Override

@@ -48,7 +48,7 @@ public class PickupSpinner extends SubsystemBase{
     {
         //super(new PIDController(Constants.PickupHead.kP_Spinner, Constants.PickupHead.kI_Spinner, Constants.PickupHead.kD_Spinner));//super class, must setup PID first
          //even though the default should be 0, lets tell the PID to goto 0 which is our starting position.
-         Motor_Encoder.setPosition(Constants.PickupHead.minValue_Spinner);
+         Motor_Encoder.setPosition(Constants.PizzaFloorPickupHead.minValue_Spinner);
          //setSetpoint(0);
 
          //the forward limit switch is used to detect note in pickup.

@@ -153,7 +153,7 @@ public class AlignSourceCMD extends Command {
 
     //JITTER REMOVER, enable if you have bad pids or loose tolerances
     //if any axis is within tolerance then stop jittering.
-      if(isRotInTarget()) {RZposeAxis = 0;}
+    //  if(isRotInTarget()) {RZposeAxis = 0;}
     //  if(IsXInTarget()){ xpose_adjust = 0;}
     //  if(IsYInTarget()) { Ypose_adjust = 0;}
     //////////////////////////////////////////////////

@@ -63,7 +63,7 @@ import frc.robot.subsystems.Limelight3Subsystem;
 import frc.robot.subsystems.PickupArm;
 import frc.robot.subsystems.PickupSpinner;
 import frc.robot.subsystems.SmartDashboardHandler;
-import frc.robot.subsystems.PickupArm.PickupState;
+
 
 public class RobotContainer {
 
@@ -96,7 +96,6 @@ public class RobotContainer {
     public static double RotationMulti = .45;
     public static boolean LimelightTelemetryUpdateRequested = true;
     public static boolean LimeLightBypassed = false;
-    public static PickupState LastKnownPickupState = PickupState.ZERO;
     public static boolean IsNoteInPickup = false;
     public static boolean NoteInDeliveryHolder = false;
     public static boolean AltControlModeEnabled = false;
@@ -194,7 +193,7 @@ public class RobotContainer {
   public Command C_ReturnPickupHead()
   {
 
-     return new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm)
+     return new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupPassing, pickuparm)
     .andThen(new WaitCommand(.175)) //small wait for debounce maybe take out and make grab deeper.
     ;
   }
@@ -272,7 +271,7 @@ public class RobotContainer {
     return new SequentialCommandGroup(new WaitForIndexCMD(deliveryHolder),C_ReadyCloseSpeakerShot(),new ShootDeliveryHold(deliveryHolder),new InstantCommand(()->{m_candleSubsystem.StrobeBlueLights();}),  C_ParkDeliveryHead());
   }
   private SequentialCommandGroup PickupRoutine() {
-    return new SequentialCommandGroup(new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm).unless(isNoteInIntakeboolSup),C_PickupPizzaFromFloorWithoutWashing().unless(isNoteInIntakeboolSup),C_ReturnPickupToPassing());
+    return new SequentialCommandGroup(new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupFloorPickup, pickuparm).unless(isNoteInIntakeboolSup),C_PickupPizzaFromFloorWithoutWashing().unless(isNoteInIntakeboolSup),C_ReturnPickupToPassing());
   }
   private Command AlignAndShootCenterSpeaker() {
     return new AlignSpeakerCMD(drivetrainManager,LL3,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
@@ -354,8 +353,8 @@ public class RobotContainer {
         .andThen(
               new ParallelCommandGroup(
               new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_Amp,deliveryLifter), 
-              new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Amp);},deliveryTilt),
-              new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmAmp)
+              new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Amp,deliveryTilt),
+              new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmAmp,25)
               )
               .andThen( 
                 (new ShootDeliveryHold(deliveryHolder)),
@@ -468,7 +467,7 @@ public class RobotContainer {
     //going DOWN
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionDOWN).and(()->PizzaManager.AltControlModeEnabled)
     .onTrue(new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_Zero, ChainLift)//.alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Park);}))
-    .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm)
+    .andThen(new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupPassing, pickuparm)
     .alongWith(C_ParkDeliveryHead(),new InstantCommand(()->{deliveryHolder.m_forwardLimit.enableLimitSwitch(true);}))
     ));
     
@@ -492,10 +491,10 @@ public class RobotContainer {
               )
           
       .andThen(new WaitCommand(1.0),new InstantCommand(()->{deliveryHolder.RequestIndex();}))
-      .andThen(new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm))
+      .andThen(new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupFloorPickup, pickuparm))
       .andThen(new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_Trap);},deliveryLifter))
       .andThen(new WaitCommand(2.0))
-      .andThen(new MovePickupToPosition(Constants.PickupHead.PickupVertical, pickuparm))
+      .andThen(new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupVertical, pickuparm))
       )
       )
       );
@@ -507,7 +506,7 @@ public class RobotContainer {
     //unfold and get ready for lift
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).and(()->PizzaManager.AltControlModeEnabled)
     .onTrue(
-      new MovePickupToPosition(Constants.PickupHead.PickupVertical, pickuparm)
+      new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupVertical, pickuparm)
     .alongWith(new InstantCommand(()->{
       deliveryHolder.m_forwardLimit.enableLimitSwitch(false);
       deliveryHolder.MovePosition(30);},deliveryHolder),
@@ -522,13 +521,13 @@ public class RobotContainer {
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).and(()->PizzaManager.AltControlModeEnabled)
     .onTrue(new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUpSHOOT, deliveryTilt)
     .alongWith(new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_TrapShoot);},deliveryLifter))
-    .alongWith(new MovePickupToPosition(Constants.PickupHead.PickupFloorPickup, pickuparm)
+    .alongWith(new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupFloorPickup, pickuparm)
     .alongWith(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose)))
     .andThen(new WaitCommand(.1),new ShootDeliveryHold(deliveryHolder))//new ShootDeliveryHold(deliveryHolder))
     )
     )
     .onFalse(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff))
-    .alongWith(new InstantCommand(() -> {deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUp);}).andThen(new MovePickupToPosition(Constants.PickupHead.PickupVertical, pickuparm))));
+    .alongWith(new InstantCommand(() -> {deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUp);}).andThen(new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupVertical, pickuparm))));
     //////
   }
   public RobotContainer() {
