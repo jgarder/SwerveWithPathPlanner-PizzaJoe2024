@@ -283,6 +283,11 @@ public class CANdleSystem extends SubsystemBase {
         clearAnimation();
         m_candle.setLEDs(255, 0, 0, 0, 8, LEDS_PER_ANIMATION + 8);
     }
+    public void YellowLights()
+    {
+        clearAnimation();
+        m_candle.setLEDs(255, 255, 0, 0, 8, LEDS_PER_ANIMATION + 8);
+    }
     public void BlueLights()
     {
         clearAnimation();
@@ -307,6 +312,26 @@ public class CANdleSystem extends SubsystemBase {
     public void StrobeGreenLights()
     {
         m_toAnimate = new StrobeAnimation(0, 255, 0, 0, 0.01, LEDS_PER_ANIMATION, m_candleChannel * LEDS_PER_ANIMATION + 8);
+    }
+    public void StrobeRedLights()
+    {
+        m_toAnimate = new StrobeAnimation(255, 0, 0, 0, 0.01, LEDS_PER_ANIMATION, m_candleChannel * LEDS_PER_ANIMATION + 8);
+    }
+    public void StrobeYellowLights()
+    {
+        m_toAnimate = new StrobeAnimation(255, 255, 0, 0, 0.01, LEDS_PER_ANIMATION, m_candleChannel * LEDS_PER_ANIMATION + 8);
+    }
+    public void StrobeCyanLights()
+    {
+        m_toAnimate = new StrobeAnimation(0, 255, 255, 0, 0.01, LEDS_PER_ANIMATION, m_candleChannel * LEDS_PER_ANIMATION + 8);
+    }
+    public void StrobePurpleLights()
+    {
+        m_toAnimate = new StrobeAnimation(255, 0, 255, 0, 0.01, LEDS_PER_ANIMATION, m_candleChannel * LEDS_PER_ANIMATION + 8);
+    }
+    public void StrobeWhiteLights()
+    {
+        m_toAnimate = new StrobeAnimation(255, 255, 255, 255, 0.01, LEDS_PER_ANIMATION, m_candleChannel * LEDS_PER_ANIMATION + 8);
     }
     public void RainbowRoadLights()
     {

@@ -4,8 +4,9 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public class Constants {
+  public static final String LimelightName = "limelight";
 
-        /*
+    /*
 	 * Talon FX has 2048 units per revolution
 	 * 
 	 * https://phoenix-documentation.readthedocs.io/en/latest/ch14_MCSensor.html#sensor-resolution
@@ -230,8 +231,8 @@ public class Constants {
       public static final double Tilt_Position_TrapLiftHitHook = 7.75;
       public static final double Tilt_Position_TrapLiftUp = 10.75;
       public static final double Tilt_Position_TrapLiftUpSHOOT = 28;
-      public static final double Tilt_Position_Speaker_Closest = 7.5;
-      public static final double Tilt_Position_Speaker_Podium = 11.4;//10.85;
+      public static final double Tilt_Position_Speaker_Closest = 7.4;
+      public static final double Tilt_Position_Speaker_Podium = 11.6;//10.85;
       public static final double Tilt_Position_Speaker_Furthest = 10;
       public static final double Tilt_Position_Amp = 24;
 

@@ -75,9 +75,9 @@ RobotContainer thisrobot;
 
     public void getdataToDashboard()
     {
-      if (DriverStation.getAlliance().isPresent()) {
-        SmartDashboard.putString("Alliance", DriverStation.getAlliance().toString());
-      }
+        if (DriverStation.getAlliance().isPresent()) {
+          SmartDashboard.putString("Alliance", DriverStation.getAlliance().toString());
+        }
         SmartDashboard.putBoolean("teleOpEnable", DriverStation.isTeleopEnabled());
         SmartDashboard.putBoolean("AutonEnable", DriverStation.isAutonomousEnabled());
         //SmartDashboard.putString("Alliance", DriverStation.getAlliance().toString());

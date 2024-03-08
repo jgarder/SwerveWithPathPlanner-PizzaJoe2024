@@ -52,9 +52,10 @@ public class DeliveryShooter extends SubsystemBase {
         m_motor = new TalonFX(Constants.CANBus.UppershooterCanID,Constants.CANBus.kRIOCANbusName);//new CANSparkMax(Constants.CANBus.UppershooterCanID, MotorType.kBrushless);
         m_motor_LowS = new TalonFX(Constants.CANBus.LowerShooterCanID,Constants.CANBus.kRIOCANbusName);//new CANSparkMax(Constants.CANBus.LowerShooterCanID, MotorType.kBrushless);
         
+        
         /* Torque-based velocity does not require a feed forward, as torque will accelerate the rotor up to the desired velocity by itself */
-        configs.Slot1.kP = 6;//5; // An error of 1 rotation per second results in 5 amps output
-        configs.Slot1.kI = .4;//0.1; // An error of 1 rotation per second increases output by 0.1 amps every second
+        configs.Slot1.kP = 12;//5; // An error of 1 rotation per second results in 5 amps output
+        configs.Slot1.kI = .8;//0.1; // An error of 1 rotation per second increases output by 0.1 amps every second
         configs.Slot1.kD = .001;//0.001; // A change of 1000 rotation per second squared results in 1 amp output
 
         // Peak output of 40 amps
@@ -108,7 +109,7 @@ public class DeliveryShooter extends SubsystemBase {
             LastSetRPM = WantedRPM;
             if(WantedRPM != 0)
             {
-                double friction_torque =0;// (WantedRPM > 0) ? 1 : -1; // To account for friction, we add this to the arbitrary feed forward
+                double friction_torque = 0;// (WantedRPM > 0) ? 1 : -1; // To account for friction, we add this to the arbitrary feed forward
                 /* Use torque velocity */
                 m_motor.setControl(m_torqueVelocity.withVelocity(WantedRPM/60).withFeedForward(friction_torque));
                 m_motor_LowS.setControl(m_torqueVelocity.withVelocity(WantedRPM/60).withFeedForward(friction_torque));

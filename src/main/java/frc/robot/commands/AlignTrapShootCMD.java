@@ -13,13 +13,13 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.DrivetrainManager;
 import frc.robot.subsystems.Limelight3Subsystem;
 
 
 public class AlignTrapShootCMD extends Command {
   
-  Limelight3Subsystem LLightSubsystem;
   DrivetrainManager drivetrainManager;
   Optional<Alliance> CurrentAlliance;
   private DoubleSupplier strafeSup;
@@ -62,7 +62,7 @@ public class AlignTrapShootCMD extends Command {
   //////////////////////////////////////////////////////////// SETUP TARGET POSITIONS////////////////////////////////////////////
   //This is a top function because this is the logic for deciding what points are to be chosen and why. 
   private void SetupTargetPosition() {
-  int targetID = LLightSubsystem.getTargetID();
+  double targetID = LimelightHelpers.getFiducialID(Constants.LimelightName);
   if ( (CurrentAlliance.get() == Alliance.Red) )//substation
   { 
     TargetPose = GetLatestPoseToBuffer();//default incase a tag is not seen. 
@@ -115,8 +115,7 @@ public class AlignTrapShootCMD extends Command {
   /////////////////////////////////////////////END TARGET SETUP 
 
   //this is the constructor, this is whats called when the object is built
-  public AlignTrapShootCMD(DrivetrainManager Thiss_Swerve,Limelight3Subsystem LL3, DoubleSupplier strafeSup) {
-    LLightSubsystem = LL3;
+  public AlignTrapShootCMD(DrivetrainManager Thiss_Swerve,DoubleSupplier strafeSup) {
     drivetrainManager = Thiss_Swerve;
     this.strafeSup = strafeSup;
     addRequirements(drivetrainManager); 
