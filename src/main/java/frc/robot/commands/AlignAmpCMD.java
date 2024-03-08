@@ -29,7 +29,7 @@ public class AlignAmpCMD extends Command {
   private final PIDController AlignRZController = new PIDController(Constants.ChassisPid.k_RZ_P,Constants.ChassisPid.k_RZ_I,Constants.ChassisPid.k_RZ_D);
   
   double minXposeErrorToCorrect = Constants.ChassisPid.minXposeErrorToCorrect; //.03175 Meters error is 1.25"
-  double minYposeErrorToCorrect = Constants.ChassisPid.minYposeErrorToCorrect;
+  double minYposeErrorToCorrect = Constants.ChassisPid.minYposeErrorToCorrect/1.3;
   double minRZErrorToCorrect = Constants.ChassisPid.minRZErrorToCorrect;
 
   double min_xpose_command = Constants.ChassisPid.min_xpose_command;

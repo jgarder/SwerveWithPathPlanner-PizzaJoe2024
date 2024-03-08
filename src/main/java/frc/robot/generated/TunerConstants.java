@@ -46,7 +46,7 @@ public class TunerConstants {
 
     private static final double kDriveGearRatio = 8.14;//7.363636364;//brody changed from 6.75;
     private static final double kSteerGearRatio = 15.42857143;
-    private static final double kWheelRadiusInches = 2;//1.929;//2.167; // Estimated at first, then fudge-factored to make odom match record
+    private static final double kWheelRadiusInches = 2;//1.992;//1.929;//2.167; // Estimated at first, then fudge-factored to make odom match record
 
     private static final boolean kSteerMotorReversed = true;
     private static final boolean kInvertLeftSide = false;
@@ -90,7 +90,7 @@ public class TunerConstants {
      private static final int kFrontLeftDriveMotorId = Constants.CANBus.kFrontLeftDriveMotorId;
      private static final int kFrontLeftSteerMotorId = Constants.CANBus.kFrontLeftSteerMotorId;
      private static final int kFrontLeftEncoderId = Constants.CANBus.kFrontLeftEncoderId;
-     private static final double kFrontLeftEncoderOffset = 0.070556640625;
+     private static final double kFrontLeftEncoderOffset = 0.069956640625;
  
      private static final double kFrontLeftXPosInches = 17.0625;
      private static final double kFrontLeftYPosInches = 17.0625;
@@ -99,7 +99,7 @@ public class TunerConstants {
      private static final int kFrontRightDriveMotorId = Constants.CANBus.kFrontRightDriveMotorId;
      private static final int kFrontRightSteerMotorId = Constants.CANBus.kFrontRightSteerMotorId;
      private static final int kFrontRightEncoderId = Constants.CANBus.kFrontRightEncoderId;
-     private static final double kFrontRightEncoderOffset = -0.43115234375;
+     private static final double kFrontRightEncoderOffset = -0.43815234375;
  
      private static final double kFrontRightXPosInches = 17.0625;
      private static final double kFrontRightYPosInches = -17.0625;
@@ -108,7 +108,7 @@ public class TunerConstants {
      private static final int kBackLeftDriveMotorId = Constants.CANBus.kBackLeftDriveMotorId;
      private static final int kBackLeftSteerMotorId = Constants.CANBus.kBackLeftSteerMotorId;
      private static final int kBackLeftEncoderId = Constants.CANBus.kBackLeftEncoderId;
-     private static final double kBackLeftEncoderOffset = 0.102783203125;
+     private static final double kBackLeftEncoderOffset = 0.100783203125;
  
      private static final double kBackLeftXPosInches = -17.0625;
      private static final double kBackLeftYPosInches = 17.0625;

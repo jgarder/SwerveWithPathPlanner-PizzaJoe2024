@@ -5,8 +5,6 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -18,22 +16,16 @@ import frc.robot.subsystems.CANdleSystem;
 import frc.robot.subsystems.DeliveryShooter;
 import frc.robot.subsystems.DeliveryTilt;
 import frc.robot.subsystems.DrivetrainManager;
-import frc.robot.subsystems.Limelight3Subsystem;
 
 public class AlignSpeakerTest extends Command {
-      /** Creates a new ArmStopCMD. */
+      
   DrivetrainManager drivetrainManager;
   CANdleSystem m_candleSubsystem;
   DeliveryTilt DTilt;
   DeliveryShooter Dshooter;
- double kMaxAngularSpeed = 2;
-double kMaxSpeed = 5;
-  //private final Drivetrain m_swerve = new Drivetrain();
+  double kMaxAngularSpeed = 2;
+  double kMaxSpeed = 5;
 
-  // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0 to 1.
-  private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(3);
-  private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(3);
-  private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
 
   DoubleSupplier XAxis;
   DoubleSupplier YAxis;
@@ -42,6 +34,7 @@ double kMaxSpeed = 5;
   double totaltilt=0;
   double TotalRpm=0;
   double currentPercentOfMaxDistance = 0;
+
   final double minYdistanceToShootFrom = 1.20;
   final double maxYtoShootFrom = 23.2;
   
@@ -55,6 +48,16 @@ double kMaxSpeed = 5;
   double RpmAddPossible = RPMAtMaxDistance-RPMatShortestDistance;
   double TiltAddPossible = TiltAtMaxDistance-TiltAtShortestDistance;
   private final PIDController AlignRZController = new PIDController(Constants.ChassisPid.k_RZ_P,Constants.ChassisPid.k_RZ_I,Constants.ChassisPid.k_RZ_D);
+  Optional<Alliance> CurrentAlliance;
+  public String AlignRotname = "AlignRotShot";
+  double RPMpercentageTolerance = 4;
+  int timesgood = 0;
+  int goodneeded = 5;
+  boolean RotationInRange = false;
+  double MaxRotationOffset = .025;
+  private final Timer m_SettleTimer = new Timer();
+  double SettleTimeAtCorrectRPM = .15;
+
 
   public AlignSpeakerTest(DrivetrainManager dtm, DeliveryTilt dTilt,DeliveryShooter dshooter,CANdleSystem candleSubsystem,DoubleSupplier Xaxis, DoubleSupplier Yaxis){
     m_candleSubsystem = candleSubsystem;
@@ -66,8 +69,7 @@ double kMaxSpeed = 5;
 
         //addRequirements(m_DeliveryHolder);
     }
-    Optional<Alliance> CurrentAlliance;
-  public String AlignRotname = "AlignRotShot";
+  
   
 
   // Called when the command is initially scheduled.
@@ -103,7 +105,7 @@ double kMaxSpeed = 5;
     //////
     if (currentPercentOfMaxDistance > 1.0) //if we are at greater than 100% shooting
     {
-      m_candleSubsystem.StrobeRedLights();
+      m_candleSubsystem.RedLights();
       return;
     }
     ///////////////////////
@@ -117,7 +119,7 @@ double kMaxSpeed = 5;
     double tid = LimelightHelpers.getFiducialID("limelight");
     if(tid != 4 & tid !=7)
     {
-      m_candleSubsystem.StrobeYellowLights();;
+      m_candleSubsystem.StrobeRedLights();
       return;
     }
     else
@@ -142,15 +144,14 @@ double kMaxSpeed = 5;
     return RZAdjust;//targetingAngularVelocity;
   }
 
-    private void drive() {
+  private void drive() {
 
-          var xSpeed = MathUtil.applyDeadband(XAxis.getAsDouble(),0.02);
-          var ySpeed = MathUtil.applyDeadband(YAxis.getAsDouble(),0.02);     
-    drivetrainManager.drivetrain.setControl(drivetrainManager.FCdriveAuton.withVelocityX(-ySpeed* drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
-            .withVelocityY(-xSpeed * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(rotationOffset * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
-        );
-
+      var xSpeed = MathUtil.applyDeadband(XAxis.getAsDouble(),0.02);
+      var ySpeed = MathUtil.applyDeadband(YAxis.getAsDouble(),0.02);     
+      drivetrainManager.drivetrain.setControl(drivetrainManager.FCdriveAuton.withVelocityX(-ySpeed* drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
+        .withVelocityY(-xSpeed * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
+        .withRotationalRate(rotationOffset * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
+    );
   }
 
 
@@ -161,22 +162,15 @@ double kMaxSpeed = 5;
     super.end(interrupted);
   }
 
-  //double currentPercentOfMaxDistance = 0;//MAX distance is the podium for our robot
-  //how many times must robot be in location for this to command to finish.
-  double percentageTolerance = 5;
-  int timesgood = 0;
-  int goodneeded = 5;
-  boolean RotationInRange = false;
-  private final Timer m_SettleTimer = new Timer();
-  double SettleTimeAtCorrectRPM = .15;
+  
   @Override
   public boolean isFinished() {
 
-        RotationInRange = Math.abs(rotationOffset) < .025;//.01
+        RotationInRange = Math.abs(rotationOffset) < MaxRotationOffset;//.01
         SmartDashboard.putBoolean("isRotInTarget", RotationInRange);
         ///RPM SPOOLer
-        boolean isUpperWithinRange = Constants.isWithinPercentage(Dshooter.CurrentEncoderVelocity, Dshooter.LastSetRPM, percentageTolerance);
-        boolean islowerWithinRange = Constants.isWithinPercentage(Dshooter.CurrentEncoderVelocity_LowS, Dshooter.LastSetRPM, percentageTolerance);
+        boolean isUpperWithinRange = Constants.isWithinPercentage(Dshooter.CurrentEncoderVelocity, Dshooter.LastSetRPM, RPMpercentageTolerance);
+        boolean islowerWithinRange = Constants.isWithinPercentage(Dshooter.CurrentEncoderVelocity_LowS, Dshooter.LastSetRPM, RPMpercentageTolerance);
         SmartDashboard.putBoolean("isUpperWithinRange", isUpperWithinRange);
         SmartDashboard.putBoolean("islowerWithinRange", islowerWithinRange);
         boolean ReadyTofire = false;

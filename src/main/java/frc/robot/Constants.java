@@ -243,7 +243,7 @@ public class Constants {
       public static final double maxRPM = 6250;
       public static final double ShooterRpmOff = 0;
       public static final double ShooterRpmSpeakerClose = 4750;//4500;
-      public static final double ShooterRpmSpeakerPodium = 6000;//5650;
+      public static final double ShooterRpmSpeakerPodium = 5900;//5650;
       public static final double ShooterRpmAmp = 1500;
       public static final double ShooterRpmHumanSource = -1550;//-2250;//-1550;//-500;
     }

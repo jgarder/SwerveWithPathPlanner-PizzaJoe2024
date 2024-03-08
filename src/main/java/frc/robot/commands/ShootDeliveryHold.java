@@ -12,6 +12,11 @@ public class ShootDeliveryHold extends Command{
         m_DeliveryHolder = deliveryHolder;
         addRequirements(m_DeliveryHolder);
     }
+     public ShootDeliveryHold(DeliveryHolder deliveryHolder,double ForSeconds){
+      TimeoutSeconds=ForSeconds;
+        m_DeliveryHolder = deliveryHolder;
+        addRequirements(m_DeliveryHolder);
+    }
 
     @Override
   public void initialize() {

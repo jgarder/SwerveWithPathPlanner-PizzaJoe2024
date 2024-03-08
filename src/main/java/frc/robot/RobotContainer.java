@@ -357,7 +357,7 @@ public class RobotContainer {
               new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmAmp,25)
               )
               .andThen( 
-                (new ShootDeliveryHold(deliveryHolder)),
+                (new ShootDeliveryHold(deliveryHolder,.5)),
                 new InstantCommand(()->{m_candleSubsystem.StrobeBlueLights();},m_candleSubsystem),
               C_ParkDeliveryHead()
               //.onlyIf(()->PizzaManager.NoteInDeliveryHolder)
