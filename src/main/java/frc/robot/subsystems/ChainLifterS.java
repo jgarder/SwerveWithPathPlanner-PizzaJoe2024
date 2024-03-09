@@ -1,5 +1,10 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -32,98 +37,102 @@ public class ChainLifterS extends SubsystemBase {
     double kFF = 0.00;
     double kIz = 0;
 
-    private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.CANBus.ChainLifterCanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
-    private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
-    private final SparkPIDController MotorControllerPid = Motor_Controller.getPIDController();
+    TalonFXConfiguration configs = new TalonFXConfiguration();
+    private final TalonFX Motor_Controller = new TalonFX(Constants.CANBus.ChainLifterCanBusID,Constants.CANBus.kRIOCANbusName);
+      /* Start at position 0, no feed forward, use slot 1 */
+    private final PositionTorqueCurrentFOC m_torquePosition = new PositionTorqueCurrentFOC(0, 0, 0, 1, false, false, false);
+    /* Keep a neutral out so we can disable the motor */
+    private final NeutralOut m_brake = new NeutralOut();
+
+   // private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.CANBus.ChainLifterCanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
+   // private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
+   // private final SparkPIDController MotorControllerPid = Motor_Controller.getPIDController();
     
     public ChainLifterS()
     {
-        //super(new PIDController(Constants.PickupHead.kP_lifter, Constants.PickupHead.kI_lifter, Constants.PickupHead.kD_lifter));//super class, must setup PID first
-        //even though the default should be 0, lets tell the PID to goto 0 which is our starting position.
 
-        Motor_Encoder.setPosition(Constants.ChainLifter.Lift_minValue);
-        MotorControllerPid.setP(kP_lifter);
-        MotorControllerPid.setI(kI_lifter);
-        MotorControllerPid.setD(kD_lifter);
-        MotorControllerPid.setFF(kFF);
-        MotorControllerPid.setOutputRange(kMinOutput, kMaxOutput);
-        MotorControllerPid.setReference(0.0, CANSparkBase.ControlType.kPosition);
-        //setSetpoint(0);
-        //should the motor controller be inverted? 0 is folded in and 44 (or max) is folded out.
-        Motor_Controller.setInverted(false);
+      SetupMotorConfig();
+      Motor_Controller.setPosition(0);
+      //should the motor controller be inverted? 0 is folded in and 44 (or max) is folded out.
+      Motor_Controller.setInverted(false);
+      
+      // display PID coefficients on SmartDashboard
+      SmartDashboard.putNumber(MotorName + " P Gain", kP_lifter);
+      SmartDashboard.putNumber(MotorName + " I Gain", kI_lifter);
+      SmartDashboard.putNumber(MotorName + " D Gain", kD_lifter);
+      SmartDashboard.putNumber(MotorName + " I Zone", kIz);
+      SmartDashboard.putNumber(MotorName + " Feed Forward", kFF);
 
-        //Enable the soft limits and set the values
-        Motor_Controller.enableSoftLimit(SoftLimitDirection.kForward, true);
-        Motor_Controller.enableSoftLimit(SoftLimitDirection.kReverse, true);
-        Motor_Controller.setSoftLimit(SoftLimitDirection.kForward, (float)Constants.ChainLifter.Lift_maxValue);
-        Motor_Controller.setSoftLimit(SoftLimitDirection.kReverse, (float)Constants.ChainLifter.Lift_minValue);
+    }
+    
+      private void SetupMotorConfig() {
+      
 
-        //set the idle mode to brake so it doesnt move when we dont want it to, or coast if we want it to coast after "stopping"
-        Motor_Controller.setIdleMode(IdleMode.kBrake);
-        
-        //set the ramp rate to controll sudden input changes (smooth input
-        Motor_Controller.setClosedLoopRampRate(0);//.05
-        Motor_Controller.setOpenLoopRampRate(0);//.05 -small ramp rate becuase this will reverse instantly. 
-        
-        //current limit to keep motors safe from Fire (over current)
-        Motor_Controller.setSmartCurrentLimit(35);
+      configs.Slot1.kP = 40; // An error of 1 rotations results in 40 amps output
+      configs.Slot1.kI = 0;
+      configs.Slot1.kD = 2; // A change of 1 rotation per second results in 2 amps output
+      // Peak output of 130 amps
+      configs.TorqueCurrent.PeakForwardTorqueCurrent = 130;
+      configs.TorqueCurrent.PeakReverseTorqueCurrent = 130;
+      
+      configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+      configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-        //limit everything on this motor controller to 500ms except the status 0 frame which is 10ms and does faults and applied output. 
-        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);  //Default Rate: 20ms ,Motor Velocity,Motor Temperature,Motor VoltageMotor Current
-        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);  //Default Rate: 20ms ,Motor Position
-        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 250); //Default Rate: 50ms ,Analog Sensor Voltage ,Analog Sensor Velocity ,Analog Sensor Position
-        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 250); //Default Rate: 20ms, Alternate Encoder Velocity,Alternate Encoder Position
-        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Position,Duty Cycle Absolute Encoder Absolute Angle
-        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Velocity,Duty Cycle Absolute Encoder Frequency
-        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);  //Default Rate: 20ms ,Motor Velocity,Motor Temperature,Motor VoltageMotor Current
-        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);  //Default Rate: 20ms ,Motor Velocity,Motor Temperature,Motor VoltageMotor Current
-        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);  //Default Rate: 20ms ,Motor Position
-        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 50); //Default Rate: 50ms ,Analog Sensor Voltage ,Analog Sensor Velocity ,Analog Sensor Position
-        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 20); //Default Rate: 20ms, Alternate Encoder Velocity,Alternate Encoder Position
-        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Position,Duty Cycle Absolute Encoder Absolute Angle
-        // Motor_Controller.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); //Default Rate: 200ms, Duty Cycle Absolute Encoder Velocity,Duty Cycle Absolute Encoder Frequency
-  
-        
-        // display PID coefficients on SmartDashboard
-        SmartDashboard.putNumber(MotorName + " P Gain", kP_lifter);
-        SmartDashboard.putNumber(MotorName + " I Gain", kI_lifter);
-        SmartDashboard.putNumber(MotorName + " D Gain", kD_lifter);
-        SmartDashboard.putNumber(MotorName + " I Zone", kIz);
-        SmartDashboard.putNumber(MotorName + " Feed Forward", kFF);
+      configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.DeliveryHead.Lift_maxValue;
+      configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.DeliveryHead.Lift_minValue;
+
+
+
+      SetConfigToMotor();
+
 
     }
 
-    public void getEncoderData()
-    {
-      OutputCurrent = Motor_Controller.getOutputCurrent();
-      SmartDashboard.putNumber(MotorName + " Amps",OutputCurrent);
-  
-      MotorTemp = Motor_Controller.getMotorTemperature();
-      SmartDashboard.putNumber(MotorName + " Motor Temp",MotorTemp);
-      /**
-       * Encoder position is read from a RelativeEncoder object by calling the
-       * GetPosition() method.
-       * 
-       * GetPosition() returns the position of the encoder in units of revolutions
-       */
-      CurrentEncoderValue = Motor_Encoder.getPosition();
-      SmartDashboard.putNumber(MotorName + " PID Encoder Position",CurrentEncoderValue);
-  
-      /**
-       * Encoder velocity is read from a RelativeEncoder object by calling the
-       * GetVelocity() method.
-       * 
-       * GetVelocity() returns the velocity of the encoder in units of RPM
-       */
-      CurrentEncoderVelocity = Motor_Encoder.getVelocity();
-      SmartDashboard.putNumber(MotorName + " Velocity", CurrentEncoderVelocity);
-      
-      SmartDashboard.putNumber(MotorName + " PID output",Motor_Controller.getAppliedOutput());
-      SmartDashboard.putNumber(MotorName + " setpoint ",  WantedEncoderValue);
-      
+      private void SetConfigToMotor() {
+        /* Retry config apply up to 5 times, report if failure */
+        StatusCode status = StatusCode.StatusCodeNotInitialized;
+        for (int i = 0; i < 5; ++i) {
+          //PUT MOTORS TO BE CONFIGED HERE
+          status = Motor_Controller.getConfigurator().apply(configs);
+          //
+          if (status.isOK()) break;
+        }
+        if(!status.isOK()) {
+          System.out.println("Could not apply configs, error code: " + status.toString());
+        }
+      }
 
-    }
-
+      public void getEncoderData()
+      {
+        OutputCurrent = Motor_Controller.getTorqueCurrent().getValueAsDouble();;
+        SmartDashboard.putNumber(MotorName + " Amps",OutputCurrent);
+    
+        MotorTemp = Motor_Controller.getDeviceTemp().getValueAsDouble();
+        SmartDashboard.putNumber(MotorName + " Motor Temp",MotorTemp);
+        /**
+         * Encoder position is read from a RelativeEncoder object by calling the
+         * GetPosition() method.
+         * 
+         * GetPosition() returns the position of the encoder in units of revolutions
+         */
+        CurrentEncoderValue = Motor_Controller.getPosition().getValueAsDouble();
+        SmartDashboard.putNumber(MotorName + " PID Encoder Position",CurrentEncoderValue);
+    
+        /**
+         * Encoder velocity is read from a RelativeEncoder object by calling the
+         * GetVelocity() method.
+         * 
+         * GetVelocity() returns the velocity of the encoder in units of RPM
+         */
+        CurrentEncoderVelocity = Motor_Controller.getVelocity().getValueAsDouble();
+        SmartDashboard.putNumber(MotorName + " Velocity", CurrentEncoderVelocity*60);
+        
+        SmartDashboard.putNumber(MotorName + " PID output",Motor_Controller.getClosedLoopOutput().getValueAsDouble());
+        SmartDashboard.putNumber(MotorName + " setpoint ",  WantedEncoderValue);
+        
+  
+      }
+  
     @Override
     public void periodic() {
         //anything you wanted to do periodically put it here.
@@ -131,17 +140,15 @@ public class ChainLifterS extends SubsystemBase {
       getEncoderData();
       //super.periodic();// This is a PidSubsystem, we have orridden the periodic method to get encoder data... So we need to call the super periodic method to get the PID stuff to work.
       // read PID coefficients from SmartDashboard
+      
     double p = SmartDashboard.getNumber(MotorName + " P Gain", 0);
     double i = SmartDashboard.getNumber(MotorName + " I Gain", 0);
     double d = SmartDashboard.getNumber(MotorName + " D Gain", 0);
-    double iz = SmartDashboard.getNumber(MotorName + " I Zone", 0);
-    double ff = SmartDashboard.getNumber(MotorName + " Feed Forward", 0);
+
       
-      if((p != kP_lifter)) { MotorControllerPid.setP(p); kP_lifter = p; }
-    if((i != kI_lifter)) { MotorControllerPid.setI(i); kI_lifter = i; }
-    if((d != kD_lifter)) { MotorControllerPid.setD(d); kD_lifter = d; }
-    if((iz != kIz)) { MotorControllerPid.setIZone(iz); kIz = iz; }
-    if((ff != kFF)) { MotorControllerPid.setFF(ff); kFF = ff; }
+    //   if((p != kP_Tilter)) { configs.Slot1.kP = p; kP_Tilter = p; SetConfigToMotor(); }
+    // if((i != kI_Tilter)) { configs.Slot1.kI = i; kI_Tilter = i; SetConfigToMotor(); }
+    // if((d != kD_Tilter)) { configs.Slot1.kD = d; kD_Tilter = d; SetConfigToMotor(); }
     
     }
 
@@ -150,36 +157,29 @@ public class ChainLifterS extends SubsystemBase {
       }
     
 
-      public void resetEncoder() {
-        SetSpeed(0);
-        Motor_Encoder.setPosition(Constants.ChainLifter.Lift_minValue);
-        setSetpointZero();
-        
-        Motor_Controller.enableSoftLimit(SoftLimitDirection.kReverse, true);
-      }
 
       public void AlterSetpointposition(double AddToPosition)
       {
         WantedEncoderValue = WantedEncoderValue + AddToPosition;
-        MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
+        Motor_Controller.setControl(m_torquePosition.withPosition(WantedEncoderValue));
       }
 
       public void setSetpointToPosition(double position)
       {
         //enable();
         WantedEncoderValue = position;
-        MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
+        Motor_Controller.setControl(m_torquePosition.withPosition(WantedEncoderValue));
       }
 
       public void setSetpointZero() {
         //enable();
         WantedEncoderValue = Constants.ChainLifter.Lift_Position_Zero;
-        MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
+        Motor_Controller.setControl(m_torquePosition.withPosition(WantedEncoderValue));
       }
         public void setSetpointCenterAndTrapLift() {
         //enable();
         WantedEncoderValue = Constants.ChainLifter.Lift_Position_CenterAndTrap;
-        MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
+        Motor_Controller.setControl(m_torquePosition.withPosition(WantedEncoderValue));
       }
 
 
