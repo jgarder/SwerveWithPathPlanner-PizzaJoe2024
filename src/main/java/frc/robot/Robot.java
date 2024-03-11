@@ -24,6 +24,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     m_robotContainer.drivetrainManager.drivetrain.getDaqThread().setThreadPriority(99);
+  
   }
   @Override
   public void robotPeriodic() {
@@ -52,14 +53,22 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
+    m_Timer.reset();
+    m_Timer.start();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
   }
-
+  private final Timer m_Timer = new Timer();
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+
+    if(m_Timer.get() >= 15){
+      if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
+    }
+    }
+  }
 
   @Override
   public void autonomousExit() {}

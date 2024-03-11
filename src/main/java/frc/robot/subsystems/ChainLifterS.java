@@ -1,10 +1,12 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -30,9 +32,9 @@ public class ChainLifterS extends SubsystemBase {
     double kMaxOutput = 1; 
     double kMinOutput = -1;
 
-    double kP_lifter = 0.0500;//0.0400;
+    double kP_lifter = 5.000;//0.0400;
     double kI_lifter = 0.000004;
-    double kD_lifter = 0.000001;
+    double kD_lifter = 0.250001;
 
     double kFF = 0.00;
     double kIz = 0;
@@ -55,7 +57,7 @@ public class ChainLifterS extends SubsystemBase {
       Motor_Controller.setPosition(0);
       //should the motor controller be inverted? 0 is folded in and 44 (or max) is folded out.
       Motor_Controller.setInverted(false);
-      
+      Motor_Controller.setNeutralMode(NeutralModeValue.Brake);
       // display PID coefficients on SmartDashboard
       SmartDashboard.putNumber(MotorName + " P Gain", kP_lifter);
       SmartDashboard.putNumber(MotorName + " I Gain", kI_lifter);
@@ -68,20 +70,20 @@ public class ChainLifterS extends SubsystemBase {
       private void SetupMotorConfig() {
       
 
-      configs.Slot1.kP = 40; // An error of 1 rotations results in 40 amps output
-      configs.Slot1.kI = 0;
-      configs.Slot1.kD = 2; // A change of 1 rotation per second results in 2 amps output
+      configs.Slot1.kP = kP_lifter; // An error of 1 rotations results in 40 amps output
+      configs.Slot1.kI = kI_lifter;
+      configs.Slot1.kD = kD_lifter; // A change of 1 rotation per second results in 2 amps output
       // Peak output of 130 amps
-      configs.TorqueCurrent.PeakForwardTorqueCurrent = 130;
-      configs.TorqueCurrent.PeakReverseTorqueCurrent = 130;
+      configs.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+      configs.TorqueCurrent.PeakReverseTorqueCurrent = -40;
       
       configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
-      configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.DeliveryHead.Lift_maxValue;
-      configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.DeliveryHead.Lift_minValue;
+      configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.ChainLifter.Lift_maxValue;
+      configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.ChainLifter.Lift_minValue;
 
-
+      
 
       SetConfigToMotor();
 
@@ -132,7 +134,14 @@ public class ChainLifterS extends SubsystemBase {
         
   
       }
-  
+      
+      public void disableatpark()
+      {
+        setSetpointToPosition(CurrentEncoderValue);
+        //Motor_Controller.stopMotor();
+        Motor_Controller.setControl(m_brake);//we press into our hysterisis on powerup. so without this the tilt motor always runs trying to go to the bottom. 
+      }
+
     @Override
     public void periodic() {
         //anything you wanted to do periodically put it here.
@@ -146,9 +155,9 @@ public class ChainLifterS extends SubsystemBase {
     double d = SmartDashboard.getNumber(MotorName + " D Gain", 0);
 
       
-    //   if((p != kP_Tilter)) { configs.Slot1.kP = p; kP_Tilter = p; SetConfigToMotor(); }
-    // if((i != kI_Tilter)) { configs.Slot1.kI = i; kI_Tilter = i; SetConfigToMotor(); }
-    // if((d != kD_Tilter)) { configs.Slot1.kD = d; kD_Tilter = d; SetConfigToMotor(); }
+      if((p != kP_lifter)) { configs.Slot1.kP = p; kP_lifter = p; SetConfigToMotor(); }
+      if((i != kI_lifter)) { configs.Slot1.kI = i; kI_lifter = i; SetConfigToMotor(); }
+      if((d != kD_lifter)) { configs.Slot1.kD = d; kD_lifter = d; SetConfigToMotor(); }
     
     }
 
@@ -186,7 +195,7 @@ public class ChainLifterS extends SubsystemBase {
       public boolean HasNote = false;
 
 
-    double setpointTolerance = 2.5;
+    double setpointTolerance = 1.0;
       public boolean atSetpoint() {        
           if (Constants.isWithinAmount(CurrentEncoderValue, WantedEncoderValue, setpointTolerance)) {
             return true;

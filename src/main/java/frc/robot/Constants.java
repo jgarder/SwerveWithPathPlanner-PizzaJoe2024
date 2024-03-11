@@ -160,7 +160,7 @@ public class Constants {
     public static class ChainLifter
     {
         public static final double Lift_minValue = 0;
-        public static final double Lift_maxValue = 340;//430;
+        public static final double Lift_maxValue = 346;//430;
         
 
         public static final double Lift_Position_Zero = 0;
@@ -224,16 +224,17 @@ public class Constants {
       public static final double Tilt_maxValue = 28;
       
       public static final double Tilt_Position_Zero = 0;
-      public static final double Tilt_Position_Park = 0;
+      public static final double Tilt_Position_Park = .25;
       public static final double Tilt_Position_Passing = 5;
       public static final double Tilt_Position_TrapLift = 2;//7.75;
       public static final double Tilt_Position_TrapDodge = 6;//7.75;
-      public static final double Tilt_Position_TrapLiftHitHook = 7.75;
+      public static final double Tilt_Position_TrapLiftHitHook = 17;//7.75;
       public static final double Tilt_Position_TrapLiftUp = 10.75;
       public static final double Tilt_Position_TrapLiftUpSHOOT = 28;
-      public static final double Tilt_Position_Speaker_Closest = 7.2;
-      public static final double Tilt_Position_Speaker_Podium = 11.6;//10.85;
-      public static final double Tilt_Position_Speaker_Furthest = 10;
+      public static  double Tilt_Position_Speaker_Closest = 12.75;//11.25;//10.75;//8.5;//11.5;//7.2;
+      public static  double Tilt_Position_Speaker_Furthest = 17.3;//15.75;//14.75;
+
+      public static  double Tilt_Position_Speaker_Podium = 12.5;//10.85;
       public static final double Tilt_Position_Amp = 24;
 
       //public static final double Tilt_Position_TrapStart = 11;

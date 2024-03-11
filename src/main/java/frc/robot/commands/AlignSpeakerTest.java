@@ -38,8 +38,8 @@ public class AlignSpeakerTest extends Command {
   final double minYdistanceToShootFrom = 1.20;
   final double maxYtoShootFrom = 23.2;
   
-  final double TiltAtShortestDistance = Constants.DeliveryHead.Tilt_Position_Speaker_Closest;
-  final double TiltAtMaxDistance = Constants.DeliveryHead.Tilt_Position_Speaker_Podium;//Tilt at max distance (podium)
+   double TiltAtShortestDistance = 0;//Constants.DeliveryHead.Tilt_Position_Speaker_Closest;
+   double TiltAtMaxDistance = 0;//Constants.DeliveryHead.Tilt_Position_Speaker_Furthest;//Tilt at max distance (podium)
 
   final double RPMatShortestDistance = Constants.DeliveryHead.ShooterRpmSpeakerClose;
   final double RPMAtMaxDistance = Constants.DeliveryHead.ShooterRpmSpeakerPodium;//RPM at max distance (podium)
@@ -66,7 +66,7 @@ public class AlignSpeakerTest extends Command {
     XAxis = Xaxis;
     YAxis =  Yaxis;
     drivetrainManager=dtm;
-
+  
         //addRequirements(m_DeliveryHolder);
     }
   
@@ -78,6 +78,11 @@ public class AlignSpeakerTest extends Command {
     //get our alliance red or blue.
    CurrentAlliance = DriverStation.getAlliance();
    AlignRZController.setSetpoint(-13); //-13 means we always look to the right of where we want to shoot. 
+
+    TiltAtShortestDistance = Constants.DeliveryHead.Tilt_Position_Speaker_Closest;
+    TiltAtMaxDistance = Constants.DeliveryHead.Tilt_Position_Speaker_Furthest;//Tilt at max distance (podium)
+    TiltAddPossible = TiltAtMaxDistance-TiltAtShortestDistance;
+    //System.out.println("Closest num" + Constants.DeliveryHead.Tilt_Position_Speaker_Closest);
   }
   @Override
   public void execute() {

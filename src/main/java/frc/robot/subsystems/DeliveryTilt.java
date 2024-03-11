@@ -31,14 +31,15 @@ public class DeliveryTilt extends SubsystemBase {
     double kMaxOutput = 1; 
     double kMinOutput = -1;
 
-    double kP_Tilter = 0.0700;
-    double kI_Tilter = 0.000004;
-    double kD_Tilter = 0.000001;
+    double kP_Tilter = 20.0000;
+    double kI_Tilter = 60.000000;
+    double kD_Tilter = 3.000000;
 
     double kFF = 0.00;
     double kIz = 0;
 
-    private final TalonFX Motor_Controller = new TalonFX(Constants.CANBus.Tilt_CanBusID,Constants.CANBus.kRIOCANbusName);
+    
+    public final TalonFX Motor_Controller = new TalonFX(Constants.CANBus.Tilt_CanBusID,Constants.CANBus.kRIOCANbusName);
       /* Start at position 0, no feed forward, use slot 1 */
     private final PositionTorqueCurrentFOC m_torquePosition = new PositionTorqueCurrentFOC(0, 0, 0, 1, false, false, false);
     /* Keep a neutral out so we can disable the motor */
@@ -61,6 +62,9 @@ public class DeliveryTilt extends SubsystemBase {
         SmartDashboard.putNumber(MotorName + " D Gain", kD_Tilter);
         SmartDashboard.putNumber(MotorName + " I Zone", kIz);
         SmartDashboard.putNumber(MotorName + " Feed Forward", kFF);
+
+        SmartDashboard.putNumber(MotorName + " Closest Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Closest);
+        SmartDashboard.putNumber(MotorName + " Furthest Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Furthest);
 
     }
 
@@ -87,7 +91,7 @@ public class DeliveryTilt extends SubsystemBase {
        * GetVelocity() returns the velocity of the encoder in units of RPM
        */
       CurrentEncoderVelocity = Motor_Controller.getVelocity().getValueAsDouble();
-      SmartDashboard.putNumber(MotorName + " Velocity", CurrentEncoderVelocity*60);
+      SmartDashboard.putNumber(MotorName + " RPM", CurrentEncoderVelocity*60);
       
       SmartDashboard.putNumber(MotorName + " PID output",Motor_Controller.getClosedLoopOutput().getValueAsDouble());
       SmartDashboard.putNumber(MotorName + " setpoint ",  WantedEncoderValue);
@@ -105,11 +109,14 @@ public class DeliveryTilt extends SubsystemBase {
     double p = SmartDashboard.getNumber(MotorName + " P Gain", 0);
     double i = SmartDashboard.getNumber(MotorName + " I Gain", 0);
     double d = SmartDashboard.getNumber(MotorName + " D Gain", 0);
+    double mintilt =  SmartDashboard.getNumber(MotorName + " Closest Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Closest);
+    double maxtilt =  SmartDashboard.getNumber(MotorName + " Furthest Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Furthest);
+    if((Constants.DeliveryHead.Tilt_Position_Speaker_Closest != mintilt)) { Constants.DeliveryHead.Tilt_Position_Speaker_Closest = mintilt; }
+    if((Constants.DeliveryHead.Tilt_Position_Speaker_Furthest != maxtilt)) { Constants.DeliveryHead.Tilt_Position_Speaker_Furthest = maxtilt;}//System.out.println("MaxTiltSet");
 
-      
-    //   if((p != kP_Tilter)) { configs.Slot1.kP = p; kP_Tilter = p; SetConfigToMotor(); }
-    // if((i != kI_Tilter)) { configs.Slot1.kI = i; kI_Tilter = i; SetConfigToMotor(); }
-    // if((d != kD_Tilter)) { configs.Slot1.kD = d; kD_Tilter = d; SetConfigToMotor(); }
+    if((p != kP_Tilter)) { configs.Slot1.kP = p; kP_Tilter = p; SetConfigToMotor(); }
+     if((i != kI_Tilter)) { configs.Slot1.kI = i; kI_Tilter = i; SetConfigToMotor(); }
+     if((d != kD_Tilter)) { configs.Slot1.kD = d; kD_Tilter = d; SetConfigToMotor(); }
       
     
     }
@@ -122,20 +129,20 @@ public class DeliveryTilt extends SubsystemBase {
       private void SetupMotorConfig() {
       
 
-      configs.Slot1.kP = 40; // An error of 1 rotations results in 40 amps output
-      configs.Slot1.kI = 0;
-      configs.Slot1.kD = 2; // A change of 1 rotation per second results in 2 amps output
+      configs.Slot1.kP = kP_Tilter;//40; // An error of 1 rotations results in 40 amps output
+      configs.Slot1.kI = kI_Tilter;//0;
+      configs.Slot1.kD = kD_Tilter;//2; // A change of 1 rotation per second results in 2 amps output
       // Peak output of 130 amps
-      configs.TorqueCurrent.PeakForwardTorqueCurrent = 130;
-      configs.TorqueCurrent.PeakReverseTorqueCurrent = 130;
+      configs.TorqueCurrent.PeakForwardTorqueCurrent = 30;
+      configs.TorqueCurrent.PeakReverseTorqueCurrent = -30;
       
       configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
       configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.DeliveryHead.Tilt_maxValue;
-      configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.DeliveryHead.Tilt_minValue;
+      configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.DeliveryHead.Tilt_minValue-5;
 
-
+      
 
       SetConfigToMotor();
 
@@ -189,7 +196,12 @@ public class DeliveryTilt extends SubsystemBase {
 
 
       public boolean HasNote = false;
-
+      public void disableatpark()
+      {
+        setSetpointToPosition(CurrentEncoderValue);
+        //Motor_Controller.stopMotor();
+        Motor_Controller.setControl(m_brake);//we press into our hysterisis on powerup. so without this the tilt motor always runs trying to go to the bottom. 
+      }
 
     double setpointTolerance = 2.0;
       public boolean atSetpoint() {        

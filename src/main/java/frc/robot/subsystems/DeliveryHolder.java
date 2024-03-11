@@ -150,6 +150,15 @@ public class DeliveryHolder extends SubsystemBase {
       SmartDashboard.putString("IndexStage","Requested");
       pickedupNote = false;
     }
+    public void RequestIndex(PizzaManager.PizzaTracker stage)
+    {
+      m_Timer.reset();
+      m_Timer.start();
+      requestingIndex = true;
+      SmartDashboard.putString("IndexStage","Requested");
+      PizzaManager.pizzaStage =stage;
+      pickedupNote = false;
+    }
     boolean pickedupNote = false;
     public void indexNote()
     {

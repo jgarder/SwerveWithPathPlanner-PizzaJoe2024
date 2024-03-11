@@ -4,6 +4,7 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -21,11 +22,14 @@ public class DeliveryShooter extends SubsystemBase {
     /* Start at velocity 0, no feed forward, use slot 1 */
     private final VelocityTorqueCurrentFOC m_torqueVelocity = new VelocityTorqueCurrentFOC(0, 0, 0, 1, true, false, false);
     /* Keep a neutral out so we can disable the motor */
+    private final PositionTorqueCurrentFOC m_torquePosition = new PositionTorqueCurrentFOC(0, 0, 0, 1, true, false, false);
+
     private final NeutralOut m_brake = new NeutralOut();
 
     
     public double LastSetRPM = 0;
     public double WantedRPM = 0;
+    public double WantedEncoderValue = 0;
 
     public double CurrentEncoderValue = 0;
     public double CurrentEncoderVelocity = 0;
@@ -132,6 +136,18 @@ public class DeliveryShooter extends SubsystemBase {
 
         //SmartDashboard.putNumber("SetPoint RPM  UpS", WantedRPM);
         //SmartDashboard.putNumber("Current velocity UpS", m_encoder.getVelocity());
+    }
+
+    public void MovePosition(double amount,boolean ZeropositionBeforemove)
+    {
+      if(ZeropositionBeforemove)
+      {
+          m_motor.setPosition(0);
+          m_motor_LowS.setPosition(0);
+      }
+      WantedEncoderValue = amount;
+        m_motor.setControl(m_torquePosition.withPosition(WantedEncoderValue));
+        m_motor_LowS.setControl(m_torquePosition.withPosition(WantedEncoderValue));
     }
 
     public void getEncoderData()
