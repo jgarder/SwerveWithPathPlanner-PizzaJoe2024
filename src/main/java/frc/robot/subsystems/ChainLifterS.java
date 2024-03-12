@@ -32,9 +32,9 @@ public class ChainLifterS extends SubsystemBase {
     double kMaxOutput = 1; 
     double kMinOutput = -1;
 
-    double kP_lifter = 5.000;//0.0400;
+    double kP_lifter = 6.000;//0.0400;
     double kI_lifter = 0.000004;
-    double kD_lifter = 0.250001;
+    double kD_lifter = 0.200001;
 
     double kFF = 0.00;
     double kIz = 0;
@@ -62,8 +62,6 @@ public class ChainLifterS extends SubsystemBase {
       SmartDashboard.putNumber(MotorName + " P Gain", kP_lifter);
       SmartDashboard.putNumber(MotorName + " I Gain", kI_lifter);
       SmartDashboard.putNumber(MotorName + " D Gain", kD_lifter);
-      SmartDashboard.putNumber(MotorName + " I Zone", kIz);
-      SmartDashboard.putNumber(MotorName + " Feed Forward", kFF);
 
     }
     

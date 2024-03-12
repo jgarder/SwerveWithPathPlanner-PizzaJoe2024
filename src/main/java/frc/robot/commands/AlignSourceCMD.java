@@ -2,6 +2,7 @@
 package frc.robot.commands;
 
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
@@ -23,7 +24,8 @@ public class AlignSourceCMD extends Command {
   DrivetrainManager drivetrainManager;
   Optional<Alliance> CurrentAlliance;
   private DoubleSupplier strafeSup;
-
+  private BooleanSupplier IsXButtonPressed;
+  private BooleanSupplier IsYButtonPressed;
   private final PIDController AlignXController = new PIDController(Constants.ChassisPid.k_PoseX_P,Constants.ChassisPid.k_PoseX_I,Constants.ChassisPid.k_PoseX_D);
   private final PIDController AlignPoseYController = new PIDController(Constants.ChassisPid.k_PoseY_P,Constants.ChassisPid.k_PoseY_I,Constants.ChassisPid.k_PoseY_D);
   private final PIDController AlignRZController = new PIDController(Constants.ChassisPid.k_RZ_P,Constants.ChassisPid.k_RZ_I,Constants.ChassisPid.k_RZ_D);
@@ -61,11 +63,15 @@ public class AlignSourceCMD extends Command {
   //////////////////////////////////////////////////////////// SETUP TARGET POSITIONS////////////////////////////////////////////
   //This is a top function because this is the logic for deciding what points are to be chosen and why. 
   private void SetupTargetPosition() {
-  double targetID = LimelightHelpers.getFiducialID(Constants.LimelightName);
   if ( (CurrentAlliance.get() == Alliance.Red) )//substation
   { 
-    TargetPose = Constants.TargetLocations.Red.SourceRight;
-
+    TargetPose = Constants.TargetLocations.Red.SourceCenter;
+    if(IsXButtonPressed.getAsBoolean()){
+      TargetPose = Constants.TargetLocations.Red.SourceLeft;
+    }
+    else if(IsYButtonPressed.getAsBoolean()){
+      TargetPose = Constants.TargetLocations.Red.SourceRight;
+    }
 
     Xspeed = Constants.TargetLocations.Red.Xspeed;
     Yspeed = Constants.TargetLocations.Red.Yspeed;
@@ -73,8 +79,13 @@ public class AlignSourceCMD extends Command {
   }
   else if ( (CurrentAlliance.get() == Alliance.Blue))//substation
   {
-    TargetPose = Constants.TargetLocations.Blue.SourceRight;
-    
+    TargetPose = Constants.TargetLocations.Blue.SourceCenter;
+    if(IsXButtonPressed.getAsBoolean()){
+      TargetPose = Constants.TargetLocations.Blue.SourceLeft;
+    }
+    else if(IsYButtonPressed.getAsBoolean()){
+      TargetPose = Constants.TargetLocations.Blue.SourceRight;
+    }
     Xspeed = Constants.TargetLocations.Blue.Xspeed;
     Yspeed = Constants.TargetLocations.Blue.Yspeed;
     rotationspeed = Constants.TargetLocations.Blue.rotationspeed;
@@ -89,9 +100,11 @@ public class AlignSourceCMD extends Command {
   /////////////////////////////////////////////END TARGET SETUP 
 
   //this is the constructor, this is whats called when the object is built
-  public AlignSourceCMD(DrivetrainManager Thiss_Swerve,DoubleSupplier strafeSup) {
+  public AlignSourceCMD(DrivetrainManager Thiss_Swerve,DoubleSupplier strafeSup,BooleanSupplier XButtonPressed, BooleanSupplier YButtonPressed) {
     drivetrainManager = Thiss_Swerve;
     this.strafeSup = strafeSup;
+    IsXButtonPressed = XButtonPressed;
+    IsYButtonPressed = YButtonPressed;
     addRequirements(drivetrainManager); 
   }
   
@@ -118,7 +131,8 @@ public class AlignSourceCMD extends Command {
   public void execute() {
     //we cant align to an alliance tag if the DS has no alliance. 
     if(!CurrentAlliance.isPresent()){return;}
-    
+    //setup target location based on current alliance, we *should* only need to do this once on intialization but the source has options 
+    SetupTargetPosition();
     //get latest pose from odometry (which is updated by limelight elsewhere)
     GetLatestPoseToBuffer();
     //GetLatestPoseToBuffer();

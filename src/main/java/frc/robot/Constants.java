@@ -65,6 +65,8 @@ public class Constants {
       public static final Pose2d SpeakerCenter = new Pose2d(15.05, 5.5, Rotation2d.fromDegrees(0));
 
       public static final Pose2d SourceRight = new Pose2d(.60, 1.197, Rotation2d.fromDegrees(-120));//#9
+      public static final Pose2d SourceCenter = new Pose2d(1.07, .89, Rotation2d.fromDegrees(-120));
+      public static final Pose2d SourceLeft = new Pose2d(1.63, .62, Rotation2d.fromDegrees(-120));//#10
 
       public static final Pose2d Amp = new Pose2d(14.74, 7.59, Rotation2d.fromDegrees(90));//#5
 
@@ -87,6 +89,8 @@ public class Constants {
       public static final Pose2d SpeakerCenter = new Pose2d(1.45, 5.5, Rotation2d.fromDegrees(180));//BC-CALI:1.38,5.48,177
 
       public static final Pose2d SourceRight = new Pose2d(14.83, .577, Rotation2d.fromDegrees(-60));//#1
+      public static final Pose2d SourceCenter = new Pose2d(15.42, .92, Rotation2d.fromDegrees(-60));
+      public static final Pose2d SourceLeft = new Pose2d(15.92, 1.22, Rotation2d.fromDegrees(-60));//#2
 
       public static final Pose2d Amp = new Pose2d(1.84, 7.59, Rotation2d.fromDegrees(90));//#6
 

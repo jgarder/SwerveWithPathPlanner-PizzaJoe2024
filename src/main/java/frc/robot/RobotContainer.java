@@ -102,7 +102,7 @@ public class RobotContainer {
     public static boolean NoteInDeliveryHolder = false;
     public static boolean AltControlModeEnabled = false;
     public static PizzaTracker pizzaStage = PizzaTracker.Startup; //0-10 empty, 20 detected, 30 passing, 40 passed to head, 50 index started, 51 indexout, 52 Indexed ready to fire, 
-    
+    public static boolean TrapShotOverIndexed = false;
     public enum PizzaTracker
       {
         Startup,
@@ -125,7 +125,7 @@ public class RobotContainer {
     {
       return NoteInDeliveryHolder;
     }
-
+    public static BooleanSupplier IsOvenPickUpRunning;// = ()->{joystick.rightTrigger(.1).getAsBoolean();};
     
   }
 
@@ -212,10 +212,10 @@ public class RobotContainer {
   {
     return new InstantCommand(()->{ deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose);});
   }
-
+  public double safeLifterPosition = 10;
   public Command C_TiltGotoPark()
   {
-    return new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Passing, deliveryTilt).andThen(new WaitCommand(20).until(()->deliveryLifter.CurrentLiftEncoderValue < 20))
+    return new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Passing, deliveryTilt).andThen(new WaitCommand(20).until(()->deliveryLifter.CurrentLiftEncoderValue < safeLifterPosition))
     .andThen(
       new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Park);},deliveryTilt), 
       new WaitCommand(.05),
@@ -322,9 +322,9 @@ public class RobotContainer {
     joystick.a().onTrue(C_CatchAndIndexNote()).onFalse(new InstantCommand(()-> {m_candleSubsystem.StrobeWhiteLights();}));
     //joystick.b().onTrue(new ShootDeliveryHold(deliveryHolder));
     joystick.b().onTrue(new InstantCommand(()->{SmartDashboard.putBoolean(SDashBoardH.LimelightbypassName, true);})).onFalse(new InstantCommand(()->{SmartDashboard.putBoolean(SDashBoardH.LimelightbypassName, false);}));
-    joystick.x().onTrue(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner).andThen(new RunDeliveryHoldIntake(deliveryHolder,false,40)))
+    joystick.x().and(joystick.rightTrigger().negate()).onTrue(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner).andThen(new RunDeliveryHoldIntake(deliveryHolder,false,40)))
     .onFalse(new InstantCommand(()->{pickupSpinner.stopSpinner();},pickupSpinner));// (pickuparm.runonce(() -> {pickuparm.setSetpointFloorPickup();}));
-    joystick.y().whileTrue(new InstantCommand(()->{pickupSpinner.RunPickup();}).repeatedly()).onFalse(new InstantCommand(()->{pickupSpinner.stopSpinner();},pickupSpinner)); //.until(()->{pickupSpinner.m_forwardLimit.isPressed();})
+    joystick.y().and(joystick.rightTrigger().negate()).whileTrue(new InstantCommand(()->{pickupSpinner.RunPickup();}).repeatedly()).onFalse(new InstantCommand(()->{pickupSpinner.stopSpinner();},pickupSpinner)); //.until(()->{pickupSpinner.m_forwardLimit.isPressed();})
     //joystick.y().onTrue(C_PickupPizzaFromFloorWithoutWashing());
 
     //left trigger will bring joe into the speaker position
@@ -335,7 +335,7 @@ public class RobotContainer {
     joystick.rightTrigger().whileTrue(HumanSourcePickup()
     .alongWith(
       new SequentialCommandGroup(
-            new AlignSourceCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
+            new AlignSourceCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis),()->joystick.getHID().getXButtonPressed(),()->joystick.getHID().getYButtonPressed()).unless(IsLimeLightBypassed)
           //new ForwardBump(drivetrainManager,SourceBumpTimeout).unless(IsLimeLightBypassed)
           )
           )
@@ -507,9 +507,21 @@ public Command AlignWhereverShootSpeaker()
     //going DOWN
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionDOWN).and(()->PizzaManager.AltControlModeEnabled)
     .onTrue(new MoveChainLiftToPosition(Constants.ChainLifter.Lift_Position_Zero, ChainLift)//.alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Park);}))
-    .andThen(new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupPassing, pickuparm)
-    .alongWith(C_ParkDeliveryHead(),new InstantCommand(()->{deliveryHolder.m_forwardLimit.enableLimitSwitch(true);}),new InstantCommand(()->{ChainLift.disableatpark();},ChainLift))
-    ));
+    .andThen(
+      new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupPassing, pickuparm)
+    .alongWith(
+      C_ParkDeliveryHead(),
+      new InstantCommand(()->{deliveryHolder.m_forwardLimit.enableLimitSwitch(true);}),
+      new InstantCommand(()->{ChainLift.disableatpark();},ChainLift)
+      )
+    )
+    .andThen(
+      new InstantCommand(()->{PizzaManager.TrapShotOverIndexed = false;}),
+      new InstantCommand(()->{deliveryHolder.RequestIndex(PizzaTracker.intaking);}),
+      new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmHumanSource/2)
+      
+      )
+    );
     
     //going DOWN
     // joystick.pov(Constants.XboxControllerMap.kPOVDirectionDOWN).and(()->PizzaManager.AltControlModeEnabled)
@@ -532,8 +544,8 @@ public Command AlignWhereverShootSpeaker()
               )
           
       .andThen(new WaitCommand(.25),
-      new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmHumanSource),
-      new InstantCommand(()->{deliveryHolder.RequestIndex(PizzaTracker.intaking);})
+      new InstantCommand(()->{deliveryHolder.RequestIndex(PizzaTracker.intaking);}),
+      new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmHumanSource/2)
       )
       .andThen(new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupFloorPickup, pickuparm))
       .andThen(new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_Trap);},deliveryLifter))
@@ -555,7 +567,8 @@ public Command AlignWhereverShootSpeaker()
       deliveryHolder.m_forwardLimit.enableLimitSwitch(false);
       deliveryHolder.MovePosition(80);
       deliveryShooter.MovePosition(2.5, true);
-    },deliveryHolder),
+      PizzaManager.TrapShotOverIndexed = true;
+    },deliveryHolder).unless(()->PizzaManager.TrapShotOverIndexed),
       
       new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_TrapStart);},deliveryLifter))
     .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLift);}))
@@ -567,11 +580,12 @@ public Command AlignWhereverShootSpeaker()
     
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).and(()->PizzaManager.AltControlModeEnabled)
     .onTrue(new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUpSHOOT, deliveryTilt)
-    .alongWith(new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_TrapShoot);},deliveryLifter))
-    .alongWith(new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupFloorPickup, pickuparm)
-    .alongWith(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose)))
-    .andThen(new WaitCommand(.1),new ShootDeliveryHold(deliveryHolder))//new ShootDeliveryHold(deliveryHolder))
+    .alongWith(
+      new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_TrapShoot, deliveryLifter),
+      new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupFloorPickup, pickuparm)
     )
+    .andThen(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose)),new WaitCommand(.1),new ShootDeliveryHold(deliveryHolder))//new ShootDeliveryHold(deliveryHolder))
+    
     )
     .onFalse(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff))
     .alongWith(new InstantCommand(() -> {deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUp);}).andThen(new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupVertical, pickuparm))));
@@ -585,7 +599,10 @@ public Command AlignWhereverShootSpeaker()
     SmartDashboard.putData("Auto choices", autoChooser);
     SmartDashboard.setPersistent("Auto choices");
     //
+    PizzaManager.IsOvenPickUpRunning = joystick.rightTrigger(.1);
+
     configureBindings();
+
   }
 
   private void BuildAutos() {
