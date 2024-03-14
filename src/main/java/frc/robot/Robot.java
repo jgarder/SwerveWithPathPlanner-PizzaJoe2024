@@ -4,11 +4,14 @@
 
 package frc.robot;
 
+import javax.naming.spi.DirStateFactory.Result;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.LimelightHelpers.Results;
 import frc.robot.RobotContainer.PizzaManager;
 
 public class Robot extends TimedRobot {
@@ -31,12 +34,13 @@ public class Robot extends TimedRobot {
    
     CommandScheduler.getInstance().run(); 
     if (UseLimelight & PizzaManager.LimelightTelemetryUpdateRequested) {    
-      var lastResult = LimelightHelpers.getLatestResults("limelight").targetingResults;
+      Results lastResult = LimelightHelpers.getLatestResults(Constants.LimelightName).targetingResults;
 
       Pose2d llPose = lastResult.getBotPose2d_wpiBlue();
-
+      double tl = LimelightHelpers.getLatency_Pipeline(Constants.LimelightName);
+      double cl = LimelightHelpers.getLatency_Capture(Constants.LimelightName);
       if (lastResult.valid) {
-        m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(llPose, Timer.getFPGATimestamp());
+        m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(llPose, Timer.getFPGATimestamp() - (tl/1000.0) - (cl/1000.0));
       }
     }
   }

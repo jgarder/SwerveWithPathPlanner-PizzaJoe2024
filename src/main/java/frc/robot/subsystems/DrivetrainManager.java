@@ -1,12 +1,14 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.mechanisms.swerve.utility.PhoenixPIDController;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.CommandSwerveDrivetrain;
@@ -46,7 +48,11 @@ public class DrivetrainManager extends SubsystemBase{
       double VelocY =speedLimiterX.calculate(-joystick.getLeftX()) * (MaxSpeed*PizzaManager.speedMulti);
       SmartDashboard.putNumber("VelocX", VelocX);
       SmartDashboard.putNumber("VelocY", VelocY);
+
+      SmartDashboard.putNumber("AccumGyroZ", drivetrain.getPigeon2().getAccumGyroZ().getValueAsDouble() - accumGyroz);
+      SmartDashboard.putNumber("GyroYaw", drivetrain.getPigeon2().getYaw().getValueAsDouble());
     }
+    public double accumGyroz = 0;
     public static final double slewrateXY = 9;//7;//20;//3;
     public static final double slewrateRotation = 20;//2.7;
     SlewRateLimiter speedLimiterX = new SlewRateLimiter(slewrateXY);
@@ -66,8 +72,9 @@ public class DrivetrainManager extends SubsystemBase{
 
         //stuff below should be tested when drivetrain is complete    
         //joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
-
+       // joystick.b().whileTrue(drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+       // joystick.b().whileTrue(new InstantCommand(()->{drivetrain.getPigeon2().setYaw(0);accumGyroz = drivetrain.getPigeon2().getAccumGyroZ().getValueAsDouble();}));
+        fieldpoint.HeadingController = new PhoenixPIDController(4, 0, 0);
         //joystick.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
         //joystick.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
         
@@ -102,16 +109,23 @@ public class DrivetrainManager extends SubsystemBase{
             .withRotationalRate(0 * MaxAngularRate) // Drive counterclockwise with negative X (left)
         ).ignoringDisable(false);
     }
+
+    public void MoveRobotToTargetInFieldCoordinatesWithRotation(double YposeAxis, double XposeAxis, Rotation2d RZposeAxis) {
+      drivetrain.setControl(fieldpoint.withVelocityX(XposeAxis * MaxSpeedPid) // Drive forward with // negative Y (forward)
+          .withVelocityY(YposeAxis * MaxSpeedPid) // Drive left with negative X (left)
+          .withTargetDirection(RZposeAxis) // Drive counterclockwise with negative X (left)
+      );
+    }
       //
 
-    public final SwerveRequest.FieldCentric FCdriveAuton = new SwerveRequest.FieldCentric()
+    public final SwerveRequest.FieldCentric FCdriveAuton = new SwerveRequest.FieldCentric();
       //.withDeadband(MaxSpeed * 0.09).withRotationalDeadband(MaxAngularRate * 0.09) // Add a 10% deadband
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
+      //.withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
 
 
   public final SwerveRequest.FieldCentric FCdrive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * 0.09).withRotationalDeadband(MaxAngularRate * 0.09) // Add a 10% deadband
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
+      .withDeadband(MaxSpeed * 0.09).withRotationalDeadband(MaxAngularRate * 0.09); // Add a 10% deadband
+      //.withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
   public final SwerveRequest.RobotCentric RobotCentricdrive = new SwerveRequest.RobotCentric()
   //.withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -121,5 +135,5 @@ public class DrivetrainManager extends SubsystemBase{
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-  private final SwerveRequest.FieldCentricFacingAngle fieldpoint = new SwerveRequest.FieldCentricFacingAngle();
+  public final SwerveRequest.FieldCentricFacingAngle fieldpoint = new SwerveRequest.FieldCentricFacingAngle();
 }

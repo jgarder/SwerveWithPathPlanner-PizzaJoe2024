@@ -1,7 +1,10 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 
 public class Constants {
   public static final String LimelightName = "limelight";
@@ -62,6 +65,7 @@ public class Constants {
        public static final double Yspeed = -1.0;//used to invert results with -1 or 1;
        public static final double rotationspeed = 1.0;//used to invert results with -1 or 1;
 
+      public static final Pose2d SpeakerCenterTagLocation = new Pose2d(Units.inchesToMeters(652.73),Units.inchesToMeters(218.42), Rotation2d.fromDegrees(180));
       public static final Pose2d SpeakerCenter = new Pose2d(15.05, 5.5, Rotation2d.fromDegrees(0));
 
       public static final Pose2d SourceRight = new Pose2d(.60, 1.197, Rotation2d.fromDegrees(-120));//#9
@@ -85,6 +89,8 @@ public class Constants {
       public static final double Xspeed = 1.0;//used to invert results with -1 or 1;
        public static final double Yspeed = 1.0;//used to invert results with -1 or 1;
        public static final double rotationspeed = 1.0;//used to invert results with -1 or 1;
+
+      public static final Pose2d SpeakerCenterTagLocation = new Pose2d(Units.inchesToMeters(-1.5),Units.inchesToMeters(218.42), Rotation2d.fromDegrees(0));
 
       public static final Pose2d SpeakerCenter = new Pose2d(1.45, 5.5, Rotation2d.fromDegrees(180));//BC-CALI:1.38,5.48,177
 
@@ -236,7 +242,7 @@ public class Constants {
       public static final double Tilt_Position_TrapLiftUp = 10.75;
       public static final double Tilt_Position_TrapLiftUpSHOOT = 28;
       public static  double Tilt_Position_Speaker_Closest = 12.75;//11.25;//10.75;//8.5;//11.5;//7.2;
-      public static  double Tilt_Position_Speaker_Furthest = 17.4;//15.75;//14.75;
+      public static  double Tilt_Position_Speaker_Furthest = 17.3;//15.75;//14.75;
 
       public static  double Tilt_Position_Speaker_Podium = 12.5;//10.85;
       public static final double Tilt_Position_Amp = 28;

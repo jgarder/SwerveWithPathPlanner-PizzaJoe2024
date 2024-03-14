@@ -1,10 +1,7 @@
 package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.DeliveryLifter;
 import frc.robot.subsystems.DeliveryTilt;
-import frc.robot.subsystems.PickupArm;
-import frc.robot.subsystems.PickupSpinner;
 
 public class MoveDTiltToPosition extends Command{
     //private final PickupSpinner m_PickupSpinner;
@@ -33,7 +30,7 @@ public class MoveDTiltToPosition extends Command{
   public void execute() {
    
   }
-  double SettleTimeAtCorrectRPM = .15;
+  double SettleTimeAtCorrectPosition = .15;
   double TimeoutSeconds = 10.0;
   private final Timer m_SettleTimer = new Timer();
   boolean ReadyTofire = false;
@@ -43,7 +40,7 @@ public class MoveDTiltToPosition extends Command{
         return true;
     } 
     if (m_DeliveryTilter.atSetpoint()) {
-      if(m_SettleTimer.get() > SettleTimeAtCorrectRPM)
+      if(m_SettleTimer.get() > SettleTimeAtCorrectPosition)
       {
         ReadyTofire = true;
         return true;
