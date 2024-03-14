@@ -118,7 +118,8 @@ public class DeliveryHolder extends SubsystemBase {
       if (istriggered & !IgnorelimitSwitch) {
         Motor_Encoder.setPosition(0);
         WantedEncoderValue = 0;
-        MotorControllerPid.setReference(0, CANSparkBase.ControlType.kPosition);
+        //MotorControllerPid.setReference(0, CANSparkBase.ControlType.kPosition);
+        SetToWantedDutyCycle(IdleDutyCycle);
         PizzaManager.NoteInDeliveryHolder = true;
         if(PizzaManager.pizzaStage == PizzaTracker.passed)//if we are first getting this note from the pass
           {
@@ -133,7 +134,8 @@ public class DeliveryHolder extends SubsystemBase {
       {
         Motor_Encoder.setPosition(0);
         WantedEncoderValue = reduction;
-        MotorControllerPid.setReference(reduction, CANSparkBase.ControlType.kPosition);
+        SetToWantedDutyCycle(NormalPassingDutyCycle);
+        //MotorControllerPid.setReference(reduction, CANSparkBase.ControlType.kPosition);
         PizzaManager.NoteInDeliveryHolder = false;
         //PizzaManager.pizzaStage = PizzaTracker.indexNeeded;
       }
@@ -256,6 +258,7 @@ public class DeliveryHolder extends SubsystemBase {
       }
 
       public double IdleDutyCycle = 0;
+      public double NormalPassingDutyCycle = .50;
       public double SpeakerDutyCycle = 1;//rpm used during note release
       public double AmpDutyCycle = .75;//rpm used during note release
       public double PassingDutyCycle = .75;//rpm used during note release

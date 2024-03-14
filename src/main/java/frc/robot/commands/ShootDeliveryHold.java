@@ -29,14 +29,18 @@ public class ShootDeliveryHold extends Command{
   @Override
   public void execute() {
     //System.out.println("executing hold");
-   m_DeliveryHolder.IntakeRuntoHoldCommand(reduction,true);
+   //m_DeliveryHolder.IntakeRuntoHoldCommand(reduction,true);
+   m_DeliveryHolder.m_forwardLimit.enableLimitSwitch(false);
+   m_DeliveryHolder.SetToWantedDutyCycle(1.0);
   }
 
   double TimeoutSeconds = .3;
   @Override
   public boolean isFinished() {
     if(m_Timer.get() > TimeoutSeconds){
-      m_DeliveryHolder.MovePosition(0);
+      //m_DeliveryHolder.MovePosition(0);
+      m_DeliveryHolder.SetToWantedDutyCycle(0);
+       m_DeliveryHolder.m_forwardLimit.enableLimitSwitch(true);
         return true;
     } 
     // if (!m_DeliveryHolder.IsNoteInDeliveryHold()) {

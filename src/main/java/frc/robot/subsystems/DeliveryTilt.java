@@ -6,6 +6,7 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -14,6 +15,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -55,7 +57,7 @@ public class DeliveryTilt extends SubsystemBase {
         Motor_Controller.setPosition(0);
         //should the motor controller be inverted? 0 is folded in and 44 (or max) is folded out.
         Motor_Controller.setInverted(false);
-        
+        Motor_Controller.setNeutralMode(NeutralModeValue.Brake);
         // display PID coefficients on SmartDashboard
         SmartDashboard.putNumber(MotorName + " P Gain", kP_Tilter);
         SmartDashboard.putNumber(MotorName + " I Gain", kI_Tilter);
@@ -142,7 +144,7 @@ public class DeliveryTilt extends SubsystemBase {
       configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.DeliveryHead.Tilt_maxValue;
       configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.DeliveryHead.Tilt_minValue-5;
 
-      
+    
 
       SetConfigToMotor();
 
