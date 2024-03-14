@@ -77,7 +77,7 @@ public class AlignSpeakerTest extends Command {
   public void initialize() {
     //get our alliance red or blue.
    CurrentAlliance = DriverStation.getAlliance();
-   AlignRZController.setSetpoint(-13); //-13 means we always look to the right of where we want to shoot. 
+   AlignRZController.setSetpoint(-10); //-13 means we always look to the right of where we want to shoot. 
 
     TiltAtShortestDistance = Constants.DeliveryHead.Tilt_Position_Speaker_Closest;
     TiltAtMaxDistance = Constants.DeliveryHead.Tilt_Position_Speaker_Furthest;//Tilt at max distance (podium)

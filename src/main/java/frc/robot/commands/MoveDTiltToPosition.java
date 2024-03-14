@@ -24,6 +24,8 @@ public class MoveDTiltToPosition extends Command{
   public void initialize() {
     m_Timer.reset();
     m_Timer.start();
+    m_SettleTimer.reset();
+    m_SettleTimer.start();
     m_DeliveryTilter.setSetpointToPosition(desiredSetpoint);
   }
 
@@ -31,16 +33,29 @@ public class MoveDTiltToPosition extends Command{
   public void execute() {
    
   }
-
+  double SettleTimeAtCorrectRPM = .15;
   double TimeoutSeconds = 10.0;
+  private final Timer m_SettleTimer = new Timer();
+  boolean ReadyTofire = false;
   @Override
   public boolean isFinished() {
     if(m_Timer.get() > TimeoutSeconds){
         return true;
     } 
     if (m_DeliveryTilter.atSetpoint()) {
-         return true;
-    }  
+      if(m_SettleTimer.get() > SettleTimeAtCorrectRPM)
+      {
+        ReadyTofire = true;
+        return true;
+      }
+      
+         
+    } 
+    else
+      {
+        m_SettleTimer.reset();
+        m_SettleTimer.start();
+      }
     return false;
   }
 }

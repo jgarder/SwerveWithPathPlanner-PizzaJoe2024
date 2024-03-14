@@ -236,10 +236,10 @@ public class Constants {
       public static final double Tilt_Position_TrapLiftUp = 10.75;
       public static final double Tilt_Position_TrapLiftUpSHOOT = 28;
       public static  double Tilt_Position_Speaker_Closest = 12.75;//11.25;//10.75;//8.5;//11.5;//7.2;
-      public static  double Tilt_Position_Speaker_Furthest = 17.3;//15.75;//14.75;
+      public static  double Tilt_Position_Speaker_Furthest = 17.4;//15.75;//14.75;
 
       public static  double Tilt_Position_Speaker_Podium = 12.5;//10.85;
-      public static final double Tilt_Position_Amp = 24;
+      public static final double Tilt_Position_Amp = 28;
 
       //public static final double Tilt_Position_TrapStart = 11;
       //public static final double Tilt_Position_Trap = 12;
@@ -248,7 +248,7 @@ public class Constants {
       public static final double maxRPM = 6250;
       public static final double ShooterRpmOff = 0;
       public static final double ShooterRpmSpeakerClose = 4750;//4500;
-      public static final double ShooterRpmSpeakerPodium = 5900;//5650;
+      public static final double ShooterRpmSpeakerPodium = 5300;//5650;
       public static final double ShooterRpmAmp = 1500;
       public static final double ShooterRpmHumanSource = -1550;//-2250;//-1550;//-500;
     }
