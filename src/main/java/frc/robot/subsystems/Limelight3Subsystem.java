@@ -53,18 +53,18 @@ public class Limelight3Subsystem extends SubsystemBase {
     {
     SmartDashboard.putNumber("PoseWPIBLueX", wpiblue[0]);
     SmartDashboard.putNumber("PoseWPIBLuey", wpiblue[1]);
-    SmartDashboard.putNumber("PoseWPIBLuez", wpiblue[2]);
-    SmartDashboard.putNumber("PoseWPIBLueYaw", wpiblue[3]);
-    SmartDashboard.putNumber("PoseWPIBLuePitch", wpiblue[4]);
+    //SmartDashboard.putNumber("PoseWPIBLuez", wpiblue[2]);
+    //SmartDashboard.putNumber("PoseWPIBLueYaw", wpiblue[3]);
+    //SmartDashboard.putNumber("PoseWPIBLuePitch", wpiblue[4]);
     SmartDashboard.putNumber("PoseWPIBLueRoll", wpiblue[5]);
     }
 
     //SmartDashboard.putNumber("PoseWPIBLueLatency", botpose_wpiblueNTE.getDoubleArray(new double[6])[6]);
     //System.out.println("");
     //post to smart dashboard periodically
-    SmartDashboard.putNumber("LimelightX", LimelightHelpers.getTX(Constants.LimelightName));
-    SmartDashboard.putNumber("LimelightY", LimelightHelpers.getTY(Constants.LimelightName));
-    SmartDashboard.putNumber("LimelightArea", LimelightHelpers.getTA(Constants.LimelightName));
+    //SmartDashboard.putNumber("LimelightX", LimelightHelpers.getTX(Constants.LimelightName));
+    //SmartDashboard.putNumber("LimelightY", LimelightHelpers.getTY(Constants.LimelightName));
+    //SmartDashboard.putNumber("LimelightArea", LimelightHelpers.getTA(Constants.LimelightName));
     
     int roundingpower = 1000;
     //SmartDashboard.putNumber("LL Distance", Math.floor(LimelightHelpers.getdistance()*roundingpower)/roundingpower);

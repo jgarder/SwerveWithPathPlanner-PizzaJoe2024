@@ -34,7 +34,7 @@ public class ShootDeliveryHold extends Command{
    m_DeliveryHolder.SetToWantedDutyCycle(1.0);
   }
 
-  double TimeoutSeconds = .3;
+  double TimeoutSeconds = 1;
   @Override
   public boolean isFinished() {
     if(m_Timer.get() > TimeoutSeconds){

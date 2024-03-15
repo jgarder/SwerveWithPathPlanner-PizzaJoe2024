@@ -66,6 +66,7 @@ public class DeliveryTilt extends SubsystemBase {
         SmartDashboard.putNumber(MotorName + " Feed Forward", kFF);
 
         SmartDashboard.putNumber(MotorName + " Closest Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Closest);
+        SmartDashboard.putNumber(MotorName + " Mid Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Mid);
         SmartDashboard.putNumber(MotorName + " Furthest Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Furthest);
 
     }
@@ -113,7 +114,10 @@ public class DeliveryTilt extends SubsystemBase {
     double d = SmartDashboard.getNumber(MotorName + " D Gain", 0);
     double mintilt =  SmartDashboard.getNumber(MotorName + " Closest Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Closest);
     double maxtilt =  SmartDashboard.getNumber(MotorName + " Furthest Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Furthest);
+    double midtilt =  SmartDashboard.getNumber(MotorName + " Mid Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Mid);
+
     if((Constants.DeliveryHead.Tilt_Position_Speaker_Closest != mintilt)) { Constants.DeliveryHead.Tilt_Position_Speaker_Closest = mintilt; }
+    if((Constants.DeliveryHead.Tilt_Position_Speaker_Mid != midtilt)) { Constants.DeliveryHead.Tilt_Position_Speaker_Mid = midtilt;}
     if((Constants.DeliveryHead.Tilt_Position_Speaker_Furthest != maxtilt)) { Constants.DeliveryHead.Tilt_Position_Speaker_Furthest = maxtilt;}//System.out.println("MaxTiltSet");
 
     if((p != kP_Tilter)) { configs.Slot1.kP = p; kP_Tilter = p; SetConfigToMotor(); }

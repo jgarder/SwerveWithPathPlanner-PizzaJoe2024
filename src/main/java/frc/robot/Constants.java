@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Meters;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Constants {
   public static final String LimelightName = "limelight";
@@ -161,6 +162,23 @@ public class Constants {
         return Math.abs(Difference) <= NumericalTolerance;
     }
 
+    public static Rotation2d findAngleBetween ( double x1 ,double y1 ,double x2 ,double y2 )
+{
+     var calc_angle = Math.atan2 ( y2 - y1 , x2 - x1 ) ;
+     // notice y is the first parameter not x
+     // y is the rise and x is the run
+     // we could do (y2-y1, x2-x1) or (y1-y2, x1-x2)
+     if ( calc_angle < 0 ) // we don't want negative angles
+    {
+         calc_angle += Math.PI * 2;
+         // make negative angles positive by adding 360 degrees
+    }
+    // convert angle from radians to degrees then log
+    //var thisangle = calc_angle * ( 180 / Math.PI );
+    //SmartDashboard.putNumber("angle raw", thisangle);
+     return new Rotation2d(calc_angle);
+} 
+
     public static class NeoBrushless
     {
       public static int neo550safelimitAmps = 35;//Pickup rollers and delivery index motor
@@ -241,8 +259,9 @@ public class Constants {
       public static final double Tilt_Position_TrapLiftHitHook = 17;//7.75;
       public static final double Tilt_Position_TrapLiftUp = 10.75;
       public static final double Tilt_Position_TrapLiftUpSHOOT = 28;
-      public static  double Tilt_Position_Speaker_Closest = 12.75;//11.25;//10.75;//8.5;//11.5;//7.2;
-      public static  double Tilt_Position_Speaker_Furthest = 17.3;//15.75;//14.75;
+      public static  double Tilt_Position_Speaker_Closest = 11.15;//12.9;//11.25;//10.75;//8.5;//11.5;//7.2;
+      public static  double Tilt_Position_Speaker_Mid = 15.25;
+      public static  double Tilt_Position_Speaker_Furthest = 18.3;//19.75;//17.3;//15.75;//14.75;
 
       public static  double Tilt_Position_Speaker_Podium = 12.5;//10.85;
       public static final double Tilt_Position_Amp = 28;
@@ -253,8 +272,8 @@ public class Constants {
       
       public static final double maxRPM = 6250;
       public static final double ShooterRpmOff = 0;
-      public static final double ShooterRpmSpeakerClose = 4750;//4500;
-      public static final double ShooterRpmSpeakerPodium = 5300;//5650;
+      public static final double ShooterRpmSpeakerClose = 5500;//4750;//4500;
+      public static final double ShooterRpmSpeakerPodium = 5500;//5650;
       public static final double ShooterRpmAmp = 1500;
       public static final double ShooterRpmHumanSource = -1550;//-2250;//-1550;//-500;
     }

@@ -59,13 +59,19 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "backupToMid"
+                        "pathName": "Any backupToMid"
                       }
                     },
                     {
                       "type": "wait",
                       "data": {
                         "waitTime": 0.05
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "PodToCenterPrep"
                       }
                     },
                     {
@@ -120,19 +126,25 @@
                           {
                             "type": "wait",
                             "data": {
-                              "waitTime": 0.025
+                              "waitTime": 0.25
                             }
                           },
                           {
                             "type": "path",
                             "data": {
-                              "pathName": "PodToCenter"
+                              "pathName": "AnybackupCenter"
                             }
                           },
                           {
                             "type": "wait",
                             "data": {
                               "waitTime": 0.025
+                            }
+                          },
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "CenterToAmpPrep"
                             }
                           },
                           {
