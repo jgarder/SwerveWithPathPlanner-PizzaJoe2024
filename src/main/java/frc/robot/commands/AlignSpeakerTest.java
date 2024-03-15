@@ -89,7 +89,7 @@ public class AlignSpeakerTest extends Command {
 
   Pose2d PoseOffset;//This is how far we are from where we want to be. this is CurrentPose minus TargetPose.
   
-  double AlignRzSetpoint = 0;//-1;//-13 means we always look to the right of where we want to shoot.
+  double AlignRzSetpoint = -1;//-1;//-13 means we always look to the right of where we want to shoot.
 
   // Called when the command is initially scheduled.
   @Override
