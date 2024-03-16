@@ -35,6 +35,7 @@ public class ShootDeliveryHold extends Command{
   }
 
   double TimeoutSeconds = 1;
+   double MinTimeoutSeconds = .15;
   @Override
   public boolean isFinished() {
     if(m_Timer.get() > TimeoutSeconds){
@@ -43,10 +44,11 @@ public class ShootDeliveryHold extends Command{
        m_DeliveryHolder.m_forwardLimit.enableLimitSwitch(true);
         return true;
     } 
-    // if (!m_DeliveryHolder.IsNoteInDeliveryHold()) {
-    //   //m_DeliveryHolder.MovePosition(20);//This is a post running sequence that need not be run at this moment. add it back if needed?
-    //       return true;
-    // }  
+    if (m_Timer.get() > MinTimeoutSeconds && !m_DeliveryHolder.IsNoteInDeliveryHold()) {
+        m_DeliveryHolder.SetToWantedDutyCycle(0);
+       m_DeliveryHolder.m_forwardLimit.enableLimitSwitch(true);
+           return true;
+     }  
     return false;
   }
 }

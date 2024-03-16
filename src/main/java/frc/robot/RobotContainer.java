@@ -90,7 +90,7 @@ public class RobotContainer {
   public final SmartDashboardHandler SDashBoardH = new SmartDashboardHandler(this);
   //
   BooleanSupplier isNoteInIntakeboolSup = () -> pickupSpinner.m_forwardLimit.isPressed(); 
-  BooleanSupplier isNoteInDeliveryHolderboolSup = () -> deliveryHolder.m_forwardLimit.isPressed(); 
+  public BooleanSupplier isNoteInDeliveryHolderboolSup = () -> deliveryHolder.m_forwardLimit.isPressed(); 
   BooleanSupplier IsLimeLightBypassed = () -> PizzaManager.LimeLightBypassed; 
   public static class PizzaManager{
     public static double speedMulti = 1.0;
@@ -144,9 +144,12 @@ public class RobotContainer {
     .andThen(new RunIntake(pickupSpinner).withInterruptBehavior(InterruptionBehavior.kCancelIncoming))
     .andThen(new InstantCommand(()->{m_candleSubsystem.StrobeBlueLights();},m_candleSubsystem))
     .andThen(new InstantCommand(()->{intakepassing = false;}))
-    .andThen(C_ReturnPickupHead().alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand();},pickupSpinner)
-    .andThen(new WaitCommand(.4))//was .5//POST ROLL PICKUP INTAKE SPIN)
-    .andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}))))//POST ROLL PICKUP INTAKE SPIN)
+    .andThen(C_ReturnPickupHead()
+      .alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand();},pickupSpinner)
+      .andThen(new WaitCommand(.4))//was .5//POST ROLL PICKUP INTAKE SPIN)
+      .andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}))
+    )
+    )//POST ROLL PICKUP INTAKE SPIN)
     
     .andThen(new InstantCommand(()->{m_candleSubsystem.BlueLights();},m_candleSubsystem))
     // .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm))

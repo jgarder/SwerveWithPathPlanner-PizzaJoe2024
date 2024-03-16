@@ -33,7 +33,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.025
+            "waitTime": 0.0
           }
         },
         {
@@ -41,9 +41,22 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "PickupRoutine"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "PickupRoutine"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AlignWhereverShootSpeaker"
+                      }
+                    }
+                  ]
                 }
               },
               {
@@ -53,7 +66,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.15
+                        "waitTime": 0.05
                       }
                     },
                     {
@@ -69,19 +82,13 @@
                       }
                     },
                     {
-                      "type": "path",
-                      "data": {
-                        "pathName": "PodToCenterPrep"
-                      }
-                    },
-                    {
                       "type": "parallel",
                       "data": {
                         "commands": [
                           {
-                            "type": "named",
+                            "type": "path",
                             "data": {
-                              "name": "ReadyShootPreEmptive"
+                              "pathName": "PodToCenterPrep"
                             }
                           }
                         ]
@@ -97,18 +104,6 @@
           "type": "sequential",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "AlignWhereverShootSpeaker"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.025
-                }
-              },
               {
                 "type": "parallel",
                 "data": {
@@ -126,7 +121,7 @@
                           {
                             "type": "wait",
                             "data": {
-                              "waitTime": 0.25
+                              "waitTime": 0.2
                             }
                           },
                           {
@@ -138,7 +133,7 @@
                           {
                             "type": "wait",
                             "data": {
-                              "waitTime": 0.025
+                              "waitTime": 0.0
                             }
                           },
                           {
