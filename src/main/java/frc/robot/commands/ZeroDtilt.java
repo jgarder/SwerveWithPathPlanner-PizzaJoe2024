@@ -31,7 +31,7 @@ public class ZeroDtilt extends Command{
    
   }
 
-  double TimeoutSeconds = .5;
+  double TimeoutSeconds = .25;
   @Override
   public boolean isFinished() {
     if(m_Timer.get() > TimeoutSeconds){

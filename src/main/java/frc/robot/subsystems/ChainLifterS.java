@@ -104,7 +104,7 @@ public class ChainLifterS extends SubsystemBase {
 
       public void getEncoderData()
       {
-        OutputCurrent = Motor_Controller.getTorqueCurrent().getValueAsDouble();;
+        OutputCurrent = Motor_Controller.getTorqueCurrent().getValueAsDouble();
         SmartDashboard.putNumber(MotorName + " Amps",OutputCurrent);
     
         MotorTemp = Motor_Controller.getDeviceTemp().getValueAsDouble();

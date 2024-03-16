@@ -125,7 +125,7 @@ public class PickupArm extends SubsystemBase{
       double i = SmartDashboard.getNumber(MotorName + " I Gain", 0);
       double d = SmartDashboard.getNumber(MotorName + " D Gain", 0);
         
-        if((p != kP_lifter)) { MotorControllerPid.setP(p); kP_lifter = p; }
+      if((p != kP_lifter)) { MotorControllerPid.setP(p); kP_lifter = p;  }
       if((i != kI_lifter)) { MotorControllerPid.setI(i); kI_lifter = i; }
       if((d != kD_lifter)) { MotorControllerPid.setD(d); kD_lifter = d; }
       }

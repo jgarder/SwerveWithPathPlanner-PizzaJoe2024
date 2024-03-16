@@ -46,7 +46,7 @@ public class AlignSpeakerTest extends Command {
   final double minDistanceToShootFrom = 1.41;//1.20;
   final double maxDistToShootFrom = 5.0;//23.2;
 
-    double MaxRotationOffset = 2.0;//2.0;//1.43;
+    double MaxRotationOffset = 1.0;//2.0;//1.43;
   
    double TiltAtShortestDistance = 0;//Constants.DeliveryHead.Tilt_Position_Speaker_Closest;
    double TiltAtMid = 0;
@@ -89,7 +89,7 @@ public class AlignSpeakerTest extends Command {
 
   Pose2d PoseOffset;//This is how far we are from where we want to be. this is CurrentPose minus TargetPose.
   
-  double AlignRzSetpoint = -1;//-1;//-13 means we always look to the right of where we want to shoot.
+  double AlignRzSetpoint = -7;//-1;//-13 means we always look to the right of where we want to shoot.
 
   // Called when the command is initially scheduled.
   @Override
