@@ -10,11 +10,14 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import frc.robot.Constants.XboxControllerMap;
 import frc.robot.subsystems.DrivetrainManager;
 import frc.robot.subsystems.Limelight3Subsystem;
 
@@ -23,9 +26,9 @@ public class AlignSourceCMD extends Command {
   
   DrivetrainManager drivetrainManager;
   Optional<Alliance> CurrentAlliance;
-  private DoubleSupplier strafeSup;
-  private BooleanSupplier IsXButtonPressed;
-  private BooleanSupplier IsYButtonPressed;
+  XboxController thisController;
+  CommandXboxController thisCommandcontroller;
+
   private final PIDController AlignXController = new PIDController(Constants.ChassisPid.k_PoseX_P,Constants.ChassisPid.k_PoseX_I,Constants.ChassisPid.k_PoseX_D);
   private final PIDController AlignPoseYController = new PIDController(Constants.ChassisPid.k_PoseY_P,Constants.ChassisPid.k_PoseY_I,Constants.ChassisPid.k_PoseY_D);
   private final PIDController AlignRZController = new PIDController(Constants.ChassisPid.k_RZ_P,Constants.ChassisPid.k_RZ_I,Constants.ChassisPid.k_RZ_D);
@@ -66,10 +69,10 @@ public class AlignSourceCMD extends Command {
   if ( (CurrentAlliance.get() == Alliance.Red) )//substation
   { 
     TargetPose = Constants.TargetLocations.Red.SourceCenter;
-    if(IsXButtonPressed.getAsBoolean()){
+    if(thisController.getRawButton(XboxController.Button.kX.value)){
       TargetPose = Constants.TargetLocations.Red.SourceLeft;
     }
-    else if(IsYButtonPressed.getAsBoolean()){
+    else if(thisController.getRawButton(XboxController.Button.kY.value)){
       TargetPose = Constants.TargetLocations.Red.SourceRight;
     }
 
@@ -80,10 +83,10 @@ public class AlignSourceCMD extends Command {
   else if ( (CurrentAlliance.get() == Alliance.Blue))//substation
   {
     TargetPose = Constants.TargetLocations.Blue.SourceCenter;
-    if(IsXButtonPressed.getAsBoolean()){
+    if(thisController.getRawButton(XboxController.Button.kX.value)){
       TargetPose = Constants.TargetLocations.Blue.SourceLeft;
     }
-    else if(IsYButtonPressed.getAsBoolean()){
+    else if(thisController.getRawButton(XboxController.Button.kY.value)){
       TargetPose = Constants.TargetLocations.Blue.SourceRight;
     }
     Xspeed = Constants.TargetLocations.Blue.Xspeed;
@@ -100,11 +103,10 @@ public class AlignSourceCMD extends Command {
   /////////////////////////////////////////////END TARGET SETUP 
 
   //this is the constructor, this is whats called when the object is built
-  public AlignSourceCMD(DrivetrainManager Thiss_Swerve,DoubleSupplier strafeSup,BooleanSupplier XButtonPressed, BooleanSupplier YButtonPressed) {
+  public AlignSourceCMD(DrivetrainManager Thiss_Swerve,CommandXboxController thisCommandcontrollerin) {
     drivetrainManager = Thiss_Swerve;
-    this.strafeSup = strafeSup;
-    IsXButtonPressed = XButtonPressed;
-    IsYButtonPressed = YButtonPressed;
+    thisCommandcontroller = thisCommandcontrollerin;
+    thisController = thisCommandcontroller.getHID();
     addRequirements(drivetrainManager); 
   }
   
@@ -149,7 +151,7 @@ public class AlignSourceCMD extends Command {
     Ypose_adjust += (Math.signum(Ypose_adjust)*min_Ypose_command);
     
     //if user wants to strafe let that in
-    double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
+    double strafeVal = MathUtil.applyDeadband(thisController.getRawAxis(XboxController.Axis.kRightX.value), Constants.stickDeadband);
     if(strafeVal > minRZErrorToCorrect){
       RZAdjust = strafeVal;
     }

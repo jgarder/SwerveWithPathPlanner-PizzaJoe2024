@@ -256,12 +256,12 @@ public class DeliveryHolder extends SubsystemBase {
         PizzaManager.NoteInDeliveryHolder = m_forwardLimit.isPressed();
         return PizzaManager.NoteInDeliveryHolder;
       }
-
+      //21:1 - 15:1;
       public double IdleDutyCycle = 0;
-      public double NormalPassingDutyCycle = .50;
-      public double SpeakerDutyCycle = 1;//rpm used during note release
-      public double AmpDutyCycle = .75;//rpm used during note release
-      public double PassingDutyCycle = .75;//rpm used during note release
+      public double NormalPassingDutyCycle = .355;//.50;
+      public double SpeakerDutyCycle = 1.0;//rpm used during note release
+      public double AmpDutyCycle = .53;//.75;//rpm used during note release
+      public double PassingDutyCycle = .53;//.75;//rpm used during note release
       public double LastSetDutyCycle = 0;
 
       public void SetToWantedDutyCycle(double wantedDutyCycle) {

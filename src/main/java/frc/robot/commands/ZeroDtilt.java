@@ -1,6 +1,7 @@
 package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.LimelightHelpers;
 import frc.robot.RobotContainer.PizzaManager;
 import frc.robot.subsystems.DeliveryTilt;
 
@@ -31,14 +32,20 @@ public class ZeroDtilt extends Command{
    
   }
 
+      // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    super.end(interrupted);
+  }
+
   double TimeoutSeconds = .25;
   @Override
   public boolean isFinished() {
     if(m_Timer.get() > TimeoutSeconds){
-      m_DeliveryTilter.Motor_Controller.setPosition(0);
-      m_DeliveryTilter.setSetpointToPosition(0);
       m_DeliveryTilter.disableatpark();
       PizzaManager.HasTiltBeenZeroed = true;
+      m_DeliveryTilter.Motor_Controller.setPosition(0);
+      m_DeliveryTilter.setSetpointToPosition(0);
         return true;
     } 
     //  if (m_DeliveryTilter.Motor_Controller.getPosition().getValueAsDouble() < -1.0) {

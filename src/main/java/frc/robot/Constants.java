@@ -60,13 +60,14 @@ public class Constants {
   }
   public static class TargetLocations
   {
+    public static double SpeakerAimOffset = Units.inchesToMeters(14);
     public static class Red
     {
        public static final double Xspeed = -1.0;//used to invert results with -1 or 1;
        public static final double Yspeed = -1.0;//used to invert results with -1 or 1;
        public static final double rotationspeed = 1.0;//used to invert results with -1 or 1;
 
-      public static final Pose2d SpeakerCenterTagLocation = new Pose2d(Units.inchesToMeters(652.73),Units.inchesToMeters(218.42), Rotation2d.fromDegrees(180));
+      public static final Pose2d SpeakerCenterTagLocation = new Pose2d(Units.inchesToMeters(652.73),Units.inchesToMeters(218.42), Rotation2d.fromDegrees(180));//we shoot to the right of the opening!
       public static final Pose2d SpeakerCenter = new Pose2d(15.05, 5.5, Rotation2d.fromDegrees(0));
 
       public static final Pose2d SourceRight = new Pose2d(.60, 1.197, Rotation2d.fromDegrees(-120));//#9
@@ -91,7 +92,7 @@ public class Constants {
        public static final double Yspeed = 1.0;//used to invert results with -1 or 1;
        public static final double rotationspeed = 1.0;//used to invert results with -1 or 1;
 
-      public static final Pose2d SpeakerCenterTagLocation = new Pose2d(Units.inchesToMeters(-1.5),Units.inchesToMeters(218.42), Rotation2d.fromDegrees(0));
+      public static final Pose2d SpeakerCenterTagLocation = new Pose2d(Units.inchesToMeters(-1.5),Units.inchesToMeters(218.42), Rotation2d.fromDegrees(0));//we shoot to the right of the opening!
 
       public static final Pose2d SpeakerCenter = new Pose2d(1.45, 5.5, Rotation2d.fromDegrees(180));//BC-CALI:1.38,5.48,177
 
@@ -241,7 +242,7 @@ public class Constants {
       public static final double Lift_Position_Zero = 0;
       public static final double Lift_Position_Passing = 15;
       public static final double Lift_Position_Speaker = 0;
-      public static final double Lift_Position_Amp = 50;//50;
+      public static final double Lift_Position_Amp = 70;//50;
       public static final double Lift_Position_HumanSource = 100;//100;//85;//65;//50;
       public static final double Lift_Position_TrapStart = 120;
       public static final double Lift_Position_Trap = 140;
@@ -259,12 +260,12 @@ public class Constants {
       public static final double Tilt_Position_TrapLiftHitHook = 17;//7.75;
       public static final double Tilt_Position_TrapLiftUp = 10.75;
       public static final double Tilt_Position_TrapLiftUpSHOOT = 28;
-      public static  double Tilt_Position_Speaker_Closest = 11.15;//12.9;//11.25;//10.75;//8.5;//11.5;//7.2;
-      public static  double Tilt_Position_Speaker_Mid = 15.25;
-      public static  double Tilt_Position_Speaker_Furthest = 18.3;//19.75;//17.3;//15.75;//14.75;
+      public static  double Tilt_Position_Speaker_Closest = 7.6;//10.15;//12.9;//11.25;//10.75;//8.5;//11.5;//7.2;
+      public static  double Tilt_Position_Speaker_Mid = 10.9;//14.25;
+      public static  double Tilt_Position_Speaker_Furthest = 14.27;//17.2;//19.75;//17.3;//15.75;//14.75;
 
       public static  double Tilt_Position_Speaker_Podium = 12.5;//10.85;
-      public static final double Tilt_Position_Amp = 28;
+      public static final double Tilt_Position_Amp = 25.0;//28;
 
       //public static final double Tilt_Position_TrapStart = 11;
       //public static final double Tilt_Position_Trap = 12;
@@ -272,8 +273,9 @@ public class Constants {
       
       public static final double maxRPM = 6250;
       public static final double ShooterRpmOff = 0;
-      public static final double ShooterRpmSpeakerClose = 5500;//4750;//4500;
-      public static final double ShooterRpmSpeakerPodium = 5500;//5650;
+      public static final double ShooterRpmSpeakerKnownClose = 4250;//5650;
+      public static final double ShooterRpmSpeakerClose = 5250;//5500;//4750;//4500;
+      public static final double ShooterRpmSpeakerPodium = 5250;//5500;//5650;
       public static final double ShooterRpmAmp = 1500;
       public static final double ShooterRpmHumanSource = -1550;//-2250;//-1550;//-500;
     }

@@ -144,14 +144,16 @@ public class RobotContainer {
     .andThen(new RunIntake(pickupSpinner).withInterruptBehavior(InterruptionBehavior.kCancelIncoming))
     .andThen(new InstantCommand(()->{m_candleSubsystem.StrobeBlueLights();},m_candleSubsystem))
     .andThen(new InstantCommand(()->{intakepassing = false;}))
-    .andThen(C_ReturnPickupHead()
+    .andThen(
+      new InstantCommand(()->{m_candleSubsystem.BlueLights();},m_candleSubsystem),
+      C_ReturnPickupHead()
       .alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand();},pickupSpinner)
       .andThen(new WaitCommand(.4))//was .5//POST ROLL PICKUP INTAKE SPIN)
       .andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}))
-    )
+        )
     )//POST ROLL PICKUP INTAKE SPIN)
     
-    .andThen(new InstantCommand(()->{m_candleSubsystem.BlueLights();},m_candleSubsystem))
+    //.andThen()
     // .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm))
     //   //.alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(50);}))
     //     //.alongWith(new RunDeliveryHoldIntake(deliveryHolder)))
@@ -208,35 +210,37 @@ public class RobotContainer {
   public Command C_ParkDeliveryHead()
   {
     return  new InstantCommand(()->{deliveryLifter.setSetpointZero();},deliveryLifter)
-      .alongWith(C_TiltGotoPark(),new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff)))
+      .alongWith(
+        C_TiltGotoPark(),
+      new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff)))
       .andThen(new InstantCommand(()->{m_candleSubsystem.TimeOffLight();}).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
   }
   public Command ReadyShootPreEmptive()
   {
-    return new InstantCommand(()->{ deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose);});
+    return new InstantCommand(()->{ deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerKnownClose);});
   }
   public double safeLifterPosition = 10;
   public Command C_TiltGotoPark()
   {
     return new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Passing, deliveryTilt).andThen(new WaitCommand(20).until(()->deliveryLifter.CurrentLiftEncoderValue < safeLifterPosition))
     .andThen(
-      new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Park);},deliveryTilt), 
+      new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Zero);},deliveryTilt), 
       new WaitCommand(.05),
     new InstantCommand(()->{deliveryTilt.disableatpark();},deliveryTilt)
     );
   }
   public Command C_ReadyCloseSpeakerShot()
   {
-    return new InstantCommand(()->{deliveryLifter.setSetpointPassing();},deliveryLifter)
+    return new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_Zero);},deliveryLifter)
       .alongWith(
         new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Closest, deliveryTilt),
         //new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Closest);},deliveryTilt)
-        new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmSpeakerClose)
+        new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmSpeakerKnownClose)
         );
   }
-    public Command C_ReadyPodiumSpeakerShot()
+  public Command C_ReadyPodiumSpeakerShot()
   {
-    return new InstantCommand(()->{deliveryLifter.setSetpointPassing();},deliveryLifter)
+    return new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_Zero);},deliveryLifter)
       .alongWith(
         new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Podium, deliveryTilt),
         //new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_SafePost);},deliveryTilt),
@@ -338,7 +342,7 @@ public class RobotContainer {
     joystick.rightTrigger().whileTrue(HumanSourcePickup()
     .alongWith(
       new SequentialCommandGroup(
-            new AlignSourceCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis),()->joystick.getHID().getXButtonPressed(),()->joystick.getHID().getYButtonPressed()).unless(IsLimeLightBypassed)
+            new AlignSourceCMD(drivetrainManager,joystick).unless(IsLimeLightBypassed)
           //new ForwardBump(drivetrainManager,SourceBumpTimeout).unless(IsLimeLightBypassed)
           )
           )
@@ -489,7 +493,7 @@ joystick.pov(Constants.XboxControllerMap.kPOVDirectionDOWN).and(()->!PizzaManage
   }
   public Command ZeroTilt()
   {
-    return new ZeroDtilt(deliveryTilt).unless(()->PizzaManager.HasTiltBeenZeroed).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+    return new InstantCommand(()->{});//ZeroDtilt(deliveryTilt).unless(()->PizzaManager.HasTiltBeenZeroed).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
 public Command AlignWhereverShootSpeaker()
 {

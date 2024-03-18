@@ -204,7 +204,7 @@ public class DeliveryTilt extends SubsystemBase {
       public boolean HasNote = false;
       public void disableatpark()
       {
-        setSetpointToPosition(CurrentEncoderValue);
+        setSetpointToPosition(0);//CurrentEncoderValue
         //Motor_Controller.stopMotor();
         Motor_Controller.setControl(m_brake);//we press into our hysterisis on powerup. so without this the tilt motor always runs trying to go to the bottom. 
       }

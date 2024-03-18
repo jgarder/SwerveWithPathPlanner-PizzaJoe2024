@@ -23,8 +23,8 @@ import frc.robot.subsystems.DrivetrainManager;
 public class AlignSpeakerTest extends Command {
       
 
-  double kP = 0.025;
-  double kI = .00010;
+  double kP = 0.017;
+  double kI = .000000001;
   double kD = 0.002;
 
   DrivetrainManager drivetrainManager;
@@ -46,7 +46,7 @@ public class AlignSpeakerTest extends Command {
   final double minDistanceToShootFrom = 1.41;//1.20;
   final double maxDistToShootFrom = 5.0;//23.2;
 
-    double MaxRotationOffset = 1.0;//2.0;//1.43;
+    double MaxRotationOffset = 0.5;//2.0;//1.43;
   
    double TiltAtShortestDistance = 0;//Constants.DeliveryHead.Tilt_Position_Speaker_Closest;
    double TiltAtMid = 0;
@@ -89,7 +89,7 @@ public class AlignSpeakerTest extends Command {
 
   Pose2d PoseOffset;//This is how far we are from where we want to be. this is CurrentPose minus TargetPose.
   
-  double AlignRzSetpoint = -7;//-1;//-13 means we always look to the right of where we want to shoot.
+  double AlignRzSetpoint = 0;//-7.0;//-1;//-13 means we always look to the right of where we want to shoot.
 
   // Called when the command is initially scheduled.
   @Override
@@ -227,7 +227,22 @@ public class AlignSpeakerTest extends Command {
     SmartDashboard.putNumber("Xpose_Offset", Xpose_Offset);
     
     //do trig
-    Rotation2d turnChassistoangleab = Constants.findAngleBetween(CurrentPose.getX(), CurrentPose.getY(), TargetPose.getX(), TargetPose.getY());
+    Rotation2d turnChassistoangleab = new Rotation2d();
+    //we want to aim to the right of the target slightly. 
+    if (CurrentAlliance.get() == Alliance.Red) {
+      
+     turnChassistoangleab = Constants.findAngleBetween(CurrentPose.getX(), CurrentPose.getY(), TargetPose.getX(), TargetPose.getY()-Constants.TargetLocations.SpeakerAimOffset);
+    }
+    else
+    {
+      boolean areweOnWeakSide = CurrentPose.getY() < TargetPose.getY()-1.25;
+      double offset = Constants.TargetLocations.SpeakerAimOffset;
+      if(areweOnWeakSide)
+      {
+        offset+=Units.inchesToMeters(24);
+      }
+     turnChassistoangleab = Constants.findAngleBetween(CurrentPose.getX(), CurrentPose.getY(), TargetPose.getX(), TargetPose.getY()+offset);
+    }
     double m_positionError = MathUtil.inputModulus(turnChassistoangleab.getDegrees(), -180, 180);
     Rotation2d m_positionError2 = Rotation2d.fromDegrees(m_positionError);
     SmartDashboard.putNumber("turnChassistoangleAbsomod2", m_positionError2.getDegrees());
@@ -255,8 +270,8 @@ public class AlignSpeakerTest extends Command {
 
       if(isRotInTarget()) {RZAdjust = 0;}
 
-      var xSpeed = MathUtil.applyDeadband(XAxis.getAsDouble(),0.02);
-      var ySpeed = MathUtil.applyDeadband(YAxis.getAsDouble(),0.02);     
+      var xSpeed = MathUtil.applyDeadband(XAxis.getAsDouble(),0.08);
+      var ySpeed = MathUtil.applyDeadband(YAxis.getAsDouble(),0.08);     
       drivetrainManager.drivetrain.setControl(drivetrainManager.FCdriveAuton.withVelocityX(-ySpeed* drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
         .withVelocityY(-xSpeed * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
         .withRotationalRate(RZAdjust * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
@@ -281,7 +296,7 @@ public class AlignSpeakerTest extends Command {
         ///RPM SPOOLer
         boolean ReadyTofire = getRPMReadyTofire();
         ///
-        if(currentPercentOfMaxDistance < 100  && RotationInRange && ReadyTofire && DTilt.atSetpoint())
+        if(currentPercentOfMaxDistance < 100.0  && RotationInRange && ReadyTofire && DTilt.atSetpoint())
         {
           if(timesgood > goodneeded)
           {
