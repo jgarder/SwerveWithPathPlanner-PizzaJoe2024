@@ -508,6 +508,8 @@ public Command AlignWhereverShootSpeaker()
         );
 }
 
+public double trapindexmovement = 50;//80;
+public double shooterIndexMovement = 2.25;
 
   public void configureTrapButtons()
   {
@@ -546,7 +548,7 @@ public Command AlignWhereverShootSpeaker()
       .alongWith(
           new SequentialCommandGroup(
               new WaitCommand(.75), 
-              new InstantCommand(()->{deliveryHolder.MovePosition(-80);}),
+              new InstantCommand(()->{deliveryHolder.MovePosition(-trapindexmovement);}),
               new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUp);})
               )
           
@@ -572,8 +574,8 @@ public Command AlignWhereverShootSpeaker()
       new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupVertical, pickuparm)
     .alongWith(new InstantCommand(()->{
       deliveryHolder.m_forwardLimit.enableLimitSwitch(false);
-      deliveryHolder.MovePosition(80);
-      deliveryShooter.MovePosition(2.5, true);
+      deliveryHolder.MovePosition(trapindexmovement);
+      deliveryShooter.MovePosition(shooterIndexMovement, true);
       PizzaManager.TrapShotOverIndexed = true;
     },deliveryHolder).unless(()->PizzaManager.TrapShotOverIndexed),
       
