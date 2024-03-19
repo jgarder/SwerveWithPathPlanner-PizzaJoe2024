@@ -77,15 +77,15 @@ public class Constants {
 
       public static final Pose2d Amp = new Pose2d(14.74, 7.59, Rotation2d.fromDegrees(90));//#5
 
-      public static final double StageAMPSIDE_XP_Setpoint = 12.1;//12.0;//4.52; //(Red stage Right)
-      public static final double StageAMPSIDE_YP_Setpoint = 4.87;//4.83;//4.87; //(Red stage Right)
-      public static final double StageAMPSIDE_RZ_Setpoint = -120;//-60; //(Red stage Right)
-      public static final Pose2d ClimbChainStageAMPSIDE = new Pose2d(12.1, 4.87, Rotation2d.fromDegrees(-120));
+      public static final Pose2d ClimbChainStageAmpSIDE = new Pose2d(12.1, 4.80, Rotation2d.fromDegrees(-120));//(Red stage Right)
+      public static final Pose2d ClimbChainStageSourceSIDE = new Pose2d(12.14, 3.25, Rotation2d.fromDegrees(120));//(Red stage left)
+      public static final Pose2d ClimbChainStageCenterSIDE = new Pose2d(10.79, 4.00, Rotation2d.fromDegrees(0));//(Red stage Middle)
 
-      public static final Pose2d TrapFloorStageCenterSide = new Pose2d(10.4, 4.00, Rotation2d.fromDegrees(0));//13
+      
       public static final Pose2d TrapFloorStageAmpSide = new Pose2d(12.27, 5.07, Rotation2d.fromDegrees(-120));//12
       public static final Pose2d TrapFloorStageSourceSide = new Pose2d(12.27, 2.92, Rotation2d.fromDegrees(120));//11
-    
+      public static final Pose2d TrapFloorStageCenterSide = new Pose2d(10.4, 4.00, Rotation2d.fromDegrees(0));//13
+
     }
     public static class Blue
     {
@@ -103,13 +103,13 @@ public class Constants {
 
       public static final Pose2d Amp = new Pose2d(1.84, 7.59, Rotation2d.fromDegrees(90));//#6
 
-      public static final double StageAMPSIDE_XP_Setpoint = 4.39;//4.52; //(blue stage left)
-      public static final double StageAMPSIDE_YP_Setpoint = 4.80;//4.87; //(blue stage left)
-      public static final double StageAMPSIDE_RZ_Setpoint = -62;//-60; //(blue stage left)
+      public static final Pose2d ClimbChainStageAmpSIDE = new Pose2d(4.39, 4.80, Rotation2d.fromDegrees(-60));//(blue stage left)
+      public static final Pose2d ClimbChainStageSourceSIDE = new Pose2d(4.45, 3.25, Rotation2d.fromDegrees(60));//(blue stage Right)
+      public static final Pose2d ClimbChainStageCenterSIDE = new Pose2d(5.75, 4.09, Rotation2d.fromDegrees(180));//(blue stage Middle)
 
       public static final Pose2d TrapFloorStageCenterSide = new Pose2d(6.10, 4.00, Rotation2d.fromDegrees(-180));//14
       public static final Pose2d TrapFloorStageAmpSide = new Pose2d(4.25, 5.07, Rotation2d.fromDegrees(-60));//15
-      public static final Pose2d TrapFloorSourceSide = new Pose2d(4.1910, 2.84, Rotation2d.fromDegrees(60));//16
+      public static final Pose2d TrapFloorStageSourceSide = new Pose2d(4.1910, 2.84, Rotation2d.fromDegrees(60));//16
     }
   }
   public static class CANBus
@@ -321,5 +321,15 @@ public class Constants {
       boolean RotationInRange = RZoffsetFromSetpoint < maxRzOffset;
       SmartDashboard.putBoolean("isRotInTarget", RotationInRange);
       return RotationInRange;
+    }
+
+    public static double getdistancetopose(Pose2d currentPose2d,Pose2d targetPose2d)
+    {
+      double Xpose_Offset = currentPose2d.getX() - targetPose2d.getX();
+      double Ypose_Offset = currentPose2d.getY() - targetPose2d.getY();   
+  
+      var Currdistance = Math.abs(Math.hypot(Xpose_Offset, Ypose_Offset));
+  
+      return Currdistance;
     }
 }

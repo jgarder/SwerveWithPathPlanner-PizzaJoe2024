@@ -94,7 +94,7 @@ public class AlignTrapShootCMD extends Command {
     } 
     else if (targetID == Constants.AllianceAprilTags.Blue.StageSourceSide) 
     {
-      TargetPose = Constants.TargetLocations.Blue.TrapFloorSourceSide;
+      TargetPose = Constants.TargetLocations.Blue.TrapFloorStageSourceSide;
     } 
     else if (targetID == Constants.AllianceAprilTags.Blue.StageCenterSide) 
     {
