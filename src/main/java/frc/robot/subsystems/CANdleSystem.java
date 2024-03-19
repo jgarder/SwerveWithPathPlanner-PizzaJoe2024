@@ -102,6 +102,7 @@ public class CANdleSystem extends SubsystemBase {
         configAll.brightnessScalar = 0.1;
         configAll.vBatOutputMode = VBatOutputMode.Modulated;
         m_candle.configAllSettings(configAll, 100);
+        clearAnimation();
     }
 
     public void toggle5VOverride() {
@@ -273,9 +274,10 @@ public class CANdleSystem extends SubsystemBase {
         m_timer.start();
     }
     public void OFFLights()
-    {
-       
-        clearAnimation();
+    {   
+        m_toAnimate = null;
+        m_candle.clearAnimation(0);
+        //clearAnimation();
         m_candle.setLEDs(0, 0, 0, 0, 0, LEDS_PER_ANIMATION + 8);
     
     }
