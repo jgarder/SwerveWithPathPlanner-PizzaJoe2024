@@ -45,12 +45,15 @@ public class AlignSpeakerTest extends Command {
 
   final double minDistanceToShootFrom = 1.41;//1.20;
   final double maxDistToShootFrom = 5.0;//23.2;
+  final double MidDistance = .5;
 
-    double MaxRotationOffset = 0.5;//2.0;//1.43;
-  
-   double TiltAtShortestDistance = 0;//Constants.DeliveryHead.Tilt_Position_Speaker_Closest;
-   double TiltAtMid = 0;
-   double TiltAtMaxDistance = 0;//Constants.DeliveryHead.Tilt_Position_Speaker_Furthest;//Tilt at max distance (podium)
+  double MaxRotationOffset = 1.0;//.5//2.0;//1.43;
+  double MetersOffCenterForCorrection = 1.25;
+  double inchesToAddToAimCorrection = 24;
+
+  double TiltAtShortestDistance = 0;//Constants.DeliveryHead.Tilt_Position_Speaker_Closest;
+  double TiltAtMid = 0;
+  double TiltAtMaxDistance = 0;//Constants.DeliveryHead.Tilt_Position_Speaker_Furthest;//Tilt at max distance (podium)
 
   final double RPMatShortestDistance = Constants.DeliveryHead.ShooterRpmSpeakerClose;
   final double RPMAtMaxDistance = Constants.DeliveryHead.ShooterRpmSpeakerPodium;//RPM at max distance (podium)
@@ -101,7 +104,7 @@ public class AlignSpeakerTest extends Command {
     TiltAtShortestDistance = Constants.DeliveryHead.Tilt_Position_Speaker_Closest;
     TiltAtMid = Constants.DeliveryHead.Tilt_Position_Speaker_Mid;
     TiltAtMaxDistance = Constants.DeliveryHead.Tilt_Position_Speaker_Furthest;//Tilt at max distance (podium)
-    
+    Dshooter.resetSettleTimer();
     //System.out.println("Closest num" + Constants.DeliveryHead.Tilt_Position_Speaker_Closest);
     /////////////////
     PidTuneRot(AlignRotname);
@@ -127,7 +130,7 @@ public class AlignSpeakerTest extends Command {
       TargetPose = Constants.TargetLocations.Blue.SpeakerCenterTagLocation;
     }
     // get offsets of current pose from target pose
-    double MidDistance = .5;
+    
     UpdateOffsetsFromTarget();
     //
     //distance check
@@ -168,16 +171,6 @@ public class AlignSpeakerTest extends Command {
       SmartDashboard.putNumber("TiltAdded", TiltAdded);
     }
     //// 
-    //get aim and offsets
-     //final var rot_limelight = limelight_aim_proportional();
-     // rotationOffset = rot_limelight;
-     // SmartDashboard.putNumber("RotationOffsetAiming", rotationOffset);
-      //SmartDashboard.putNumber("AlignRotShot-RpmAddPossible", RpmAddPossible);
-      //SmartDashboard.putNumber("AlignRotShot-RPMadded", RpmAdded);
-      //SmartDashboard.putNumber("AlignRotShot-RPMatShortestDistance", RPMatShortestDistance);
-      
-      
-      
       SmartDashboard.putNumber("AlignRotShot-RPM", TotalRpm);
       SmartDashboard.putNumber("AlignRotShot-Tilt", totaltilt);
       SmartDashboard.putNumber("currentPercentOfMaxDistance", currentPercentOfMaxDistance);
@@ -203,14 +196,6 @@ public class AlignSpeakerTest extends Command {
     DTilt.setSetpointToPosition(totaltilt);
     Dshooter.SetShootSpeed(TotalRpm);
     //
-    // var xSpeed = MathUtil.applyDeadband(XAxis.getAsDouble(),0.02);
-    // var ySpeed = MathUtil.applyDeadband(YAxis.getAsDouble(),0.02);  
-       
-    //   drivetrainManager.drivetrain.setControl(drivetrainManager.fieldpoint.withVelocityX(-ySpeed* drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
-    //     .withVelocityY(-xSpeed * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
-    //     .withTargetDirection(m_positionError2) // Drive counterclockwise with negative X (left)
-    // );
-    //
     drive();
     PidTuneRot(AlignRotname);
   }
@@ -227,22 +212,29 @@ public class AlignSpeakerTest extends Command {
     SmartDashboard.putNumber("Xpose_Offset", Xpose_Offset);
     
     //do trig
+
     Rotation2d turnChassistoangleab = new Rotation2d();
-    //we want to aim to the right of the target slightly. 
+    //we want to aim to the right of the target slightly because we shoot to the left. 
     if (CurrentAlliance.get() == Alliance.Red) {
-      
-     turnChassistoangleab = Constants.findAngleBetween(CurrentPose.getX(), CurrentPose.getY(), TargetPose.getX(), TargetPose.getY()-Constants.TargetLocations.SpeakerAimOffset);
-    }
-    else
-    {
-      boolean areweOnWeakSide = CurrentPose.getY() < TargetPose.getY()-1.25;
+      boolean areweOnWeakSide = CurrentPose.getY() > TargetPose.getY()+MetersOffCenterForCorrection;
       double offset = Constants.TargetLocations.SpeakerAimOffset;
       if(areweOnWeakSide)
       {
-        offset+=Units.inchesToMeters(24);
+        offset+=Units.inchesToMeters(inchesToAddToAimCorrection);
+      }
+     turnChassistoangleab = Constants.findAngleBetween(CurrentPose.getX(), CurrentPose.getY(), TargetPose.getX(), TargetPose.getY()-offset);
+    }
+    else
+    {
+      boolean areweOnWeakSide = CurrentPose.getY() < TargetPose.getY()-MetersOffCenterForCorrection;
+      double offset = Constants.TargetLocations.SpeakerAimOffset;
+      if(areweOnWeakSide)
+      {
+        offset+=Units.inchesToMeters(inchesToAddToAimCorrection);
       }
      turnChassistoangleab = Constants.findAngleBetween(CurrentPose.getX(), CurrentPose.getY(), TargetPose.getX(), TargetPose.getY()+offset);
     }
+    //
     double m_positionError = MathUtil.inputModulus(turnChassistoangleab.getDegrees(), -180, 180);
     Rotation2d m_positionError2 = Rotation2d.fromDegrees(m_positionError);
     SmartDashboard.putNumber("turnChassistoangleAbsomod2", m_positionError2.getDegrees());
@@ -253,22 +245,13 @@ public class AlignSpeakerTest extends Command {
     return;
   }
 
-  // double limelight_aim_proportional()
-  // {    
-  //   // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of 
-  //   // your limelight 3 feed, tx should return roughly 31 degrees.
-  //   double targetingAngular = LimelightHelpers.getTX("limelight");
-  //   double RZAdjust = AlignRZController.calculate(targetingAngular);
 
-
-  //   return RZAdjust;//targetingAngularVelocity;
-  // }
 
   private void drive() {
 
     var RZAdjust = AlignRZController.calculate(PoseOffset.getRotation().getDegrees()) + (Math.signum(AlignRZController.calculate(PoseOffset.getRotation().getDegrees()))*min_RZ_command);
 
-      if(isRotInTarget()) {RZAdjust = 0;}
+      if(Constants.isRotInTarget(PoseOffset.getRotation(),MaxRotationOffset)) {RZAdjust = 0;}
 
       var xSpeed = MathUtil.applyDeadband(XAxis.getAsDouble(),0.08);
       var ySpeed = MathUtil.applyDeadband(YAxis.getAsDouble(),0.08);     
@@ -291,10 +274,10 @@ public class AlignSpeakerTest extends Command {
   @Override
   public boolean isFinished() {
         
-        RotationInRange = isRotInTarget();//RZoffsetFromSetpoint < MaxRotationOffset;//.01
+        RotationInRange = Constants.isRotInTarget(PoseOffset.getRotation(),MaxRotationOffset);//RZoffsetFromSetpoint < MaxRotationOffset;//.01
 
         ///RPM SPOOLer
-        boolean ReadyTofire = getRPMReadyTofire();
+        boolean ReadyTofire = Dshooter.getRPMReadyTofire();
         ///
         if(currentPercentOfMaxDistance < 100.0  && RotationInRange && ReadyTofire && DTilt.atSetpoint())
         {
@@ -316,34 +299,34 @@ public class AlignSpeakerTest extends Command {
       return false;
   }
 
-    private boolean isRotInTarget() {
-    double RZoffsetFromSetpoint = (Math.abs(PoseOffset.getRotation().getDegrees())+AlignRzSetpoint);
-    SmartDashboard.putNumber("RZ_Offset", RZoffsetFromSetpoint);
-    boolean RotationInRange = RZoffsetFromSetpoint < MaxRotationOffset;
-    SmartDashboard.putBoolean("isRotInTarget", RotationInRange);
-    return RotationInRange;
-  }
+  //   private boolean isRotInTarget(Rotation2d thisRotation2d,double maxRzOffset) {
+  //   double RZoffsetFromSetpoint = (Math.abs(PoseOffset.getRotation().getDegrees())+AlignRzSetpoint);
+  //   SmartDashboard.putNumber("RZ_Offset", RZoffsetFromSetpoint);
+  //   boolean RotationInRange = RZoffsetFromSetpoint < MaxRotationOffset;
+  //   SmartDashboard.putBoolean("isRotInTarget", RotationInRange);
+  //   return RotationInRange;
+  // }
 
-  private boolean getRPMReadyTofire() {
-    boolean isUpperWithinRange = Constants.isWithinPercentage(Dshooter.CurrentEncoderVelocity, Dshooter.LastSetRPM, RPMpercentageTolerance);
-    boolean islowerWithinRange = Constants.isWithinPercentage(Dshooter.CurrentEncoderVelocity_LowS, Dshooter.LastSetRPM, RPMpercentageTolerance);
-    SmartDashboard.putBoolean("isUpperWithinRange", isUpperWithinRange);
-    SmartDashboard.putBoolean("islowerWithinRange", islowerWithinRange);
-    boolean ReadyTofire = false;
-    if (isUpperWithinRange && islowerWithinRange)
-    {
-      if(m_SettleTimer.get() > SettleTimeAtCorrectRPM)
-      {
-        ReadyTofire = true;
-      }
-    }
-    else
-    {
-      m_SettleTimer.reset();
-      m_SettleTimer.start();
-    }
-    return ReadyTofire;
-  }
+  // private boolean getRPMReadyTofire() {
+  //   boolean isUpperWithinRange = Constants.isWithinPercentage(Dshooter.CurrentEncoderVelocity, Dshooter.LastSetRPM, RPMpercentageTolerance);
+  //   boolean islowerWithinRange = Constants.isWithinPercentage(Dshooter.CurrentEncoderVelocity_LowS, Dshooter.LastSetRPM, RPMpercentageTolerance);
+  //   SmartDashboard.putBoolean("isUpperWithinRange", isUpperWithinRange);
+  //   SmartDashboard.putBoolean("islowerWithinRange", islowerWithinRange);
+  //   boolean ReadyTofire = false;
+  //   if (isUpperWithinRange && islowerWithinRange)
+  //   {
+  //     if(m_SettleTimer.get() > SettleTimeAtCorrectRPM)
+  //     {
+  //       ReadyTofire = true;
+  //     }
+  //   }
+  //   else
+  //   {
+  //     m_SettleTimer.reset();
+  //     m_SettleTimer.start();
+  //   }
+  //   return ReadyTofire;
+  // }
 
   private void PidTuneRot(String PidName) {
     double p = SmartDashboard.getNumber(PidName + " P Gain", kP);

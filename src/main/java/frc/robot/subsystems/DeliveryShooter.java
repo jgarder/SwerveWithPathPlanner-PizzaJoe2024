@@ -8,6 +8,8 @@ import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -148,6 +150,34 @@ public class DeliveryShooter extends SubsystemBase {
       WantedEncoderValue = amount;
         m_motor.setControl(m_torquePosition.withPosition(WantedEncoderValue));
         m_motor_LowS.setControl(m_torquePosition.withPosition(WantedEncoderValue));
+    }
+
+    public void resetSettleTimer()
+    {
+      m_SettleTimer.reset();
+      m_SettleTimer.start();
+    }
+    double SettleTimeAtCorrectRPM = .15;
+    double RPMpercentageTolerance = 4;
+    private final Timer m_SettleTimer = new Timer();
+    public boolean getRPMReadyTofire() {
+      boolean isUpperWithinRange = Constants.isWithinPercentage(CurrentEncoderVelocity, LastSetRPM, RPMpercentageTolerance);
+      boolean islowerWithinRange = Constants.isWithinPercentage(CurrentEncoderVelocity_LowS, LastSetRPM, RPMpercentageTolerance);
+      SmartDashboard.putBoolean("isUpperWithinRange", isUpperWithinRange);
+      SmartDashboard.putBoolean("islowerWithinRange", islowerWithinRange);
+      boolean ReadyTofire = false;
+      if (isUpperWithinRange && islowerWithinRange)
+      {
+        if(m_SettleTimer.get() > SettleTimeAtCorrectRPM)
+        {
+          ReadyTofire = true;
+        }
+      }
+      else
+      {
+        resetSettleTimer();
+      }
+      return ReadyTofire;
     }
 
     public void getEncoderData()

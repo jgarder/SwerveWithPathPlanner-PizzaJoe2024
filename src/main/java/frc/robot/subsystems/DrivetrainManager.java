@@ -49,8 +49,8 @@ public class DrivetrainManager extends SubsystemBase{
       SmartDashboard.putNumber("VelocX", VelocX);
       SmartDashboard.putNumber("VelocY", VelocY);
 
-      SmartDashboard.putNumber("AccumGyroZ", drivetrain.getPigeon2().getAccumGyroZ().getValueAsDouble() - accumGyroz);
-      SmartDashboard.putNumber("GyroYaw", drivetrain.getPigeon2().getYaw().getValueAsDouble());
+     // SmartDashboard.putNumber("AccumGyroZ", drivetrain.getPigeon2().getAccumGyroZ().getValueAsDouble() - accumGyroz);
+      //SmartDashboard.putNumber("GyroYaw", drivetrain.getPigeon2().getYaw().getValueAsDouble());
     }
     public double accumGyroz = 0;
     public static final double slewrateXY = 9;//7;//20;//3;

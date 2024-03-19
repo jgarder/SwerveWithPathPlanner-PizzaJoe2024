@@ -2,6 +2,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
@@ -302,5 +303,23 @@ public class Constants {
         public static final int StageCenterSide = 14;
       }
 
+    }
+
+    // public static void PidTuneRot(String PidName,PIDController AlignRZController) {
+    //   double p = SmartDashboard.getNumber(PidName + " P Gain", -1);
+    //   double i = SmartDashboard.getNumber(PidName + " I Gain", -1);
+    //   double d = SmartDashboard.getNumber(PidName + " D Gain", -1);
+        
+    //   if((p != AlignRZController.getP())) { AlignRZController.setP(p); }
+    //   if((i != AlignRZController.getI())) { AlignRZController.setI(i); }
+    //   if((d != AlignRZController.getD())) { AlignRZController.setD(d); }
+  
+    // }
+    public static boolean isRotInTarget(Rotation2d thisRotation2d,double maxRzOffset) {
+      double RZoffsetFromSetpoint = (Math.abs(thisRotation2d.getDegrees()));
+      SmartDashboard.putNumber("RZ_Offset", RZoffsetFromSetpoint);
+      boolean RotationInRange = RZoffsetFromSetpoint < maxRzOffset;
+      SmartDashboard.putBoolean("isRotInTarget", RotationInRange);
+      return RotationInRange;
     }
 }
