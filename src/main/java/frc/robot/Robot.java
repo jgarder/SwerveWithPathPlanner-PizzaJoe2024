@@ -76,17 +76,30 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousExit() {}
-
+  int TotalTeleOpSeconds = 135;
+  int SecondsNeededForTrapping = 35; //190seconds into match = 215total
+  int TeleOpSecondsToPlay = TotalTeleOpSeconds - SecondsNeededForTrapping;
+  private final Timer m_Timer_ClimbTime = new Timer();
   @Override
   public void teleopInit() {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_Timer_ClimbTime.restart();
     //PizzaManager.LimelightTelemetryUpdateRequested = false;
+  
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+
+      if(m_Timer_ClimbTime.get() > TeleOpSecondsToPlay)
+    {
+        PizzaManager.RequestTrapLights = true;
+        m_Timer_ClimbTime.reset();
+        m_Timer_ClimbTime.stop();
+    }
+  }
 
   @Override
   public void teleopExit() {

@@ -53,7 +53,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-
+import frc.robot.RobotContainer.PizzaManager;
 
 import com.ctre.phoenix.led.*;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
@@ -66,7 +66,7 @@ import com.ctre.phoenix.led.TwinkleOffAnimation.TwinkleOffPercent;
 public class CANdleSystem extends SubsystemBase {
     double speed = 0.2;
     double brightness = 0.5;
-    private final int LEDS_PER_ANIMATION = 500;
+    private final int LEDS_PER_ANIMATION = 250;
     private final CANdle m_candle = new CANdle(Constants.CANBus.CANdleCanBusID, Constants.CANBus.kRIOCANbusName);
     private int m_candleChannel = 0;
     private boolean m_clearAllAnims = false;
@@ -90,6 +90,7 @@ public class CANdleSystem extends SubsystemBase {
         Empty
     }
     private AnimationTypes m_currentAnimation;
+    
 
     public CANdleSystem() {
         
@@ -215,6 +216,8 @@ public class CANdleSystem extends SubsystemBase {
 
     public void clearAllAnims() {m_clearAllAnims = true;}
 
+    
+
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
@@ -246,8 +249,12 @@ public class CANdleSystem extends SubsystemBase {
                 m_candle.clearAnimation(i);
             }
         }
-
-        if(m_timer.get() > 2)
+        
+        if (PizzaManager.RequestTrapLights) {
+            FlickerObviousLights();
+            PizzaManager.RequestTrapLights = false;
+        }
+        else if(m_timer.get() > 2)
         {
             OFFLights();
             m_timer.reset();
@@ -337,4 +344,17 @@ public class CANdleSystem extends SubsystemBase {
     {
         m_toAnimate = new RainbowAnimation(1, 0.7, LEDS_PER_ANIMATION, m_animDirection, m_candleChannel * LEDS_PER_ANIMATION + 8);
     }
+    public void FlickerObviousLights()
+    {
+    //  m_toAnimate = new TwinkleAnimation(255, 0, 255, 255, 1.0, LEDS_PER_ANIMATION, TwinklePercent.Percent42, m_candleChannel * LEDS_PER_ANIMATION + 8);
+    //  m_toAnimate = new TwinkleOffAnimation(255, 0, 255, 255, 3.0, LEDS_PER_ANIMATION, TwinkleOffPercent.Percent76, m_candleChannel * LEDS_PER_ANIMATION + 8);
+       // m_toAnimate = new LarsonAnimation(255, 0, 255, 255, 1.0, LEDS_PER_ANIMATION, BounceMode.Front, 10, m_candleChannel * LEDS_PER_ANIMATION + 8);
+        var m_toAnimate3 = new FireAnimation(1.0, .7, 128, 1.0, 0.1, m_animDirection, 8);
+        var m_toAnimate2 = new FireAnimation(1.0, .7, 128, 1.0, 0.1, m_animDirection, 128);
+        m_candle.animate(m_toAnimate3, 1);
+        m_candle.animate(m_toAnimate2, 2);
+        //m_toAnimate = new ColorFlowAnimation(255, 0, 255, 255, 1.0, LEDS_PER_ANIMATION, Direction.Forward, m_candleChannel * LEDS_PER_ANIMATION + 8);
+
+    }
+
 }

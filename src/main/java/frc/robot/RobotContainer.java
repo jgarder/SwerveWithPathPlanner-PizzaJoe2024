@@ -126,6 +126,7 @@ public class RobotContainer {
       return NoteInDeliveryHolder;
     }
     public static BooleanSupplier IsOvenPickUpRunning;// = ()->{joystick.rightTrigger(.1).getAsBoolean();};
+    public static boolean RequestTrapLights;
     
   }
 
@@ -596,8 +597,10 @@ public double shooterIndexMovement = 2.25;
     .andThen(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose)),new WaitCommand(.1),new ShootDeliveryHold(deliveryHolder))//new ShootDeliveryHold(deliveryHolder))
     
     )
-    .onFalse(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff))
-    .alongWith(new InstantCommand(() -> {deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUp);}).andThen(new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupVertical, pickuparm))));
+    .onFalse(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff)).andThen(new InstantCommand(()->{deliveryHolder.requestingIndex = false; deliveryHolder.SetToWantedDutyCycle(0);}))
+    .alongWith(
+      new InstantCommand(() -> {deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUp);})
+      .andThen(new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupVertical, pickuparm))));
     //////
   }
   public RobotContainer() {
