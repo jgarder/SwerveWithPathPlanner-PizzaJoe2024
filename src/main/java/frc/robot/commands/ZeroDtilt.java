@@ -24,7 +24,7 @@ public class ZeroDtilt extends Command{
     m_Timer.reset();
     m_Timer.start();
     if(PizzaManager.HasTiltBeenZeroed){end(false);return;}
-    m_DeliveryTilter.setSetpointToPosition(-5);
+    m_DeliveryTilter.setSetpointToPosition(0);
   }
 
   @Override
@@ -42,9 +42,10 @@ public class ZeroDtilt extends Command{
   @Override
   public boolean isFinished() {
     if(m_Timer.get() > TimeoutSeconds){
-      m_DeliveryTilter.disableatpark();
-      PizzaManager.HasTiltBeenZeroed = true;
       m_DeliveryTilter.Motor_Controller.setPosition(0);
+      //m_DeliveryTilter.disableatpark();
+      PizzaManager.HasTiltBeenZeroed = true;
+      
       m_DeliveryTilter.setSetpointToPosition(0);
         return true;
     } 

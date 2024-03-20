@@ -54,7 +54,7 @@ public class DeliveryTilt extends SubsystemBase {
     public DeliveryTilt()
     {
         SetupMotorConfig();
-        Motor_Controller.setPosition(0);
+        
         //should the motor controller be inverted? 0 is folded in and 44 (or max) is folded out.
         Motor_Controller.setInverted(false);
         Motor_Controller.setNeutralMode(NeutralModeValue.Brake);
@@ -69,6 +69,11 @@ public class DeliveryTilt extends SubsystemBase {
         SmartDashboard.putNumber(MotorName + " Mid Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Mid);
         SmartDashboard.putNumber(MotorName + " Furthest Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Furthest);
 
+        StatusCode status = Motor_Controller.setPosition(0);
+        if(!status.isOK()) {
+          System.out.println("Could not apply zero position, error code: " + status.toString());
+        }
+        
     }
 
     public void getEncoderData()
@@ -201,7 +206,7 @@ public class DeliveryTilt extends SubsystemBase {
       }
 
 
-      public boolean HasNote = false;
+      //public boolean HasNote = false;
       public void disableatpark()
       {
         setSetpointToPosition(0);//CurrentEncoderValue

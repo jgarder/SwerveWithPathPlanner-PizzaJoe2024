@@ -57,6 +57,7 @@
 	</widget>
 	<widget field="DeliveryTilt Closest Setpoint" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="756" y="345"/>
+		<property name="Background" value="51.255.0.255"/>
 	</widget>
 	<widget field="vyMetersPerSecond" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1430" y="667"/>
@@ -516,6 +517,7 @@
 	<widget field="DeliveryTilt PID Encoder Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="904" y="222"/>
 		<width>210</width>
+		<property name="Background" value="0.204.0.255"/>
 	</widget>
 	<widget field="DeliveryTilt Motor Temp" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="404" y="228"/>

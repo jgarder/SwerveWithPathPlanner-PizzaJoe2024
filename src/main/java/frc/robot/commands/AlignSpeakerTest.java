@@ -254,11 +254,18 @@ public class AlignSpeakerTest extends Command {
       if(Constants.isRotInTarget(PoseOffset.getRotation(),MaxRotationOffset)) {RZAdjust = 0;}
 
       var xSpeed = MathUtil.applyDeadband(XAxis.getAsDouble(),0.08);
-      var ySpeed = MathUtil.applyDeadband(YAxis.getAsDouble(),0.08);     
-      drivetrainManager.drivetrain.setControl(drivetrainManager.FCdriveAuton.withVelocityX(-ySpeed* drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
+      var ySpeed = MathUtil.applyDeadband(YAxis.getAsDouble(),0.08);
+      if(DriverStation.isTeleopEnabled())
+      {
+        drivetrainManager.drivetrain.setControl(drivetrainManager.FCdriveAuton.withVelocityX(-ySpeed* drivetrainManager.MaxSpeed) // Drive forward with // negative Y (forward)
         .withVelocityY(-xSpeed * drivetrainManager.MaxSpeed) // Drive left with negative X (left)
         .withRotationalRate(RZAdjust * drivetrainManager.MaxAngularRate) // Drive counterclockwise with negative X (left)
-    );
+      );
+      }
+      else{
+         drivetrainManager.drivetrain.setControl(drivetrainManager.FCdriveAuton.withRotationalRate(RZAdjust * drivetrainManager.MaxAngularRate)); // Drive counterclockwise with negative X (left)
+      }     
+      
   }
 
 
