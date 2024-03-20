@@ -157,7 +157,7 @@ public class DeliveryShooter extends SubsystemBase {
       m_SettleTimer.reset();
       m_SettleTimer.start();
     }
-    double SettleTimeAtCorrectRPM = .15;
+    double SettleTimeAtCorrectRPM = .05;
     double RPMpercentageTolerance = 4;
     private final Timer m_SettleTimer = new Timer();
     public boolean getRPMReadyTofire() {

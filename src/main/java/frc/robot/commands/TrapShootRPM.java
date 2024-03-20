@@ -6,19 +6,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.DeliveryShooter;
 import frc.robot.subsystems.PickupSpinner;
-public class SpoolPizzaDeliveryToRPM extends Command{
+public class TrapShootRPM extends Command{
     private final DeliveryShooter m_DeliveryShooter;
     private final Timer m_Timer = new Timer();
     private double WantedRPM = 0;
-    public SpoolPizzaDeliveryToRPM(DeliveryShooter pickupSpinner,double Rpmwanted){
+    public TrapShootRPM(DeliveryShooter pickupSpinner){
         m_DeliveryShooter = pickupSpinner;
-        WantedRPM = Rpmwanted;
-        addRequirements(m_DeliveryShooter);
-    }
-    public SpoolPizzaDeliveryToRPM(DeliveryShooter pickupSpinner,double Rpmwanted,double percentTolerance){
-      percentageTolerance = percentTolerance;
-        m_DeliveryShooter = pickupSpinner;
-        WantedRPM = Rpmwanted;
         addRequirements(m_DeliveryShooter);
     }
 
@@ -27,6 +20,7 @@ public class SpoolPizzaDeliveryToRPM extends Command{
   public void initialize() {
     m_Timer.reset();
     m_Timer.start();
+    WantedRPM = SmartDashboard.getNumber("TrapFloorRPM", 0);
     m_DeliveryShooter.SetShootSpeed(WantedRPM);
   }
 

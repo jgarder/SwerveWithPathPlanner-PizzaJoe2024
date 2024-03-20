@@ -5,26 +5,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.DeliveryTilt;
 
-public class MoveDTiltToPosition extends Command{
+public class TrapShootTILT extends Command{
     //private final PickupSpinner m_PickupSpinner;
     private final DeliveryTilt m_DeliveryTilter;
     private final Timer m_Timer = new Timer();
     double desiredSetpoint = 0;
-    public MoveDTiltToPosition(double DesiredSetpoint, DeliveryTilt DelivTilt)
+    public TrapShootTILT(DeliveryTilt DelivTilt)
     {
         //m_PickupSpinner = pickupSpinner;
         m_DeliveryTilter = DelivTilt;
-        this.desiredSetpoint = DesiredSetpoint;
-        System.out.printf("this.desiredSetpoint : " + this.desiredSetpoint);
-        //addRequirements(m_PickupSpinner);
-        addRequirements(m_DeliveryTilter);
-    }
-    public MoveDTiltToPosition(Boolean TrapFloorOnlyDoNotUse, DeliveryTilt DelivTilt)
-    {
-        //m_PickupSpinner = pickupSpinner;
-        m_DeliveryTilter = DelivTilt;
-        this.desiredSetpoint = SmartDashboard.getNumber("TrapFloorTilt",0);
-        System.out.printf("this.desiredSetpoint : " + this.desiredSetpoint);
         //addRequirements(m_PickupSpinner);
         addRequirements(m_DeliveryTilter);
     }
@@ -34,6 +23,7 @@ public class MoveDTiltToPosition extends Command{
     m_Timer.start();
     m_SettleTimer.reset();
     m_SettleTimer.start();
+    this.desiredSetpoint = SmartDashboard.getNumber("TrapFloorTilt",0);
     m_DeliveryTilter.setSetpointToPosition(desiredSetpoint);
   }
 

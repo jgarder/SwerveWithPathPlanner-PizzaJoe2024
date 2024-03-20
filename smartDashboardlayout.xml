@@ -1,5 +1,13 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="TrapFloorRPM" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="592" y="368"/>
+		<property name="Background" value="0.204.204.255"/>
+	</widget>
+	<widget field="TrapFloorTilt" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="599" y="346"/>
+		<property name="Background" value="0.204.204.255"/>
+	</widget>
 	<widget field="RZ_Offset" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="836" y="742"/>
 	</widget>
@@ -600,4 +608,5 @@
 	<hidden field="Module 3"/>
 	<hidden field="Module 0"/>
 	<hidden field="Module 1"/>
+	<hidden field="DebugMsg"/>
 </xml>

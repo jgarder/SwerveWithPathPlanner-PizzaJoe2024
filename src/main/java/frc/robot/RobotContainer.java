@@ -49,6 +49,8 @@ import frc.robot.commands.RunDeliveryHoldIntake;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.ShootDeliveryHold;
 import frc.robot.commands.SpoolPizzaDeliveryToRPM;
+import frc.robot.commands.TrapShootRPM;
+import frc.robot.commands.TrapShootTILT;
 import frc.robot.commands.UndoDeliveryHold;
 import frc.robot.commands.WaitForIndexCMD;
 import frc.robot.commands.ZeroDtilt;
@@ -288,6 +290,24 @@ public class RobotContainer {
   {
     return new SequentialCommandGroup(new WaitForIndexCMD(deliveryHolder),C_ReadyCloseSpeakerShot(),new ShootDeliveryHold(deliveryHolder),new InstantCommand(()->{m_candleSubsystem.StrobeBlueLights();}),  C_ParkDeliveryHead());
   }
+    private Command ShootTrapFloor()
+  {
+    return new SequentialCommandGroup(
+      new WaitForIndexCMD(deliveryHolder),
+      C_ReadyTrapFloorShot(),
+      new ShootDeliveryHold(deliveryHolder),
+      new InstantCommand(()->{m_candleSubsystem.StrobeBlueLights();}),  
+      C_ParkDeliveryHead());
+  }
+  public Command C_ReadyTrapFloorShot()
+  {
+    return new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_Zero);},deliveryLifter)
+      .alongWith(
+        new TrapShootTILT(deliveryTilt),
+        //new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Closest);},deliveryTilt)
+        new TrapShootRPM(deliveryShooter)
+        );
+  }
   private SequentialCommandGroup PickupRoutine() {
     return new SequentialCommandGroup(
       new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupFloorPickup, pickuparm).unless(isNoteInIntakeboolSup),
@@ -401,7 +421,7 @@ public class RobotContainer {
     //Align Trap Shoot Test
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionRIGHT).and(()->!PizzaManager.AltControlModeEnabled)
     .whileTrue(
-      new AlignTrapShootCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).andThen(JustShootIt(),C_ParkDeliveryHead())
+      new AlignTrapShootCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).andThen(ShootTrapFloor(),C_ParkDeliveryHead())
     )
     .onFalse(C_ParkDeliveryHead());
     //
@@ -594,7 +614,7 @@ public double shooterIndexMovement = 2.25;
       new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_TrapShoot, deliveryLifter),
       new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupFloorPickup, pickuparm)
     )
-    .andThen(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose)),new WaitCommand(.1),new ShootDeliveryHold(deliveryHolder))//new ShootDeliveryHold(deliveryHolder))
+    .andThen(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose)),new WaitCommand(.2),new ShootDeliveryHold(deliveryHolder))//new ShootDeliveryHold(deliveryHolder))
     
     )
     .onFalse(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff)).andThen(new InstantCommand(()->{deliveryHolder.requestingIndex = false; deliveryHolder.SetToWantedDutyCycle(0);}))

@@ -204,6 +204,12 @@ public class DeliveryTilt extends SubsystemBase {
         WantedEncoderValue = Constants.DeliveryHead.Tilt_Position_Amp;
         Motor_Controller.setControl(m_torquePosition.withPosition(WantedEncoderValue));
       }
+      public void setSetpointTrapFloor() 
+      {
+        //enable();
+        WantedEncoderValue = Constants.DeliveryHead.Tilt_Position_TrapFloorShoot;
+        Motor_Controller.setControl(m_torquePosition.withPosition(WantedEncoderValue));
+      }
 
 
       //public boolean HasNote = false;

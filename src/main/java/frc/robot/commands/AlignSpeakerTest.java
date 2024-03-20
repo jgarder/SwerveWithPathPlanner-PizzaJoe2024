@@ -66,7 +66,7 @@ public class AlignSpeakerTest extends Command {
   public String AlignRotname = "AlignRotShot";
   double RPMpercentageTolerance = 4;
   int timesgood = 0;
-  int goodneeded = 5;
+  int goodneeded = 0;
 
   boolean RotationInRange = false;
 
@@ -286,7 +286,7 @@ public class AlignSpeakerTest extends Command {
         ///RPM SPOOLer
         boolean ReadyTofire = Dshooter.getRPMReadyTofire();
         ///
-        if(currentPercentOfMaxDistance < 100.0  && RotationInRange && ReadyTofire && DTilt.atSetpoint())
+        if(RotationInRange && ReadyTofire && DTilt.atSetpoint()) //currentPercentOfMaxDistance < 100.0  &&
         {
           if(timesgood > goodneeded)
           {

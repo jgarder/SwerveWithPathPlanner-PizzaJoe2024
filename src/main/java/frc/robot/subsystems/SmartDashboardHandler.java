@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.PizzaManager;
 
@@ -22,6 +23,8 @@ RobotContainer thisrobot;
 
     // Build an auto chooser. This will use Commands.none() as the default option.
     
+    SmartDashboard.putNumber("TrapFloorTilt", Constants.DeliveryHead.Tilt_Position_TrapFloorShoot);
+    SmartDashboard.putNumber("TrapFloorRPM", Constants.DeliveryHead.ShooterRpmTrapFloor);
 
     bootupPersistents();
     //BuildAutonomousChooser();
@@ -86,6 +89,11 @@ RobotContainer thisrobot;
         PizzaManager.LimeLightBypassed =  SmartDashboard.getBoolean(LimelightbypassName, false);
         PizzaManager.RotationMulti = MathUtil.clamp(SmartDashboard.getNumber(ZrotMultiplierName, PizzaManager.RotationMulti),0,1);
         PizzaManager.speedMulti = MathUtil.clamp(SmartDashboard.getNumber(XYSpeedName, PizzaManager.speedMulti),0,1);
+
+        Constants.DeliveryHead.Tilt_Position_TrapFloorShoot = SmartDashboard.getNumber("TrapFloorTilt",0);
+        Constants.DeliveryHead.ShooterRpmTrapFloor = SmartDashboard.getNumber("TrapFloorRPM", 0);
+        //System.out.printf("-tiltPos : " + Constants.DeliveryHead.Tilt_Position_TrapFloorShoot);
+        //System.out.printf("-ShooterRpmTrapFloor : " + Constants.DeliveryHead.ShooterRpmTrapFloor);
     }
     
     private static final int NUM_PDH_CHANNELS =24;

@@ -65,7 +65,9 @@ public class AlignStageCMD extends Command {
   private void SetupTargetPosition() {
   double targetID = LimelightHelpers.getFiducialID(Constants.LimelightName);
   double closesttagdistance = 9999999;
+  TargetPose = GetLatestPoseToBuffer();
   if(!CurrentAlliance.isPresent()){TargetPose = GetLatestPoseToBuffer(); return;}
+
   if ( (CurrentAlliance.get() == Alliance.Red) )//substation
   { 
     // Pose2d PoseToCheck  = Constants.TargetLocations.Red.ClimbChainStageAmpSIDE;
