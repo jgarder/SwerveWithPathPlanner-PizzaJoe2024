@@ -21,6 +21,8 @@ public class TrapShootRPM extends Command{
     m_Timer.reset();
     m_Timer.start();
     WantedRPM = SmartDashboard.getNumber("TrapFloorRPM", 0);
+    percentageTolerance = 4;
+    SettleTimeAtCorrectRPM = .15;
     m_DeliveryShooter.SetShootSpeed(WantedRPM);
   }
 

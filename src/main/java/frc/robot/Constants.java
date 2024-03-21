@@ -95,7 +95,7 @@ public class Constants {
 
       public static final Pose2d SpeakerCenterTagLocation = new Pose2d(Units.inchesToMeters(-1.5),Units.inchesToMeters(218.42), Rotation2d.fromDegrees(0));//we shoot to the right of the opening!
 
-      public static final Pose2d SpeakerCenter = new Pose2d(1.45, 5.5, Rotation2d.fromDegrees(180));//BC-CALI:1.38,5.48,177
+      public static final Pose2d SpeakerCenter = new Pose2d(1.45, 5.5-.1, Rotation2d.fromDegrees(180));//BC-CALI:1.38,5.48,177
 
       public static final Pose2d SourceRight = new Pose2d(14.83, .577, Rotation2d.fromDegrees(-60));//#1
       public static final Pose2d SourceCenter = new Pose2d(15.42, .92, Rotation2d.fromDegrees(-60));
@@ -108,7 +108,7 @@ public class Constants {
       public static final Pose2d ClimbChainStageCenterSIDE = new Pose2d(5.75, 4.09, Rotation2d.fromDegrees(180));//(blue stage Middle)
 
       public static final Pose2d TrapFloorStageCenterSide = new Pose2d(6.10, 4.00, Rotation2d.fromDegrees(-180));//14
-      public static final Pose2d TrapFloorStageAmpSide = new Pose2d(4.0, 4.91, Rotation2d.fromDegrees(-60));//15
+      public static final Pose2d TrapFloorStageAmpSide = new Pose2d(4.11, 4.97, Rotation2d.fromDegrees(-60));//15
       public static final Pose2d TrapFloorStageSourceSide = new Pose2d(4.1910, 2.84, Rotation2d.fromDegrees(60));//16
     }
   }
@@ -275,7 +275,7 @@ public class Constants {
       
       public static final double maxRPM = 6250;
       public static final double ShooterRpmOff = 0;
-      public static final double ShooterRpmSpeakerKnownClose = 4250;//5650;
+      public static final double ShooterRpmSpeakerKnownClose = 4550;//5650;
       public static  double ShooterRpmTrapFloor = 5250;//5650;
       public static final double ShooterRpmSpeakerClose = 5250;//5500;//4750;//4500;
       public static final double ShooterRpmSpeakerPodium = 5250;//5500;//5650;
