@@ -69,7 +69,7 @@ public class Constants {
        public static final double rotationspeed = 1.0;//used to invert results with -1 or 1;
 
       public static final Pose2d SpeakerCenterTagLocation = new Pose2d(Units.inchesToMeters(652.73),Units.inchesToMeters(218.42), Rotation2d.fromDegrees(180));//we shoot to the right of the opening!
-      public static final Pose2d SpeakerCenter = new Pose2d(15.05, 5.5, Rotation2d.fromDegrees(0));
+      public static final Pose2d SpeakerCenter = new Pose2d(15.05, 5.5-.2, Rotation2d.fromDegrees(0));
 
       public static final Pose2d SourceRight = new Pose2d(.60, 1.197, Rotation2d.fromDegrees(-120));//#9
       public static final Pose2d SourceCenter = new Pose2d(1.07, .89, Rotation2d.fromDegrees(-120));
@@ -277,6 +277,7 @@ public class Constants {
       public static final double ShooterRpmOff = 0;
       public static final double ShooterRpmSpeakerKnownClose = 4550;//5650;
       public static  double ShooterRpmTrapFloor = 5250;//5650;
+      public static double offset;
       public static final double ShooterRpmSpeakerClose = 5250;//5500;//4750;//4500;
       public static final double ShooterRpmSpeakerPodium = 5250;//5500;//5650;
       public static final double ShooterRpmAmp = 1500;

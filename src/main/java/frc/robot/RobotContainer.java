@@ -139,7 +139,7 @@ public class RobotContainer {
 
   
   
-
+ public double intakePostRollSeconds = 0.05;
   public Command C_PickupPizzaFromFloorWithoutWashing()
   {
     return //new RunDeliveryHoldIntake(deliveryHolder).alongWith(
@@ -151,11 +151,11 @@ public class RobotContainer {
       new InstantCommand(()->{m_candleSubsystem.BlueLights();},m_candleSubsystem),
       C_ReturnPickupHead()
       .alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand();},pickupSpinner)
-      .andThen(new WaitCommand(.4))//was .5//POST ROLL PICKUP INTAKE SPIN)
+      .andThen(new WaitCommand(intakePostRollSeconds))//.4//was .5//POST ROLL PICKUP INTAKE SPIN)
       .andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}))
         )
     )//POST ROLL PICKUP INTAKE SPIN)
-    
+   
     //.andThen()
     // .andThen(new MovePickupToPosition(Constants.PickupHead.PickupPassing, pickuparm))
     //   //.alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand(50);}))
@@ -653,10 +653,15 @@ public double shooterIndexMovement = 2.25;
       NamedCommands.registerCommand("JustShootIt",   JustShootIt());
       NamedCommands.registerCommand("AlignWhereverShootSpeaker",   AlignWhereverShootSpeaker());
       NamedCommands.registerCommand("Placeholder",   PlaceHolder());
+      NamedCommands.registerCommand("ZeroDTilt", ZeroDtilt());
     
       
       //Now build the autos 
       drivetrainManager.runAuto = drivetrainManager.drivetrain.getAutoPath("SP_C_2Piece");
+  }
+  private Command ZeroDtilt()
+  {
+    return new ZeroDtilt(deliveryTilt);
   }
   private Command PlaceHolder() {
     return new InstantCommand(()->{});

@@ -147,6 +147,7 @@ public class PickupSpinner extends SubsystemBase{
                 else
                 {
                     PizzaManager.IsNoteInPickup = true;
+                    stopSpinner();
                     //trying to run pickup but the limit switch is enabled and there is a note in the pickup so dont run the head. 
                 }
                 return;   
@@ -167,10 +168,11 @@ public class PickupSpinner extends SubsystemBase{
     double windback = 3;
     public void HoldAutoLoaded(){
         //pickupState = pickupState.ZERO;
-        double position = Motor_Encoder.getPosition();
-        Motor_Encoder.setPosition(position);
+       // double position = Motor_Encoder.getPosition();
+       // Motor_Encoder.setPosition(position);
+        SetToWantedRpm(idledutycycle);
     }
-
+      public double idledutycycle = 0;
       public double IntakeDutyCycle = -1;//rpm used during note release
       public double PassingDutyCycle = .75;//rpm used during note release
       public double LastSetRPM = 0;
