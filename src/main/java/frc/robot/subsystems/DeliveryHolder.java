@@ -183,7 +183,7 @@ public class DeliveryHolder extends SubsystemBase {
             m_forwardLimit.enableLimitSwitch(false);
             //System.out.println("outdexiong");
             SmartDashboard.putString("IndexStage","OutDexing");
-            SetToWantedDutyCycle(-.3);
+            SetToWantedDutyCycle(OutdexerDutyCycle);
             
             isUndoIndexFinished();
           }
@@ -192,7 +192,7 @@ public class DeliveryHolder extends SubsystemBase {
             m_forwardLimit.enableLimitSwitch(false);
             //System.out.println("FrontIntaking");
             SmartDashboard.putString("IndexStage","FrontIntaking");
-            SetToWantedDutyCycle(-.15);//-.2 was working
+            SetToWantedDutyCycle(OutdexerDutyCycle);//-.2 was working
             ThisShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmHumanSource);
             if(IsNoteInDeliveryHold())
             {
@@ -258,10 +258,11 @@ public class DeliveryHolder extends SubsystemBase {
       }
       //21:1 - 15:1;
       public double IdleDutyCycle = 0;
+      public double OutdexerDutyCycle = -.18;//-.20;
       public double NormalPassingDutyCycle = .355;//.50;
       public double SpeakerDutyCycle = 1.0;//rpm used during note release
       public double AmpDutyCycle = .53;//.75;//rpm used during note release
-      public double PassingDutyCycle = .53;//.75;//rpm used during note release
+      //public double PassingDutyCycle = .53;//.75;//rpm used during note release
       public double LastSetDutyCycle = 0;
 
       public void SetToWantedDutyCycle(double wantedDutyCycle) {

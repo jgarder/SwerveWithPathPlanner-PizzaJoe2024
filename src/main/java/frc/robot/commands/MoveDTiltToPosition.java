@@ -15,7 +15,7 @@ public class MoveDTiltToPosition extends Command{
         //m_PickupSpinner = pickupSpinner;
         m_DeliveryTilter = DelivTilt;
         this.desiredSetpoint = DesiredSetpoint;
-        System.out.printf("this.desiredSetpoint : " + this.desiredSetpoint);
+        //System.out.printf("this.desiredSetpoint : " + this.desiredSetpoint);
         //addRequirements(m_PickupSpinner);
         addRequirements(m_DeliveryTilter);
     }
@@ -24,7 +24,7 @@ public class MoveDTiltToPosition extends Command{
         //m_PickupSpinner = pickupSpinner;
         m_DeliveryTilter = DelivTilt;
         this.desiredSetpoint = SmartDashboard.getNumber("TrapFloorTilt",0);
-        System.out.printf("this.desiredSetpoint : " + this.desiredSetpoint);
+        //System.out.printf("this.desiredSetpoint : " + this.desiredSetpoint);
         //addRequirements(m_PickupSpinner);
         addRequirements(m_DeliveryTilter);
     }
