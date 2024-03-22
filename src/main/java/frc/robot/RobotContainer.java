@@ -659,9 +659,7 @@ public double shooterIndexMovement = 2.25;
       drivetrainManager.runAuto = drivetrainManager.drivetrain.getAutoPath("SP_C_2Piece");
   }
   private Command PlaceHolder() {
-    return new Command() {
-      
-    };
+    return new InstantCommand(()->{});
   }
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
