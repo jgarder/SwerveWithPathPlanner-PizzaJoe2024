@@ -588,12 +588,16 @@ public double shooterIndexMovement = 2.25;
 
     //alignment is not in the alt controlled mode!
      joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).and(()->!PizzaManager.AltControlModeEnabled)
-    .whileTrue(new AlignStageCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed));
+    .whileTrue(
+      new AlignStageCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
+      .alongWith(new InstantCommand(()->{LimelightHelpers.setLEDMode_ForceOn(Constants.LimelightName);}))
+    );
     //unfold and get ready for lift
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).and(()->PizzaManager.AltControlModeEnabled)
     .onTrue(
       new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupVertical, pickuparm)
     .alongWith(new InstantCommand(()->{
+      LimelightHelpers.setLEDMode_ForceOff(Constants.LimelightName);
       deliveryHolder.m_forwardLimit.enableLimitSwitch(false);
       deliveryHolder.MovePosition(trapindexmovement);
       deliveryShooter.MovePosition(shooterIndexMovement, true);
