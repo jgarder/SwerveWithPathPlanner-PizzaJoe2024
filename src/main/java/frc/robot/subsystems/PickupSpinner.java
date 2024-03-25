@@ -164,6 +164,13 @@ public class PickupSpinner extends SubsystemBase{
       //setSetpoint(-reduction);
       //enable();
     }
+        public void IntakePostRollCommand() {
+      //m_forwardLimit.enableLimitSwitch(false);
+      SetToWantedRpm(PostrollDutyCycle);
+      //Motor_Encoder.setPosition(0);
+      //setSetpoint(-reduction);
+      //enable();
+    }
     //
     double windback = 3;
     public void HoldAutoLoaded(){
@@ -173,6 +180,7 @@ public class PickupSpinner extends SubsystemBase{
         SetToWantedRpm(idledutycycle);
     }
       public double idledutycycle = 0;
+      public double PostrollDutyCycle = -.1;
       public double IntakeDutyCycle = -1;//rpm used during note release
       public double PassingDutyCycle = .75;//rpm used during note release
       public double LastSetRPM = 0;

@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
@@ -71,7 +72,13 @@ public class DeliveryTilt extends SubsystemBase {
 
         StatusCode status = Motor_Controller.setPosition(0);
         if(!status.isOK()) {
-          System.out.println("Could not apply zero position, error code: " + status.toString());
+          for(int i =0; i<10; i++) {
+            System.out.println("Could not apply zero position, error code: " + status.toString());
+            status = Motor_Controller.setPosition(0,250);
+            if(status.isOK()) break;
+          }
+          SmartDashboard.putBoolean(MotorName + "SetPosition 0", status.isOK());
+          
         }
         
     }
@@ -153,7 +160,7 @@ public class DeliveryTilt extends SubsystemBase {
       configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.DeliveryHead.Tilt_maxValue;
       configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.DeliveryHead.Tilt_minValue-5;
 
-    
+      configs.withFeedback(new FeedbackConfigs().withFeedbackRotorOffset(0));
 
       SetConfigToMotor();
 

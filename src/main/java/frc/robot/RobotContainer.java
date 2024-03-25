@@ -139,7 +139,7 @@ public class RobotContainer {
 
   
   
- public double intakePostRollSeconds = 0.05;
+ public double intakePostRollSeconds = 0.175;
   public Command C_PickupPizzaFromFloorWithoutWashing()
   {
     return //new RunDeliveryHoldIntake(deliveryHolder).alongWith(
@@ -150,7 +150,7 @@ public class RobotContainer {
     .andThen(
       new InstantCommand(()->{m_candleSubsystem.BlueLights();},m_candleSubsystem),
       C_ReturnPickupHead()
-      .alongWith(new InstantCommand(()->{pickupSpinner.IntakeRunCommand();},pickupSpinner)
+      .alongWith(new InstantCommand(()->{pickupSpinner.IntakePostRollCommand();},pickupSpinner)
       .andThen(new WaitCommand(intakePostRollSeconds))//.4//was .5//POST ROLL PICKUP INTAKE SPIN)
       .andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}))
         )
@@ -183,11 +183,12 @@ public class RobotContainer {
       .alongWith(C_passNoteFromIntakeToDeliveryHolder())
     );
   }
+  public double PostRollOutputPassing = .35;
   public Command C_passNoteFromIntakeToDeliveryHolder()
   {
  return  //small wait for debounce maybe take out and make grab deeper.
     new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner)
-    .andThen(new WaitCommand(.5))//THIS WAIT COMMAND IS THE POST ROLL OUTPUT PASSING ROLL //.onlyWhile((pickupSpinner::getLimitSwitchEnabled))
+    .andThen(new WaitCommand(PostRollOutputPassing))//THIS WAIT COMMAND IS THE POST ROLL OUTPUT PASSING ROLL //.onlyWhile((pickupSpinner::getLimitSwitchEnabled))
     .andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}))
     .andThen(new InstantCommand(()->{intakepassing = false;}));
   }
@@ -317,7 +318,7 @@ public class RobotContainer {
   private Command AlignAndShootCenterSpeaker() {
     return ZeroTilt()
     .andThen(
-      new AlignSpeakerCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
+      new AlignSpeakerCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).until(IsLimeLightBypassed)
       .alongWith(new InstantCommand(()->{m_candleSubsystem.RainbowRoadLights();},m_candleSubsystem),
       new SequentialCommandGroup(new WaitForIndexCMD(deliveryHolder), C_ReadyCloseSpeakerShot())
       )
@@ -363,7 +364,7 @@ public class RobotContainer {
     joystick.rightTrigger().whileTrue(HumanSourcePickup()
     .alongWith(
       new SequentialCommandGroup(
-            new AlignSourceCMD(drivetrainManager,joystick).unless(IsLimeLightBypassed)
+            new AlignSourceCMD(drivetrainManager,joystick).until(IsLimeLightBypassed)
           //new ForwardBump(drivetrainManager,SourceBumpTimeout).unless(IsLimeLightBypassed)
           )
           )
@@ -393,7 +394,7 @@ public class RobotContainer {
         new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_Amp,deliveryLifter),
         new InstantCommand(()->{m_candleSubsystem.RainbowRoadLights();},m_candleSubsystem)  
         //new ForwardBump(drivetrainManager,AmpBumpTimeout).unless(IsLimeLightBypassed)
-        ).unless(IsLimeLightBypassed)
+        ).until(IsLimeLightBypassed)
         .andThen(
               new ParallelCommandGroup(
               new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_Amp,deliveryLifter), 
@@ -530,7 +531,7 @@ public Command AlignWhereverShootSpeaker()
 }
 
 public double trapindexmovement = 50;//80;
-public double shooterIndexMovement = 2.25;
+public double shooterIndexMovement = 1.55;
 
   public void configureTrapButtons()
   {
@@ -589,7 +590,7 @@ public double shooterIndexMovement = 2.25;
     //alignment is not in the alt controlled mode!
      joystick.pov(Constants.XboxControllerMap.kPOVDirectionUP).and(()->!PizzaManager.AltControlModeEnabled)
     .whileTrue(
-      new AlignStageCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).unless(IsLimeLightBypassed)
+      new AlignStageCMD(drivetrainManager,() -> joystick.getRawAxis(strafeAxis)).until(IsLimeLightBypassed)
       .alongWith(new InstantCommand(()->{LimelightHelpers.setLEDMode_ForceOn(Constants.LimelightName);}))
     );
     //unfold and get ready for lift
