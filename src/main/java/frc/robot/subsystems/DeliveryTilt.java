@@ -1,13 +1,19 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -24,6 +30,8 @@ import frc.robot.Constants;
 public class DeliveryTilt extends SubsystemBase {
 
     
+    
+    
     public String MotorName = "DeliveryTilt";
     public double CurrentEncoderValue = 0;
     public double WantedEncoderValue = 0;
@@ -34,14 +42,14 @@ public class DeliveryTilt extends SubsystemBase {
     double kMaxOutput = 1; 
     double kMinOutput = -1;
 
-    double kP_Tilter = 20.0000;
-    double kI_Tilter = 60.000000;
-    double kD_Tilter = 3.000000;
+    double kP_Tilter = 650.0;//20.0000;
+    double kI_Tilter = 190.0;//60.000000;
+    double kD_Tilter = 40.0;//3.000000;
 
     double kFF = 0.00;
     double kIz = 0;
 
-    
+    public final CANcoder TiltEncoder = new CANcoder(Constants.CANBus.Tilt_ABSOCANCODER_CanBusID,Constants.CANBus.kRIOCANbusName);
     public final TalonFX Motor_Controller = new TalonFX(Constants.CANBus.Tilt_CanBusID,Constants.CANBus.kRIOCANbusName);
       /* Start at position 0, no feed forward, use slot 1 */
     private final PositionTorqueCurrentFOC m_torquePosition = new PositionTorqueCurrentFOC(0, 0, 0, 1, false, false, false);
@@ -51,7 +59,13 @@ public class DeliveryTilt extends SubsystemBase {
     //private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
     //private final SparkPIDController MotorControllerPid = Motor_Controller.getPIDController();
     
- 
+  private final StatusSignal<Double> fx_pos = Motor_Controller.getPosition();
+  private final StatusSignal<Double> fx_vel = Motor_Controller.getVelocity();
+  private final StatusSignal<Double> cc_pos = TiltEncoder.getPosition();
+  private final StatusSignal<Double> cc_vel = TiltEncoder.getVelocity();
+  private final StatusSignal<Double> fx_rotorPos = Motor_Controller.getRotorPosition();
+
+    private int ZeroAttempts = 0;
     public DeliveryTilt()
     {
         SetupMotorConfig();
@@ -71,8 +85,10 @@ public class DeliveryTilt extends SubsystemBase {
         SmartDashboard.putNumber(MotorName + " Furthest Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Furthest);
 
         StatusCode status = Motor_Controller.setPosition(0);
+        ZeroAttempts++;
         if(!status.isOK()) {
           for(int i =0; i<10; i++) {
+            ZeroAttempts++;
             System.out.println("Could not apply zero position, error code: " + status.toString());
             status = Motor_Controller.setPosition(0,250);
             if(status.isOK()) break;
@@ -81,10 +97,24 @@ public class DeliveryTilt extends SubsystemBase {
           
         }
         
+        
     }
-
+    double Absoluteposition = 0.0;
     public void getEncoderData()
     {
+      //fx_pos.refresh(); 
+      //fx_vel.refresh();
+      cc_pos.refresh(); 
+      //cc_vel.refresh();
+      //System.out.println("FX Position: " + fx_pos + " FX Vel: " + fx_vel);
+      //System.out.println("CC Position: " + cc_pos + " CC Vel: " + cc_vel);
+
+      Absoluteposition = TiltEncoder.getAbsolutePosition().getValueAsDouble();
+      SmartDashboard.putNumber(MotorName + " AbsoPos",cc_pos.getValueAsDouble());
+
+
+      SmartDashboard.putNumber(MotorName + " ZeroAttempts",ZeroAttempts);
+
       OutputCurrent = Motor_Controller.getTorqueCurrent().getValueAsDouble();;
       SmartDashboard.putNumber(MotorName + " Amps",OutputCurrent);
   
@@ -144,9 +174,40 @@ public class DeliveryTilt extends SubsystemBase {
       }
     
       TalonFXConfiguration configs = new TalonFXConfiguration();
+    
       private void SetupMotorConfig() {
       
+          /* Configure CANcoder to zero the magnet appropriately */
 
+      CANcoderConfiguration cc_cfg = new CANcoderConfiguration();
+      cc_cfg.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+      cc_cfg.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+      cc_cfg.MagnetSensor.MagnetOffset = Constants.DeliveryHead.AbsoluteEncoderOffset;
+      TiltEncoder.getConfigurator().apply(cc_cfg);
+      ///////////
+      //////////////
+       var AbsoluteEncoderFeedbackConfig = new FeedbackConfigs().withFeedbackRemoteSensorID(TiltEncoder.getDeviceID())
+       .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
+       .withRotorToSensorRatio(Constants.DeliveryHead.TiltGearRatio).withSensorToMechanismRatio(1.0);
+      
+      //configs.Feedback.FeedbackRemoteSensorID = TiltEncoder.getDeviceID();
+      //configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+      //configs.Feedback.SensorToMechanismRatio = 1.0;
+      //configs.Feedback.RotorToSensorRatio = 80.0;
+      //
+      //
+      //
+      /*hello 
+       * there s
+       * asdlkfj
+       * asdf
+       * asdf
+       * asdf
+       * asdf
+       * asdf
+       * asdf
+       * 
+       */
       configs.Slot1.kP = kP_Tilter;//40; // An error of 1 rotations results in 40 amps output
       configs.Slot1.kI = kI_Tilter;//0;
       configs.Slot1.kD = kD_Tilter;//2; // A change of 1 rotation per second results in 2 amps output
@@ -159,8 +220,9 @@ public class DeliveryTilt extends SubsystemBase {
 
       configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.DeliveryHead.Tilt_maxValue;
       configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.DeliveryHead.Tilt_minValue-5;
-
-      configs.withFeedback(new FeedbackConfigs().withFeedbackRotorOffset(0));
+      
+      configs.withFeedback(AbsoluteEncoderFeedbackConfig.withFeedbackRotorOffset(0));
+      //configs.withFeedback(new FeedbackConfigs().withFeedbackRotorOffset(0));//commented as a test is this interfering with the other feedback config. 
 
       SetConfigToMotor();
 
@@ -227,9 +289,9 @@ public class DeliveryTilt extends SubsystemBase {
         Motor_Controller.setControl(m_brake);//we press into our hysterisis on powerup. so without this the tilt motor always runs trying to go to the bottom. 
       }
 
-    double setpointTolerance = 2.0;
+    
       public boolean atSetpoint() {        
-          if (Constants.isWithinAmount(CurrentEncoderValue, WantedEncoderValue, setpointTolerance)) {
+          if (Constants.isWithinAmount(CurrentEncoderValue, WantedEncoderValue, Constants.DeliveryHead.TiltsetpointTolerance)) {
             return true;
           } else {
             return false; 

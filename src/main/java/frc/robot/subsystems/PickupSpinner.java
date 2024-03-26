@@ -31,6 +31,11 @@ public class PickupSpinner extends SubsystemBase{
 
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
 
+    public double idledutycycle = 0;
+    public double PostrollDutyCycle = -0.20;//-.1;
+    public double IntakeDutyCycle = -1;//rpm used during note release
+    public double PassingDutyCycle = .75;//rpm used during note release
+    public double LastSetRPM = 0;
 
     //boolean NoteInPickup = false;
 
@@ -179,11 +184,7 @@ public class PickupSpinner extends SubsystemBase{
        // Motor_Encoder.setPosition(position);
         SetToWantedRpm(idledutycycle);
     }
-      public double idledutycycle = 0;
-      public double PostrollDutyCycle = -.1;
-      public double IntakeDutyCycle = -1;//rpm used during note release
-      public double PassingDutyCycle = .75;//rpm used during note release
-      public double LastSetRPM = 0;
+
     public void ReleaseNote(){
         m_forwardLimit.enableLimitSwitch(false);//so the note will shoot out even though we are endstopped (does it need this?)
         setIsnoteInPickup(false);

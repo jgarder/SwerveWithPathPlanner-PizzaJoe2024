@@ -126,6 +126,7 @@ public class Constants {
     public static final int ChainLifterCanBusID = 6;
     public static final int Lift_CanBusID = 10;
     public static final int Tilt_CanBusID = 9;
+    public static final int Tilt_ABSOCANCODER_CanBusID = 12;
 
     //CANIVORE CANBUS
     public static final String kCANbusName = "8608ChassisCan";
@@ -250,28 +251,32 @@ public class Constants {
       public static final double Lift_Position_TrapShoot = 140;
 
       //TILT
+      //Old conversion factor 0.0146428571428571
+      public static final double TiltGearRatio = 80.0;
+      public static final double AbsoluteEncoderOffset = 0.396973;
+      public static double TiltsetpointTolerance = 0.005;//0.02928;//2.0;
       public static final double Tilt_minValue = 0;
-      public static final double Tilt_maxValue = 28;
+      public static final double Tilt_maxValue = .410;//28;
       
       public static final double Tilt_Position_Zero = 0;
-      public static final double Tilt_Position_Park = .25;
-      public static final double Tilt_Position_Passing = 5;
-      public static final double Tilt_Position_TrapLift = 2;//7.75;
-      public static final double Tilt_Position_TrapDodge = 6;//7.75;
-      public static final double Tilt_Position_TrapLiftHitHook = 15;//17;//7.75;
-      public static final double Tilt_Position_TrapLiftUp = 8.75;
-      public static final double Tilt_Position_TrapLiftUpSHOOT = 26;
-      public static  double Tilt_Position_TrapFloorShoot = 7.0;
-      public static  double Tilt_Position_Speaker_Closest = 7.85;//7.84;//7.6;//10.15;//12.9;//11.25;//10.75;//8.5;//11.5;//7.2;
-      public static  double Tilt_Position_Speaker_Mid = 11.3;//11.2;//10.9;//14.25;
-      public static  double Tilt_Position_Speaker_Furthest = 14.27;//17.2;//19.75;//17.3;//15.75;//14.75;
+      public static final double Tilt_Position_Park = 0.00366;//.25;
+      public static final double Tilt_Position_Passing = 0.0732;//5;
+      public static final double Tilt_Position_TrapLift = 0.0292;//2;//7.75;
+      public static final double Tilt_Position_TrapDodge = 0.0878;//6;//7.75;
+      public static final double Tilt_Position_TrapLiftHitHook = 0.2196;//15;//17;//7.75;
+      public static final double Tilt_Position_TrapLiftUp = 0.1281;//8.75;
+      public static final double Tilt_Position_TrapLiftUpSHOOT = 0.3807;//26;
+      public static  double Tilt_Position_TrapFloorShoot = 0.1025;//7.0;
+      public static  double Tilt_Position_Speaker_Closest = 0.1049;//7.85;//7.84;//7.6;//10.15;//12.9;//11.25;//10.75;//8.5;//11.5;//7.2;
+      public static  double Tilt_Position_Speaker_Mid = 0.1509;//11.4;//11.2;//10.9;//14.25;
+      public static  double Tilt_Position_Speaker_Furthest = 0.175;//14.27;//17.2;//19.75;//17.3;//15.75;//14.75;
 
-      public static  double Tilt_Position_Speaker_Podium = 12.5;//10.85;
-      public static final double Tilt_Position_Amp = 25.0;//28;
+      public static  double Tilt_Position_Speaker_Podium = 0.16;//12.5;//10.85;
+      public static final double Tilt_Position_Amp = 0.3607; //25.0;//28;
 
-      //public static final double Tilt_Position_TrapStart = 11;
-      //public static final double Tilt_Position_Trap = 12;
-      public static final double Tilt_Position_HumanSource = 16;//12;
+      //public static final double Tilt_Position_TrapStart = 0.1669;//11;
+      //public static final double Tilt_Position_Trap = 0.1669;//12;
+      public static final double Tilt_Position_HumanSource = 0.2342;//16;//12;
       
       public static final double maxRPM = 6250;
       public static final double ShooterRpmOff = 0;
