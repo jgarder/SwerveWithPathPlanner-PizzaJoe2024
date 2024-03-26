@@ -42,9 +42,9 @@ public class DeliveryTilt extends SubsystemBase {
     double kMaxOutput = 1; 
     double kMinOutput = -1;
 
-    double kP_Tilter = 650.0;//20.0000;
-    double kI_Tilter = 190.0;//60.000000;
-    double kD_Tilter = 40.0;//3.000000;
+    double kP_Tilter = 750.0;//650.0;//20.0000;
+    double kI_Tilter = 1190.0;//190.0;//60.000000;
+    double kD_Tilter = 50.0;//40.0;//3.000000;
 
     double kFF = 0.00;
     double kIz = 0;
