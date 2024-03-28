@@ -272,9 +272,9 @@ public class Constants {
       public static final double Tilt_Position_TrapLiftUpSHOOT = 0.34;//0.3807;//26;
       public static  double Tilt_Position_TrapFloorShoot = 0.1025;//7.0;
 
-      public static  double Tilt_Position_Speaker_Closest = 0.08610;//7.85;//7.84;//7.6;//10.15;//12.9;//11.25;//10.75;//8.5;//11.5;//7.2;
-      public static  double Tilt_Position_Speaker_Mid = 0.13260;//11.4;//11.2;//10.9;//14.25;
-      public static  double Tilt_Position_Speaker_Furthest = 0.17790;//14.27;//17.2;//19.75;//17.3;//15.75;//14.75;
+      public static  double Tilt_Position_Speaker_Closest = 0.08630;//0.08610;//7.85;//7.84;//7.6;//10.15;//12.9;//11.25;//10.75;//8.5;//11.5;//7.2;
+      public static  double Tilt_Position_Speaker_Mid = 0.1330;//0.13260;//11.4;//11.2;//10.9;//14.25;
+      public static  double Tilt_Position_Speaker_Furthest = 0.1780;//0.17790;//14.27;//17.2;//19.75;//17.3;//15.75;//14.75;
 
       public static  double Tilt_Position_Speaker_Podium = 0.16;//12.5;//10.85;
       public static final double Tilt_Position_Amp = 0.3407; //25.0;//28;
