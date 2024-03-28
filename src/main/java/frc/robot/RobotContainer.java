@@ -226,7 +226,10 @@ public class RobotContainer {
   public double safeLifterPosition = 10;
   public Command C_TiltGotoPark()
   {
-    return new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Passing, deliveryTilt).andThen(new WaitCommand(20).until(()->deliveryLifter.CurrentLiftEncoderValue < safeLifterPosition))
+    return new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Passing, deliveryTilt)
+    .unless(()->deliveryLifter.CurrentLiftEncoderValue < safeLifterPosition || deliveryTilt.CurrentEncoderValue <= Constants.DeliveryHead.Tilt_Position_Passing)
+    .andThen(new WaitCommand(20)
+    .until(()->deliveryLifter.CurrentLiftEncoderValue < safeLifterPosition))
     .andThen(
       new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Zero);},deliveryTilt), 
       new WaitCommand(.05),
@@ -398,7 +401,7 @@ public class RobotContainer {
         .andThen(
               new ParallelCommandGroup(
               new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_Amp,deliveryLifter), 
-              new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Amp,deliveryTilt),
+              new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Amp,deliveryTilt,Constants.DeliveryHead.Tilt_Amp_Tolerance,Constants.DeliveryHead.TiltSettleTimeAtPosition/3),
               new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmAmp,25)
               )
               .andThen( 
@@ -614,7 +617,7 @@ public double shooterIndexMovement = 1.55;
       );
     
     joystick.pov(Constants.XboxControllerMap.kPOVDirectionLeft).and(()->PizzaManager.AltControlModeEnabled)
-    .onTrue(new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUpSHOOT, deliveryTilt)
+    .onTrue(new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUpSHOOT, deliveryTilt,Constants.DeliveryHead.Tilt_Amp_Tolerance,Constants.DeliveryHead.TiltSettleTimeAtPosition/3)
     .alongWith(
       new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_TrapShoot, deliveryLifter),
       new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupFloorPickup, pickuparm)
@@ -654,7 +657,7 @@ public double shooterIndexMovement = 1.55;
       NamedCommands.registerCommand("JustShootIt",   JustShootIt());
       NamedCommands.registerCommand("AlignWhereverShootSpeaker",   AlignWhereverShootSpeaker());
       NamedCommands.registerCommand("Placeholder",   PlaceHolder());
-      NamedCommands.registerCommand("ZeroDTilt", ZeroDtilt());
+      NamedCommands.registerCommand("ZeroDTilt", PlaceHolder());//ZeroDtilt()
     
       
       //Now build the autos 

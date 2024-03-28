@@ -40,12 +40,12 @@ public class TrapShootTILT extends Command{
     if(m_Timer.get() > TimeoutSeconds){
         return true;
     } 
-    if (m_DeliveryTilter.atSetpoint()) {
-      if(m_SettleTimer.get() > SettleTimeAtCorrectPosition)
-      {
+    if (m_DeliveryTilter.atSetpoint(Constants.DeliveryHead.TiltsetpointTolerance,Constants.DeliveryHead.TiltSettleTimeAtPosition)) {
+      //if(m_SettleTimer.get() > SettleTimeAtCorrectPosition)
+      //{
         ReadyTofire = true;
         return true;
-      }
+      //}
       
          
     } 

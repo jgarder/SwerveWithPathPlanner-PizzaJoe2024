@@ -112,6 +112,7 @@ public class AlignSpeakerTest extends Command {
     SmartDashboard.putNumber(AlignRotname + " I Gain", AlignRZController.getI());
     SmartDashboard.putNumber(AlignRotname + " D Gain", AlignRZController.getD());
     ///////////////
+    DTilt.resetSettleTimer();
   }
   @Override
   public void execute() {
@@ -286,7 +287,7 @@ public class AlignSpeakerTest extends Command {
         ///RPM SPOOLer
         boolean ReadyTofire = Dshooter.getRPMReadyTofire();
         ///
-        if(RotationInRange && ReadyTofire && DTilt.atSetpoint()) //currentPercentOfMaxDistance < 100.0  &&
+        if(RotationInRange && ReadyTofire && DTilt.atSetpoint(Constants.DeliveryHead.TiltsetpointTolerance,Constants.DeliveryHead.TiltSettleTimeAtPosition)) //currentPercentOfMaxDistance < 100.0  &&
         {
           if(timesgood > goodneeded)
           {

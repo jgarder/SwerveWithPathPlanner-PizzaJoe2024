@@ -1,5 +1,14 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="DeliveryTilt MMJerk" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="825" y="577"/>
+	</widget>
+	<widget field="DeliveryTilt MMCruiseVelocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="778" y="554"/>
+	</widget>
+	<widget field="DeliveryTilt MMAcceleration" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="777" y="534"/>
+	</widget>
 	<widget field="TrapFloorRPM" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="592" y="368"/>
 		<property name="Background" value="0.204.204.255"/>
@@ -55,7 +64,7 @@
 		<width>138</width>
 	</widget>
 	<widget field="DeliveryTilt RPM" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="825" y="579"/>
+		<location x="826" y="791"/>
 	</widget>
 	<widget field="DeliveryTilt Furthest Setpoint" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="751" y="388"/>
@@ -513,10 +522,10 @@
 		<location x="383" y="414"/>
 	</widget>
 	<widget field="DeliveryTilt setpoint " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="804" y="557"/>
+		<location x="798" y="512"/>
 	</widget>
 	<widget field="DeliveryTilt PID output" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="796" y="535"/>
+		<location x="789" y="490"/>
 	</widget>
 	<widget field="DeliveryTilt Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="727" y="224"/>
@@ -536,10 +545,10 @@
 		<width>127</width>
 	</widget>
 	<widget field="DeliveryTilt Feed Forward" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="779" y="513"/>
+		<location x="791" y="783"/>
 	</widget>
 	<widget field="DeliveryTilt I Zone" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="810" y="492"/>
+		<location x="801" y="780"/>
 	</widget>
 	<widget field="DeliveryTilt D Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="808" y="469"/>

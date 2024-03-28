@@ -4,7 +4,9 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -22,6 +24,9 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 
+import edu.wpi.first.units.Velocity;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -42,9 +47,12 @@ public class DeliveryTilt extends SubsystemBase {
     double kMaxOutput = 1; 
     double kMinOutput = -1;
 
-    double kP_Tilter = 750.0;//650.0;//20.0000;
-    double kI_Tilter = 1190.0;//190.0;//60.000000;
-    double kD_Tilter = 50.0;//40.0;//3.000000;
+
+
+      public double CruiseVelocity = 0.001;
+      public double Acceleration = 0.001;
+      public double Jerk = 0.005;
+  
 
     double kFF = 0.00;
     double kIz = 0;
@@ -53,6 +61,9 @@ public class DeliveryTilt extends SubsystemBase {
     public final TalonFX Motor_Controller = new TalonFX(Constants.CANBus.Tilt_CanBusID,Constants.CANBus.kRIOCANbusName);
       /* Start at position 0, no feed forward, use slot 1 */
     private final PositionTorqueCurrentFOC m_torquePosition = new PositionTorqueCurrentFOC(0, 0, 0, 1, false, false, false);
+    
+    private final MotionMagicTorqueCurrentFOC m_MMtorquePosition = new MotionMagicTorqueCurrentFOC(0, 0, 1, false, false, false);
+
     /* Keep a neutral out so we can disable the motor */
     private final NeutralOut m_brake = new NeutralOut();
     //private final CANSparkMax Motor_Controller = new CANSparkMax(Constants.CANBus.Tilt_CanBusID, com.revrobotics.CANSparkLowLevel.MotorType.kBrushless);
@@ -74,11 +85,15 @@ public class DeliveryTilt extends SubsystemBase {
         Motor_Controller.setInverted(false);
         Motor_Controller.setNeutralMode(NeutralModeValue.Brake);
         // display PID coefficients on SmartDashboard
-        SmartDashboard.putNumber(MotorName + " P Gain", kP_Tilter);
-        SmartDashboard.putNumber(MotorName + " I Gain", kI_Tilter);
-        SmartDashboard.putNumber(MotorName + " D Gain", kD_Tilter);
+        SmartDashboard.putNumber(MotorName + " P Gain", Constants.DeliveryHead.kP_Tilter);
+        SmartDashboard.putNumber(MotorName + " I Gain", Constants.DeliveryHead.kI_Tilter);
+        SmartDashboard.putNumber(MotorName + " D Gain", Constants.DeliveryHead.kD_Tilter);
         SmartDashboard.putNumber(MotorName + " I Zone", kIz);
         SmartDashboard.putNumber(MotorName + " Feed Forward", kFF);
+
+        SmartDashboard.putNumber(MotorName + " MMAcceleration", Acceleration);
+        SmartDashboard.putNumber(MotorName + " MMCruiseVelocity", CruiseVelocity);
+        SmartDashboard.putNumber(MotorName + " MMJerk", Jerk);
 
         SmartDashboard.putNumber(MotorName + " Closest Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Closest);
         SmartDashboard.putNumber(MotorName + " Mid Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Mid);
@@ -158,15 +173,23 @@ public class DeliveryTilt extends SubsystemBase {
     double maxtilt =  SmartDashboard.getNumber(MotorName + " Furthest Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Furthest);
     double midtilt =  SmartDashboard.getNumber(MotorName + " Mid Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Mid);
 
+    double Accel2 = SmartDashboard.getNumber(MotorName + " MMAcceleration", Acceleration);
+    double Cruise2 = SmartDashboard.getNumber(MotorName + " MMCruiseVelocity", CruiseVelocity);
+    double  Jerk2 = SmartDashboard.getNumber(MotorName + " MMJerk", Jerk);
+
+
+
     if((Constants.DeliveryHead.Tilt_Position_Speaker_Closest != mintilt)) { Constants.DeliveryHead.Tilt_Position_Speaker_Closest = mintilt; }
     if((Constants.DeliveryHead.Tilt_Position_Speaker_Mid != midtilt)) { Constants.DeliveryHead.Tilt_Position_Speaker_Mid = midtilt;}
     if((Constants.DeliveryHead.Tilt_Position_Speaker_Furthest != maxtilt)) { Constants.DeliveryHead.Tilt_Position_Speaker_Furthest = maxtilt;}//System.out.println("MaxTiltSet");
 
-    if((p != kP_Tilter)) { configs.Slot1.kP = p; kP_Tilter = p; SetConfigToMotor(); }
-     if((i != kI_Tilter)) { configs.Slot1.kI = i; kI_Tilter = i; SetConfigToMotor(); }
-     if((d != kD_Tilter)) { configs.Slot1.kD = d; kD_Tilter = d; SetConfigToMotor(); }
-      
-    
+    if((p != Constants.DeliveryHead.kP_Tilter)) { configs.Slot1.kP = p; Constants.DeliveryHead.kP_Tilter = p; SetConfigToMotor(); }
+     if((i != Constants.DeliveryHead.kI_Tilter)) { configs.Slot1.kI = i; Constants.DeliveryHead.kI_Tilter = i; SetConfigToMotor(); }
+     if((d != Constants.DeliveryHead.kD_Tilter)) { configs.Slot1.kD = d; Constants.DeliveryHead.kD_Tilter = d; SetConfigToMotor(); }
+     if((Accel2 != Acceleration)) { configs.MotionMagic.MotionMagicAcceleration = Accel2; Acceleration = Accel2; SetConfigToMotor(); }
+      if((Cruise2 != CruiseVelocity)) { configs.MotionMagic.MotionMagicCruiseVelocity = Cruise2; CruiseVelocity = Cruise2; SetConfigToMotor(); }
+      if((Jerk2 != Jerk)) { configs.MotionMagic.MotionMagicJerk = Jerk2; Jerk = Jerk2; SetConfigToMotor(); }
+
     }
 
     public void SetSpeed(double thisspeed) {
@@ -174,9 +197,10 @@ public class DeliveryTilt extends SubsystemBase {
       }
     
       TalonFXConfiguration configs = new TalonFXConfiguration();
-    
+
       private void SetupMotorConfig() {
       
+
           /* Configure CANcoder to zero the magnet appropriately */
 
       CANcoderConfiguration cc_cfg = new CANcoderConfiguration();
@@ -196,21 +220,16 @@ public class DeliveryTilt extends SubsystemBase {
       //configs.Feedback.RotorToSensorRatio = 80.0;
       //
       //
+      /* Configure current limits */
+      MotionMagicConfigs mm = configs.MotionMagic;
+      mm.MotionMagicCruiseVelocity = CruiseVelocity; // 5 rotations per second cruise
+      mm.MotionMagicAcceleration = Acceleration; // Take approximately 0.5 seconds to reach max vel
+      // Take approximately 0.2 seconds to reach max accel 
+      mm.MotionMagicJerk = Jerk;
       //
-      /*hello 
-       * there s
-       * asdlkfj
-       * asdf
-       * asdf
-       * asdf
-       * asdf
-       * asdf
-       * asdf
-       * 
-       */
-      configs.Slot1.kP = kP_Tilter;//40; // An error of 1 rotations results in 40 amps output
-      configs.Slot1.kI = kI_Tilter;//0;
-      configs.Slot1.kD = kD_Tilter;//2; // A change of 1 rotation per second results in 2 amps output
+      configs.Slot1.kP = Constants.DeliveryHead.kP_Tilter;//40; // An error of 1 rotations results in 40 amps output
+      configs.Slot1.kI = Constants.DeliveryHead.kI_Tilter;//0;
+      configs.Slot1.kD = Constants.DeliveryHead.kD_Tilter;//2; // A change of 1 rotation per second results in 2 amps output
       // Peak output of 130 amps
       configs.TorqueCurrent.PeakForwardTorqueCurrent = 30;
       configs.TorqueCurrent.PeakReverseTorqueCurrent = -30;
@@ -254,29 +273,42 @@ public class DeliveryTilt extends SubsystemBase {
       {
         //enable();
         WantedEncoderValue = position;
+        //Motor_Controller.setControl(m_MMtorquePosition.withPosition(WantedEncoderValue));
         Motor_Controller.setControl(m_torquePosition.withPosition(WantedEncoderValue));
+        //MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
+      }
+      public void setsHOTSetpointToPosition(double position)
+      {
+        //enable();
+        WantedEncoderValue = position;
+        Motor_Controller.setControl(m_MMtorquePosition.withPosition(WantedEncoderValue));
+        //Motor_Controller.setControl(m_torquePosition.withPosition(WantedEncoderValue));
         //MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
       }
 
       public void setSetpointZero() {
         //enable();
         WantedEncoderValue = Constants.DeliveryHead.Tilt_Position_Zero;
+        //Motor_Controller.setControl(m_MMtorquePosition.withPosition(WantedEncoderValue));
         Motor_Controller.setControl(m_torquePosition.withPosition(WantedEncoderValue));
       }
         public void setSetpointPassing() {
         //enable();
         WantedEncoderValue = Constants.DeliveryHead.Tilt_Position_Passing;
+        //Motor_Controller.setControl(m_MMtorquePosition.withPosition(WantedEncoderValue));
         Motor_Controller.setControl(m_torquePosition.withPosition(WantedEncoderValue));
       }
       public void setSetpointAmp() {
         //enable();
         WantedEncoderValue = Constants.DeliveryHead.Tilt_Position_Amp;
+        //Motor_Controller.setControl(m_MMtorquePosition.withPosition(WantedEncoderValue));
         Motor_Controller.setControl(m_torquePosition.withPosition(WantedEncoderValue));
       }
       public void setSetpointTrapFloor() 
       {
         //enable();
         WantedEncoderValue = Constants.DeliveryHead.Tilt_Position_TrapFloorShoot;
+        //Motor_Controller.setControl(m_MMtorquePosition.withPosition(WantedEncoderValue));
         Motor_Controller.setControl(m_torquePosition.withPosition(WantedEncoderValue));
       }
 
@@ -288,14 +320,52 @@ public class DeliveryTilt extends SubsystemBase {
         //Motor_Controller.stopMotor();
         Motor_Controller.setControl(m_brake);//we press into our hysterisis on powerup. so without this the tilt motor always runs trying to go to the bottom. 
       }
+      public void resetSettleTimer()
+      {
+        m_SettleTimer.reset();
+        m_SettleTimer.start();
+      }
 
-    
-      public boolean atSetpoint() {        
-          if (Constants.isWithinAmount(CurrentEncoderValue, WantedEncoderValue, Constants.DeliveryHead.TiltsetpointTolerance)) {
-            return true;
+      //double SettleTimeAtCorrectTilt = 0.1;//0.2;
+
+      private final Timer m_SettleTimer = new Timer();
+      // public boolean atSetpoint() {    
+          
+      //     //auton version
+      //     if(DriverStation.isAutonomousEnabled())
+      //     {
+      //       if (Constants.isWithinAmount(CurrentEncoderValue, WantedEncoderValue, Constants.DeliveryHead.TiltsetpointTolerance*autonToleranceMultipler)) 
+      //       {
+      //         if(m_SettleTimer.get() > AutonSettleTimeAtCorrectTilt)
+      //         {
+      //         return true;
+      //         }
+      //       }
+      //       else {
+      //       resetSettleTimer();
+      //       }
+      //       return false;   
+      //     }
+      //     ////teleop version
+      //     if (Constants.isWithinAmount(CurrentEncoderValue, WantedEncoderValue, Constants.DeliveryHead.TiltsetpointTolerance)) {
+      //       if(m_SettleTimer.get() > SettleTimeAtCorrectTilt){
+      //         return true;
+      //       }
+      //     } else {
+      //       resetSettleTimer();
+      //     }
+      //     return false; 
+      // }
+      public boolean atSetpoint(double TiltTolerance, double SettleTime) {    
+
+          if (Constants.isWithinAmount(CurrentEncoderValue, WantedEncoderValue, TiltTolerance)) {
+            if(m_SettleTimer.get() > SettleTime){
+              return true;
+            }
           } else {
-            return false; 
+            resetSettleTimer();
           }
+          return false; 
       }
       public boolean isMotorOvertemp()
       {
