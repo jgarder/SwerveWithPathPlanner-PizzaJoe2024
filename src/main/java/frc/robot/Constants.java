@@ -69,6 +69,7 @@ public class Constants {
        public static final double rotationspeed = 1.0;//used to invert results with -1 or 1;
 
       public static final Pose2d SpeakerCenterTagLocation = new Pose2d(Units.inchesToMeters(652.73),Units.inchesToMeters(218.42), Rotation2d.fromDegrees(180));//we shoot to the right of the opening!
+      public static final Pose2d PassingLocation = SpeakerCenterTagLocation;
       public static final Pose2d SpeakerCenter = new Pose2d(15.05, 5.5-.2, Rotation2d.fromDegrees(0));
 
       public static final Pose2d SourceRight = new Pose2d(.60, 1.197, Rotation2d.fromDegrees(-120));//#9
@@ -94,8 +95,9 @@ public class Constants {
        public static final double rotationspeed = 1.0;//used to invert results with -1 or 1;
 
       public static final Pose2d SpeakerCenterTagLocation = new Pose2d(Units.inchesToMeters(-1.5),Units.inchesToMeters(218.42), Rotation2d.fromDegrees(0));//we shoot to the right of the opening!
-
-      public static final Pose2d SpeakerCenter = new Pose2d(1.45, 5.5-.1, Rotation2d.fromDegrees(180));//BC-CALI:1.38,5.48,177
+      public static final Pose2d PassingLocation = SpeakerCenterTagLocation;
+      
+      public static final Pose2d SpeakerCenter = new Pose2d(1.45, 5.5+.1, Rotation2d.fromDegrees(180));//BC-CALI:1.38,5.48,177
 
       public static final Pose2d SourceRight = new Pose2d(14.83, .577, Rotation2d.fromDegrees(-60));//#1
       public static final Pose2d SourceCenter = new Pose2d(15.42, .92, Rotation2d.fromDegrees(-60));
@@ -220,13 +222,13 @@ public class Constants {
         public static final double lifterSlewRate = 0.1;
 
         //PickupArm 
-        public static final double maxValue_PickupArm = 46;
+        public static final double maxValue_PickupArm = 46.1;
         public static final double minValue_PickupArm = 0;
         public static final double PickupZero = 0;
         public static final double PickupPassing = 0;
-        public static final double PickupFloorPickup = 46;
-        public static final double PickupSourcePickup = 13;
-        public static final double PickupVertical = 16;
+        public static final double PickupFloorPickup = 46.025;
+        public static final double PickupSourcePickup = 13.0;
+        public static final double PickupVertical = 16.0;
         
         //soft limits min/max values
      
@@ -273,10 +275,10 @@ public class Constants {
       public static  double Tilt_Position_TrapFloorShoot = 0.1025;//7.0;
 
       public static  double Tilt_Position_Speaker_Closest = 0.08630;//0.08610;//7.85;//7.84;//7.6;//10.15;//12.9;//11.25;//10.75;//8.5;//11.5;//7.2;
-      public static  double Tilt_Position_Speaker_Mid = 0.1330;//0.13260;//11.4;//11.2;//10.9;//14.25;
-      public static  double Tilt_Position_Speaker_Furthest = 0.1780;//0.17790;//14.27;//17.2;//19.75;//17.3;//15.75;//14.75;
+      public static  double Tilt_Position_Speaker_Mid = 0.1345;//0.13260;//11.4;//11.2;//10.9;//14.25;
+      public static  double Tilt_Position_Speaker_Furthest = 0.1790;//0.17790;//14.27;//17.2;//19.75;//17.3;//15.75;//14.75;
 
-      public static  double Tilt_Position_Speaker_Podium = 0.16;//12.5;//10.85;
+      //public static  double Tilt_Position_Speaker_Podium = 0.16;//12.5;//10.85;
       public static final double Tilt_Position_Amp = 0.3407; //25.0;//28;
       public static final double Tilt_Amp_Tolerance = TiltsetpointTolerance * 4.0;
       //public static final double Tilt_Position_TrapStart = 0.1669;//11;

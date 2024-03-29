@@ -32,8 +32,8 @@ public class PickupSpinner extends SubsystemBase{
     public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
 
     public double idledutycycle = 0;
-    public double PostrollDutyCycle = -0.20;//-.1;
-    public double IntakeDutyCycle = -1;//rpm used during note release
+    public double PostrollDutyCycle = -0.3;//-.1;
+    public double IntakeDutyCycle = -1.0;//rpm used during note release
     public double PassingDutyCycle = .75;//rpm used during note release
     public double LastSetRPM = 0;
 

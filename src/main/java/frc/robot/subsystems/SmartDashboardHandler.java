@@ -126,10 +126,10 @@ RobotContainer thisrobot;
      * Get the currents of each channel of the PDH and display them on
      * Shuffleboard.
      */
-    for (int channel = 0; channel < NUM_PDH_CHANNELS; channel++) {
-      SmartDashboard.putNumber(
-          ("Ch" + String.valueOf(channel) + " Current"),
-          thisrobot.m_pdh.getCurrent(channel));
-    }
+    // for (int channel = 0; channel < NUM_PDH_CHANNELS; channel++) {
+    //   SmartDashboard.putNumber(
+    //       ("Ch" + String.valueOf(channel) + " Current"),
+    //       thisrobot.m_pdh.getCurrent(channel));
+    // }
   }
 }

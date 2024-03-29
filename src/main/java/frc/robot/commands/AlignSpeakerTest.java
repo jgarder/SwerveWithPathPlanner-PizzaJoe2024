@@ -97,6 +97,9 @@ public class AlignSpeakerTest extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    tid = 0;
+    tid = LimelightHelpers.getFiducialID("limelight");
+    CurrentPose = drivetrainManager.drivetrain.getState().Pose;
     //get our alliance red or blue.
    CurrentAlliance = DriverStation.getAlliance();
    AlignRZController.setSetpoint(AlignRzSetpoint);  
@@ -113,23 +116,18 @@ public class AlignSpeakerTest extends Command {
     SmartDashboard.putNumber(AlignRotname + " D Gain", AlignRZController.getD());
     ///////////////
     DTilt.resetSettleTimer();
+    SetTarget();
   }
+   double tid = 0;
   @Override
   public void execute() {
-    
+    tid = LimelightHelpers.getFiducialID("limelight");
     //update current pose
     CurrentPose = drivetrainManager.drivetrain.getState().Pose;
     ///
     //////check alliance and set target
     if(!CurrentAlliance.isPresent()){return;}
-    if (CurrentAlliance.get() == Alliance.Red) {
-      LimelightHelpers.setPriorityTagID("limelight", 4);
-      TargetPose = Constants.TargetLocations.Red.SpeakerCenterTagLocation;
-    }
-    else{
-      LimelightHelpers.setPriorityTagID("limelight", 7);
-      TargetPose = Constants.TargetLocations.Blue.SpeakerCenterTagLocation;
-    }
+    SetTarget();
     // get offsets of current pose from target pose
     
     UpdateOffsetsFromTarget();
@@ -143,13 +141,14 @@ public class AlignSpeakerTest extends Command {
     SmartDashboard.putNumber("currentPercentOfMidDistance", currentPercentOfMidDistance);
     SmartDashboard.putNumber("currentPercentOfmidToMaxDistance", currentPercentOfmidToMaxDistance);
     SmartDashboard.putNumber("ShotDistanceMeters", Currdistance);
-    var MaxDistMultiplier = MathUtil.clamp(currentPercentOfMaxDistance, 0.000, 1.000);
+    var MaxDistMultiplier = currentPercentOfMaxDistance;//MathUtil.clamp(currentPercentOfMaxDistance, 0.000, 1.000);
     SmartDashboard.putNumber("MaxDistMultiplier", MaxDistMultiplier);
     ///
     double RpmAdded = RpmAddPossible* MaxDistMultiplier;
     TotalRpm = RpmAdded+RPMatShortestDistance;
     /////
-  
+    
+    //
     if(currentPercentOfMaxDistance < MidDistance)
     {
       var currDistmulti = currentPercentOfMidDistance;//Math.abs(Currdistance - minDistanceToShootFrom)/(maxDistToShootFrom- minDistanceToShootFrom);// Math.abs(Currdistance)/(maxDistToShootFrom*MidDistance);
@@ -159,8 +158,10 @@ public class AlignSpeakerTest extends Command {
       totaltilt = TiltAdded+TiltAtShortestDistance;
       SmartDashboard.putNumber("TiltAddPossible", TiltAddPossible);
       SmartDashboard.putNumber("TiltAdded", TiltAdded);
+      seeIdColor();
+      PrepShot();
     }
-    else
+    else if(currentPercentOfMaxDistance >= MidDistance & currentPercentOfMaxDistance < 1.0)
     {
       var currDistmulti = currentPercentOfmidToMaxDistance;//Math.abs(Currdistance - (maxDistToShootFrom*MidDistance))/(maxDistToShootFrom- (maxDistToShootFrom*MidDistance));//Math.abs(Currdistance-(maxDistToShootFrom*MidDistance))/(maxDistToShootFrom);
       SmartDashboard.putNumber("currDistmulti", currDistmulti);
@@ -170,21 +171,88 @@ public class AlignSpeakerTest extends Command {
       totaltilt = TiltAdded+TiltAtMid;
       SmartDashboard.putNumber("TiltAddPossible", TiltAddPossible);
       SmartDashboard.putNumber("TiltAdded", TiltAdded);
+      seeIdColor();
+      PrepShot();
     }
+    else if(currentPercentOfMaxDistance >= 1.0)
+    {
+      double blueLineX = 1.91;//5.84;
+      double redLineX = 14.6;//10.9;
+      double currentX = CurrentPose.getX();
+      double TiltForPassing = 0.1200;
+      if (currentX > blueLineX & currentX < redLineX)
+      {
+            SetPassingTarget();
+            totaltilt = TiltForPassing;
+            TotalRpm = RPMatShortestDistance;
+            m_candleSubsystem.GreenLights();
+            PrepShot();
+      }
+      else
+      {
+            totaltilt = 0.0;
+            TotalRpm = 0.0;
+            m_candleSubsystem.StrobeRedLights();
+            //return;
+      }
+
+      
+    }
+    
     //// 
       SmartDashboard.putNumber("AlignRotShot-RPM", TotalRpm);
       SmartDashboard.putNumber("AlignRotShot-Tilt", totaltilt);
       SmartDashboard.putNumber("currentPercentOfMaxDistance", currentPercentOfMaxDistance);
     //////
 
-    //
-    double tid = LimelightHelpers.getFiducialID("limelight");
-    if (currentPercentOfMaxDistance > 1.0) //if we are at greater than 100% shooting
-    {
-      m_candleSubsystem.StrobeRedLights();
-      //return;
+    
+    //PrepShot();
+    PidTuneRot(AlignRotname);
+  }
+
+
+
+
+
+  private void PrepShot() {
+    DTilt.setSetpointToPosition(totaltilt);
+    Dshooter.SetShootSpeed(TotalRpm);
+    drive();
+  }
+
+
+
+
+
+  private void SetTarget() {
+    if(!CurrentAlliance.isPresent()){return;}
+    if (CurrentAlliance.get() == Alliance.Red) {
+      LimelightHelpers.setPriorityTagID("limelight", 4);
+      TargetPose = Constants.TargetLocations.Red.SpeakerCenterTagLocation;
     }
-    else if(tid != 4 & tid !=7)
+    else{
+      LimelightHelpers.setPriorityTagID("limelight", 7);
+      TargetPose = Constants.TargetLocations.Blue.SpeakerCenterTagLocation;
+    }
+  }
+  private void SetPassingTarget() {
+    if(!CurrentAlliance.isPresent()){return;}
+    if (CurrentAlliance.get() == Alliance.Red) {
+      LimelightHelpers.setPriorityTagID("limelight", 4);
+      TargetPose = Constants.TargetLocations.Red.PassingLocation;
+    }
+    else{
+      LimelightHelpers.setPriorityTagID("limelight", 7);
+      TargetPose = Constants.TargetLocations.Blue.PassingLocation;
+    }
+  }
+
+
+
+
+
+  private void seeIdColor() {
+    if(tid != 4 & tid !=7)
     {
       m_candleSubsystem.YellowLights();
       //return;
@@ -193,13 +261,9 @@ public class AlignSpeakerTest extends Command {
     {
        m_candleSubsystem.RainbowRoadLights();
     }
-    //
-    DTilt.setSetpointToPosition(totaltilt);
-    Dshooter.SetShootSpeed(TotalRpm);
-    //
-    drive();
-    PidTuneRot(AlignRotname);
   }
+
+
   
 
 

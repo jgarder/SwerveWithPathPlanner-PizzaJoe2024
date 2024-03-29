@@ -70,11 +70,7 @@ public class DeliveryTilt extends SubsystemBase {
     //private final RelativeEncoder Motor_Encoder = Motor_Controller.getEncoder();
     //private final SparkPIDController MotorControllerPid = Motor_Controller.getPIDController();
     
-  private final StatusSignal<Double> fx_pos = Motor_Controller.getPosition();
-  private final StatusSignal<Double> fx_vel = Motor_Controller.getVelocity();
   private final StatusSignal<Double> cc_pos = TiltEncoder.getPosition();
-  private final StatusSignal<Double> cc_vel = TiltEncoder.getVelocity();
-  private final StatusSignal<Double> fx_rotorPos = Motor_Controller.getRotorPosition();
 
     private int ZeroAttempts = 0;
     public DeliveryTilt()
@@ -91,9 +87,9 @@ public class DeliveryTilt extends SubsystemBase {
         SmartDashboard.putNumber(MotorName + " I Zone", kIz);
         SmartDashboard.putNumber(MotorName + " Feed Forward", kFF);
 
-        SmartDashboard.putNumber(MotorName + " MMAcceleration", Acceleration);
-        SmartDashboard.putNumber(MotorName + " MMCruiseVelocity", CruiseVelocity);
-        SmartDashboard.putNumber(MotorName + " MMJerk", Jerk);
+        //SmartDashboard.putNumber(MotorName + " MMAcceleration", Acceleration);
+       // SmartDashboard.putNumber(MotorName + " MMCruiseVelocity", CruiseVelocity);
+       // SmartDashboard.putNumber(MotorName + " MMJerk", Jerk);
 
         SmartDashboard.putNumber(MotorName + " Closest Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Closest);
         SmartDashboard.putNumber(MotorName + " Mid Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Mid);
@@ -173,9 +169,9 @@ public class DeliveryTilt extends SubsystemBase {
     double maxtilt =  SmartDashboard.getNumber(MotorName + " Furthest Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Furthest);
     double midtilt =  SmartDashboard.getNumber(MotorName + " Mid Setpoint", Constants.DeliveryHead.Tilt_Position_Speaker_Mid);
 
-    double Accel2 = SmartDashboard.getNumber(MotorName + " MMAcceleration", Acceleration);
-    double Cruise2 = SmartDashboard.getNumber(MotorName + " MMCruiseVelocity", CruiseVelocity);
-    double  Jerk2 = SmartDashboard.getNumber(MotorName + " MMJerk", Jerk);
+   // double Accel2 = SmartDashboard.getNumber(MotorName + " MMAcceleration", Acceleration);
+   // double Cruise2 = SmartDashboard.getNumber(MotorName + " MMCruiseVelocity", CruiseVelocity);
+   // double  Jerk2 = SmartDashboard.getNumber(MotorName + " MMJerk", Jerk);
 
 
 
@@ -186,9 +182,9 @@ public class DeliveryTilt extends SubsystemBase {
     if((p != Constants.DeliveryHead.kP_Tilter)) { configs.Slot1.kP = p; Constants.DeliveryHead.kP_Tilter = p; SetConfigToMotor(); }
      if((i != Constants.DeliveryHead.kI_Tilter)) { configs.Slot1.kI = i; Constants.DeliveryHead.kI_Tilter = i; SetConfigToMotor(); }
      if((d != Constants.DeliveryHead.kD_Tilter)) { configs.Slot1.kD = d; Constants.DeliveryHead.kD_Tilter = d; SetConfigToMotor(); }
-     if((Accel2 != Acceleration)) { configs.MotionMagic.MotionMagicAcceleration = Accel2; Acceleration = Accel2; SetConfigToMotor(); }
-      if((Cruise2 != CruiseVelocity)) { configs.MotionMagic.MotionMagicCruiseVelocity = Cruise2; CruiseVelocity = Cruise2; SetConfigToMotor(); }
-      if((Jerk2 != Jerk)) { configs.MotionMagic.MotionMagicJerk = Jerk2; Jerk = Jerk2; SetConfigToMotor(); }
+     //if((Accel2 != Acceleration)) { configs.MotionMagic.MotionMagicAcceleration = Accel2; Acceleration = Accel2; SetConfigToMotor(); }
+     // if((Cruise2 != CruiseVelocity)) { configs.MotionMagic.MotionMagicCruiseVelocity = Cruise2; CruiseVelocity = Cruise2; SetConfigToMotor(); }
+     // if((Jerk2 != Jerk)) { configs.MotionMagic.MotionMagicJerk = Jerk2; Jerk = Jerk2; SetConfigToMotor(); }
 
     }
 
@@ -221,11 +217,11 @@ public class DeliveryTilt extends SubsystemBase {
       //
       //
       /* Configure current limits */
-      MotionMagicConfigs mm = configs.MotionMagic;
-      mm.MotionMagicCruiseVelocity = CruiseVelocity; // 5 rotations per second cruise
-      mm.MotionMagicAcceleration = Acceleration; // Take approximately 0.5 seconds to reach max vel
+      //MotionMagicConfigs mm = configs.MotionMagic;
+      //mm.MotionMagicCruiseVelocity = CruiseVelocity; // 5 rotations per second cruise
+      //mm.MotionMagicAcceleration = Acceleration; // Take approximately 0.5 seconds to reach max vel
       // Take approximately 0.2 seconds to reach max accel 
-      mm.MotionMagicJerk = Jerk;
+      //mm.MotionMagicJerk = Jerk;
       //
       configs.Slot1.kP = Constants.DeliveryHead.kP_Tilter;//40; // An error of 1 rotations results in 40 amps output
       configs.Slot1.kI = Constants.DeliveryHead.kI_Tilter;//0;

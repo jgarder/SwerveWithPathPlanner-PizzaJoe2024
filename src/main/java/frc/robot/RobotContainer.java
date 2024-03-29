@@ -139,7 +139,7 @@ public class RobotContainer {
 
   
   
- public double intakePostRollSeconds = 0.175;
+ public double intakePostRollSeconds = .4;//0.175;
   public Command C_PickupPizzaFromFloorWithoutWashing()
   {
     return //new RunDeliveryHoldIntake(deliveryHolder).alongWith(
@@ -245,14 +245,14 @@ public class RobotContainer {
         new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmSpeakerKnownClose)
         );
   }
-  public Command C_ReadyPodiumSpeakerShot()
-  {
-    return new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_Zero);},deliveryLifter)
-      .alongWith(
-        new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Podium, deliveryTilt),
-        //new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_SafePost);},deliveryTilt),
-      new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmSpeakerPodium));
-  }
+  // public Command C_ReadyPodiumSpeakerShot()
+  // {
+  //   return new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_Zero);},deliveryLifter)
+  //     .alongWith(
+  //       new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Podium, deliveryTilt),
+  //       //new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_SafePost);},deliveryTilt),
+  //     new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmSpeakerPodium));
+  // }
     public Command C_ReadyCloseAmpShot()
   {
     return new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_TrapStart,deliveryLifter)

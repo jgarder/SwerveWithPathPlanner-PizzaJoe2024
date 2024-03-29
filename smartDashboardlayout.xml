@@ -1,14 +1,5 @@
 <xml version="1.0">
 <dashboard>
-	<widget field="DeliveryTilt MMJerk" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="825" y="577"/>
-	</widget>
-	<widget field="DeliveryTilt MMCruiseVelocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="778" y="554"/>
-	</widget>
-	<widget field="DeliveryTilt MMAcceleration" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="777" y="534"/>
-	</widget>
 	<widget field="TrapFloorRPM" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="592" y="368"/>
 		<property name="Background" value="0.204.204.255"/>
@@ -55,13 +46,6 @@
 	</widget>
 	<widget field="AlignRotShot I Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1296" y="731"/>
-	</widget>
-	<widget field="GyroYaw" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1447" y="361"/>
-	</widget>
-	<widget field="AccumGyroZ" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1438" y="383"/>
-		<width>138</width>
 	</widget>
 	<widget field="DeliveryTilt RPM" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="826" y="791"/>
@@ -151,18 +135,6 @@
 	<widget field="LL TargetID" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1295" y="253"/>
 	</widget>
-	<widget field="LimelightSkew" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1283" y="340"/>
-	</widget>
-	<widget field="LimelightArea" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1285" y="318"/>
-	</widget>
-	<widget field="LimelightY" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1302" y="297"/>
-	</widget>
-	<widget field="LimelightX" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1301" y="275"/>
-	</widget>
 	<widget field="ChainLifter setpoint " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1028" y="553"/>
 	</widget>
@@ -184,12 +156,6 @@
 	<widget field="ChainLifter Amps" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="588" y="270"/>
 		<width>123</width>
-	</widget>
-	<widget field="ChainLifter Feed Forward" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1003" y="510"/>
-	</widget>
-	<widget field="ChainLifter I Zone" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1038" y="489"/>
 	</widget>
 	<widget field="ChainLifter D Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1035" y="467"/>
@@ -245,102 +211,6 @@
 	</widget>
 	<widget field="MAX Total Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="172" y="208"/>
-	</widget>
-	<widget field="Ch23 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="129" y="738"/>
-		<width>132</width>
-	</widget>
-	<widget field="Ch22 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="4" y="739"/>
-		<width>121</width>
-	</widget>
-	<widget field="Ch21 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="128" y="716"/>
-		<width>133</width>
-	</widget>
-	<widget field="Ch20 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="4" y="717"/>
-		<width>119</width>
-	</widget>
-	<widget field="Ch19 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="128" y="696"/>
-		<width>132</width>
-	</widget>
-	<widget field="Ch18 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1" y="697"/>
-		<width>124</width>
-	</widget>
-	<widget field="Ch17 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="128" y="675"/>
-		<width>131</width>
-	</widget>
-	<widget field="Ch16 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="2" y="674"/>
-		<width>124</width>
-	</widget>
-	<widget field="Ch15 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="128" y="655"/>
-		<width>134</width>
-	</widget>
-	<widget field="Ch14 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="2" y="654"/>
-		<width>125</width>
-	</widget>
-	<widget field="Ch13 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="127" y="635"/>
-		<width>134</width>
-	</widget>
-	<widget field="Ch12 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="4" y="634"/>
-		<width>123</width>
-	</widget>
-	<widget field="Ch11 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="126" y="613"/>
-		<width>130</width>
-	</widget>
-	<widget field="Ch10 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="2" y="612"/>
-		<width>126</width>
-	</widget>
-	<widget field="Ch9 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="128" y="594"/>
-		<width>128</width>
-	</widget>
-	<widget field="Ch8 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="8" y="591"/>
-		<width>120</width>
-	</widget>
-	<widget field="Ch7 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="129" y="570"/>
-		<width>126</width>
-	</widget>
-	<widget field="Ch6 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="6" y="570"/>
-		<width>124</width>
-	</widget>
-	<widget field="Ch5 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="129" y="548"/>
-		<width>124</width>
-	</widget>
-	<widget field="Ch4 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="3" y="548"/>
-		<width>125</width>
-	</widget>
-	<widget field="Ch3 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="129" y="526"/>
-		<width>123</width>
-	</widget>
-	<widget field="Ch2 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="3" y="526"/>
-		<width>125</width>
-	</widget>
-	<widget field="Ch1 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="130" y="507"/>
-		<width>121</width>
-	</widget>
-	<widget field="Ch0 Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1" y="506"/>
-		<width>129</width>
 	</widget>
 	<widget field="Total Current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="193" y="138"/>
@@ -478,9 +348,6 @@
 	<widget field="PickupArm SetPoint" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="604" y="723"/>
 	</widget>
-	<widget field="PickupArm PID output" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="593" y="702"/>
-	</widget>
 	<widget field="PickupArm Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="728" y="138"/>
 		<width>157</width>
@@ -497,39 +364,11 @@
 		<location x="590" y="137"/>
 		<width>120</width>
 	</widget>
-	<widget field="Upper Shooter Setpoint RPM" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="349" y="392"/>
-	</widget>
-	<widget field="Upper Shooter Min Output" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="354" y="501"/>
-	</widget>
-	<widget field="Upper Shooter Max Output" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="341" y="526"/>
-	</widget>
-	<widget field="Upper Shooter Feed Forward" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="325" y="544"/>
-	</widget>
-	<widget field="Upper Shooter I Zone" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="378" y="481"/>
-	</widget>
-	<widget field="Upper Shooter D Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="381" y="459"/>
-	</widget>
-	<widget field="Upper Shooter I Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="383" y="435"/>
-	</widget>
-	<widget field="Upper Shooter P Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="383" y="414"/>
-	</widget>
 	<widget field="DeliveryTilt setpoint " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="798" y="512"/>
 	</widget>
 	<widget field="DeliveryTilt PID output" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="789" y="490"/>
-	</widget>
-	<widget field="DeliveryTilt Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="727" y="224"/>
-		<width>157</width>
 	</widget>
 	<widget field="DeliveryTilt PID Encoder Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="904" y="222"/>
@@ -586,9 +425,6 @@
 	<widget field="AlignRotShot P Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1294" y="710"/>
 	</widget>
-	<widget field="RotationOffsetAiming" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1283" y="688"/>
-	</widget>
 	<widget field="AlignRot D Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1421" y="603"/>
 	</widget>
@@ -619,7 +455,9 @@
 </dashboard>
 <live-window>
 </live-window>
+	<hidden field="Ch23 Current"/>
 	<hidden field="Module 2"/>
+	<hidden field="Ch22 Current"/>
 	<hidden field="Module 3"/>
 	<hidden field="Module 0"/>
 	<hidden field="Module 1"/>
