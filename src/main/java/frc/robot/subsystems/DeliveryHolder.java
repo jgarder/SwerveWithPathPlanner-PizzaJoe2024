@@ -226,7 +226,7 @@ public class DeliveryHolder extends SubsystemBase {
     public Timer outDexingTimer = new Timer();
     public double indexBacklash = 1.5;//1.0;
     //double Timeout = .5;
-    public double OutDexingTimeout = 0.5;
+    public double OutDexingTimeout = 0.25;
   public boolean isUndoIndexFinished() {
     if (!IsNoteInDeliveryHold() | outDexingTimer.get() > OutDexingTimeout) {
       //System.out.println("No Note In Holder");

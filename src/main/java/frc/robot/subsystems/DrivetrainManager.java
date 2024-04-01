@@ -18,7 +18,7 @@ import frc.robot.generated.TunerConstants;
 
 public class DrivetrainManager extends SubsystemBase{
     
-  public final double kMaxSpeed = 3.8; //closer the max speed is to the max speed in real life the more resolution the joystick will have for driver. 
+  public final double kMaxSpeed = 4.0; //closer the max speed is to the max speed in real life the more resolution the joystick will have for driver. 
   public double MaxSpeed = kMaxSpeed;//9;//6; // 6 meters per second desired top speed
   public double MaxAngularRate = 2.5 * Math.PI; //1.8 ==  3/4 of a rotation per second max angular velocity
 
@@ -53,7 +53,7 @@ public class DrivetrainManager extends SubsystemBase{
       //SmartDashboard.putNumber("GyroYaw", drivetrain.getPigeon2().getYaw().getValueAsDouble());
     }
     public double accumGyroz = 0;
-    public static final double slewrateXY = 9;//7;//20;//3;
+    public static final double slewrateXY = 10.0;//9;//7;//20;//3;
     public static final double slewrateRotation = 20;//2.7;
     SlewRateLimiter speedLimiterX = new SlewRateLimiter(slewrateXY);
     SlewRateLimiter speedLimiterY = new SlewRateLimiter(slewrateXY);
