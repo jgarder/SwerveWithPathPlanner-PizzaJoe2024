@@ -139,7 +139,7 @@ public class RobotContainer {
 
   
   
- public double intakePostRollSeconds = .4;//0.175;
+ public double intakePostRollSeconds = 0.1;//.4;//0.175;//this is added to auton time :(
   public Command C_PickupPizzaFromFloorWithoutWashing()
   {
     return //new RunDeliveryHoldIntake(deliveryHolder).alongWith(
@@ -148,10 +148,10 @@ public class RobotContainer {
     .andThen(new InstantCommand(()->{m_candleSubsystem.StrobeBlueLights();},m_candleSubsystem))
     .andThen(new InstantCommand(()->{intakepassing = false;}))
     .andThen(
-      new InstantCommand(()->{m_candleSubsystem.BlueLights();},m_candleSubsystem),
+      //new InstantCommand(()->{m_candleSubsystem.BlueLights();},m_candleSubsystem),
       C_ReturnPickupHead()
       .alongWith(new InstantCommand(()->{pickupSpinner.IntakePostRollCommand();},pickupSpinner)
-      .andThen(new WaitCommand(intakePostRollSeconds))//.4//was .5//POST ROLL PICKUP INTAKE SPIN)
+      .andThen(new WaitCommand(intakePostRollSeconds))//POST ROLL PICKUP INTAKE SPIN
       .andThen(new InstantCommand(()->{pickupSpinner.stopSpinner();}))
         )
     )//POST ROLL PICKUP INTAKE SPIN)
@@ -236,11 +236,12 @@ public class RobotContainer {
     new InstantCommand(()->{deliveryTilt.disableatpark();},deliveryTilt)
     );
   }
+  public double CloseSpeakerShotAddedTiltFromClosestPossibleShot = 0.01;
   public Command C_ReadyCloseSpeakerShot()
   {
     return new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_Zero);},deliveryLifter)
       .alongWith(
-        new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Closest, deliveryTilt),
+        new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Closest+CloseSpeakerShotAddedTiltFromClosestPossibleShot, deliveryTilt),
         //new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Closest);},deliveryTilt)
         new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmSpeakerKnownClose)
         );

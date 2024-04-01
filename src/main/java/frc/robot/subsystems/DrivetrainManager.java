@@ -44,10 +44,10 @@ public class DrivetrainManager extends SubsystemBase{
     }
     @Override
     public void periodic() {
-            double VelocX = speedLimiterY.calculate(-joystick.getLeftY()) * (MaxSpeed*PizzaManager.speedMulti);
-      double VelocY =speedLimiterX.calculate(-joystick.getLeftX()) * (MaxSpeed*PizzaManager.speedMulti);
-      SmartDashboard.putNumber("VelocX", VelocX);
-      SmartDashboard.putNumber("VelocY", VelocY);
+      double VelocX = speedLimiterY.calculate(-joystick.getLeftY()) * (MaxSpeed*PizzaManager.speedMulti);
+      double VelocY = speedLimiterX.calculate(-joystick.getLeftX()) * (MaxSpeed*PizzaManager.speedMulti);
+      SmartDashboard.putNumber("Joystick-VelocX", VelocX);
+      SmartDashboard.putNumber("Joystick-VelocY", VelocY);
 
      // SmartDashboard.putNumber("AccumGyroZ", drivetrain.getPigeon2().getAccumGyroZ().getValueAsDouble() - accumGyroz);
       //SmartDashboard.putNumber("GyroYaw", drivetrain.getPigeon2().getYaw().getValueAsDouble());
@@ -74,7 +74,7 @@ public class DrivetrainManager extends SubsystemBase{
         //joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
        // joystick.b().whileTrue(drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
        // joystick.b().whileTrue(new InstantCommand(()->{drivetrain.getPigeon2().setYaw(0);accumGyroz = drivetrain.getPigeon2().getAccumGyroZ().getValueAsDouble();}));
-        fieldpoint.HeadingController = new PhoenixPIDController(4, 0, 0);
+        //fieldpoint.HeadingController = new PhoenixPIDController(4, 0, 0);
         //joystick.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
         //joystick.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
         
@@ -102,20 +102,20 @@ public class DrivetrainManager extends SubsystemBase{
       );
     }
 
-    public void move(double x,double y,double r)
-    {
-      drivetrain.applyRequest(() -> FCdrive.withVelocityX(-.1 * MaxSpeed) // Drive forward with                                                                                        // negative Y (forward)
-            .withVelocityY(-.1 * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(0 * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        ).ignoringDisable(false);
-    }
+    // public void move(double x,double y,double r)
+    // {
+    //   drivetrain.applyRequest(() -> FCdrive.withVelocityX(-.1 * MaxSpeed) // Drive forward with                                                                                        // negative Y (forward)
+    //         .withVelocityY(-.1 * MaxSpeed) // Drive left with negative X (left)
+    //         .withRotationalRate(0 * MaxAngularRate) // Drive counterclockwise with negative X (left)
+    //     ).ignoringDisable(false);
+    // }
 
-    public void MoveRobotToTargetInFieldCoordinatesWithRotation(double YposeAxis, double XposeAxis, Rotation2d RZposeAxis) {
-      drivetrain.setControl(fieldpoint.withVelocityX(XposeAxis * MaxSpeedPid) // Drive forward with // negative Y (forward)
-          .withVelocityY(YposeAxis * MaxSpeedPid) // Drive left with negative X (left)
-          .withTargetDirection(RZposeAxis) // Drive counterclockwise with negative X (left)
-      );
-    }
+    // public void MoveRobotToTargetInFieldCoordinatesWithRotation(double YposeAxis, double XposeAxis, Rotation2d RZposeAxis) {
+    //   drivetrain.setControl(fieldpoint.withVelocityX(XposeAxis * MaxSpeedPid) // Drive forward with // negative Y (forward)
+    //       .withVelocityY(YposeAxis * MaxSpeedPid) // Drive left with negative X (left)
+    //       .withTargetDirection(RZposeAxis) // Drive counterclockwise with negative X (left)
+    //   );
+    // }
       //
 
     public final SwerveRequest.FieldCentric FCdriveAuton = new SwerveRequest.FieldCentric();
@@ -132,8 +132,8 @@ public class DrivetrainManager extends SubsystemBase{
   .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
 
 
-  private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+  //private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+  //private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+  //private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   public final SwerveRequest.FieldCentricFacingAngle fieldpoint = new SwerveRequest.FieldCentricFacingAngle();
 }

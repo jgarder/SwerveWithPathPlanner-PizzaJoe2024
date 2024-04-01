@@ -260,6 +260,12 @@
                 "data": {
                   "name": "AlignAndShootCenterSpeaker"
                 }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "backupStageCenter"
+                }
               }
             ]
           }

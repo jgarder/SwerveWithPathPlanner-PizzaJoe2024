@@ -179,9 +179,9 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         SmartDashboard.putNumber("Posex", posesss.getX());
         SmartDashboard.putNumber("Posey", posesss.getY());
         SmartDashboard.putNumber("PoseRot", posesss.getRotation().getDegrees());
-         SmartDashboard.putNumber("PoseTran", posesss.getTranslation().getNorm());
-SmartDashboard.putNumber("vxMetersPerSecond", this.getCurrentRobotChassisSpeeds().vxMetersPerSecond);
-SmartDashboard.putNumber("vyMetersPerSecond", this.getCurrentRobotChassisSpeeds().vyMetersPerSecond);
+        SmartDashboard.putNumber("PoseTran", posesss.getTranslation().getNorm());
+        SmartDashboard.putNumber("vxMetersPerSecond", this.getCurrentRobotChassisSpeeds().vxMetersPerSecond);
+        SmartDashboard.putNumber("vyMetersPerSecond", this.getCurrentRobotChassisSpeeds().vyMetersPerSecond);
          
         /* Periodically try to apply the operator perspective */
         /* If we haven't applied the operator perspective before, then we should apply it regardless of DS state */

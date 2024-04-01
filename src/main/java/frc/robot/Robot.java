@@ -6,9 +6,11 @@ package frc.robot;
 
 import javax.naming.spi.DirStateFactory.Result;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.LimelightHelpers.Results;
@@ -33,14 +35,31 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
    
     CommandScheduler.getInstance().run(); 
-    if (UseLimelight & PizzaManager.LimelightTelemetryUpdateRequested) {    
+    if (UseLimelight & PizzaManager.LimelightTelemetryUpdateRequested) { 
+           
+
       Results lastResult = LimelightHelpers.getLatestResults(Constants.LimelightName).targetingResults;
 
       Pose2d llPose = lastResult.getBotPose2d_wpiBlue();
-      double tl = LimelightHelpers.getLatency_Pipeline(Constants.LimelightName);
-      double cl = LimelightHelpers.getLatency_Capture(Constants.LimelightName);
+      double tl = lastResult.latency_pipeline;//LimelightHelpers.getLatency_Pipeline(Constants.LimelightName);
+      double cl = lastResult.latency_capture;//LimelightHelpers.getLatency_Capture(Constants.LimelightName);
+      double jl = lastResult.latency_jsonParse;
+      // SmartDashboard.putNumber("tl", tl);
+      // SmartDashboard.putNumber("cl", cl);
+      // SmartDashboard.putNumber("jl", jl);
+      ///
+      LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+      if(limelightMeasurement.tagCount >= 2)
+      {
+        //m_robotContainer.drivetrainManager.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+        m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(
+            limelightMeasurement.pose,
+            limelightMeasurement.timestampSeconds);
+            return;//we have a good pose estimate dont do the other pose estimate. 
+      }
+      //
       if (lastResult.valid) {
-        m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(llPose, Timer.getFPGATimestamp() - (tl/1000.0) - (cl/1000.0));
+        m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(llPose, Timer.getFPGATimestamp() - (tl/1000.0) - (cl/1000.0)- (jl/1000.0));
       }
     }
   }

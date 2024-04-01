@@ -69,6 +69,7 @@ public class AlignSpeakerTest extends Command {
   int goodneeded = 0;
 
   boolean RotationInRange = false;
+  boolean RPMReadyTofire = false;
 
   private final Timer m_SettleTimer = new Timer();
   double SettleTimeAtCorrectRPM = .15;
@@ -98,7 +99,7 @@ public class AlignSpeakerTest extends Command {
   @Override
   public void initialize() {
     tid = 0;
-    tid = LimelightHelpers.getFiducialID("limelight");
+    //tid = LimelightHelpers.getFiducialID("limelight");
     CurrentPose = drivetrainManager.drivetrain.getState().Pose;
     //get our alliance red or blue.
    CurrentAlliance = DriverStation.getAlliance();
@@ -349,9 +350,9 @@ public class AlignSpeakerTest extends Command {
         RotationInRange = Constants.isRotInTarget(PoseOffset.getRotation(),MaxRotationOffset);//RZoffsetFromSetpoint < MaxRotationOffset;//.01
 
         ///RPM SPOOLer
-        boolean ReadyTofire = Dshooter.getRPMReadyTofire();
+        RPMReadyTofire = Dshooter.getRPMReadyTofire();
         ///
-        if(RotationInRange && ReadyTofire && DTilt.atSetpoint(Constants.DeliveryHead.TiltsetpointTolerance,Constants.DeliveryHead.TiltSettleTimeAtPosition)) //currentPercentOfMaxDistance < 100.0  &&
+        if(RotationInRange && RPMReadyTofire && DTilt.atSetpoint(Constants.DeliveryHead.TiltsetpointTolerance,Constants.DeliveryHead.TiltSettleTimeAtPosition)) //currentPercentOfMaxDistance < 100.0  &&
         {
           if(timesgood > goodneeded)
           {

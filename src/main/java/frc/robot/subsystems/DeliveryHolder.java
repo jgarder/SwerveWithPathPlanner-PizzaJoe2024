@@ -124,6 +124,7 @@ public class DeliveryHolder extends SubsystemBase {
         if(PizzaManager.pizzaStage == PizzaTracker.passed)//if we are first getting this note from the pass
           {
               PizzaManager.pizzaStage = PizzaTracker.indexNeeded;//then we need to index it
+              
           }
         else if(PizzaManager.pizzaStage == PizzaTracker.NoteOutDexed)//if we are receiving from an outindex
           {
@@ -151,6 +152,7 @@ public class DeliveryHolder extends SubsystemBase {
       requestingIndex = true;
       SmartDashboard.putString("IndexStage","Requested");
       pickedupNote = false;
+      outDexingTimer.restart();
     }
     public void RequestIndex(PizzaManager.PizzaTracker stage)
     {
@@ -160,6 +162,7 @@ public class DeliveryHolder extends SubsystemBase {
       SmartDashboard.putString("IndexStage","Requested");
       PizzaManager.pizzaStage =stage;
       pickedupNote = false;
+      outDexingTimer.restart();
     }
     boolean pickedupNote = false;
     public void indexNote()
@@ -177,6 +180,7 @@ public class DeliveryHolder extends SubsystemBase {
             //System.out.println("intaking");
             SmartDashboard.putString("IndexStage","Intaking");
               IntakeRuntoHoldCommand(40,false);
+              outDexingTimer.restart();
           }
           else if(PizzaManager.pizzaStage == PizzaTracker.indexNeeded)
           {
@@ -200,6 +204,7 @@ public class DeliveryHolder extends SubsystemBase {
             }
             if(pickedupNote)
             {
+              outDexingTimer.restart();
               isUndoIndexFinished();
             }
           }
@@ -218,10 +223,12 @@ public class DeliveryHolder extends SubsystemBase {
         }
         else{}
     }
-    public double indexBacklash =1.0;
+    public Timer outDexingTimer = new Timer();
+    public double indexBacklash = 1.5;//1.0;
     //double Timeout = .5;
+    public double OutDexingTimeout = 0.5;
   public boolean isUndoIndexFinished() {
-    if (!IsNoteInDeliveryHold() ) {
+    if (!IsNoteInDeliveryHold() | outDexingTimer.get() > OutDexingTimeout) {
       //System.out.println("No Note In Holder");
         PizzaManager.pizzaStage = PizzaTracker.NoteOutDexed;
         m_forwardLimit.enableLimitSwitch(true);

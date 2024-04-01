@@ -70,7 +70,7 @@ public class Constants {
 
       public static final Pose2d SpeakerCenterTagLocation = new Pose2d(Units.inchesToMeters(652.73),Units.inchesToMeters(218.42), Rotation2d.fromDegrees(180));//we shoot to the right of the opening!
       public static final Pose2d PassingLocation = SpeakerCenterTagLocation;
-      public static final Pose2d SpeakerCenter = new Pose2d(15.05, 5.5-.2, Rotation2d.fromDegrees(0));
+      public static final Pose2d SpeakerCenter = new Pose2d(15.00, 5.5-.2, Rotation2d.fromDegrees(0));
 
       public static final Pose2d SourceRight = new Pose2d(.60, 1.197, Rotation2d.fromDegrees(-120));//#9
       public static final Pose2d SourceCenter = new Pose2d(1.07, .89, Rotation2d.fromDegrees(-120));
@@ -96,8 +96,8 @@ public class Constants {
 
       public static final Pose2d SpeakerCenterTagLocation = new Pose2d(Units.inchesToMeters(-1.5),Units.inchesToMeters(218.42), Rotation2d.fromDegrees(0));//we shoot to the right of the opening!
       public static final Pose2d PassingLocation = SpeakerCenterTagLocation;
-      
-      public static final Pose2d SpeakerCenter = new Pose2d(1.45, 5.5+.1, Rotation2d.fromDegrees(180));//BC-CALI:1.38,5.48,177
+
+      public static final Pose2d SpeakerCenter = new Pose2d(1.5, 5.5+.1, Rotation2d.fromDegrees(180));//BC-CALI:1.38,5.48,177
 
       public static final Pose2d SourceRight = new Pose2d(14.83, .577, Rotation2d.fromDegrees(-60));//#1
       public static final Pose2d SourceCenter = new Pose2d(15.42, .92, Rotation2d.fromDegrees(-60));
@@ -199,7 +199,7 @@ public class Constants {
         public static final double Lift_Position_Zero = 0;
         public static final double Lift_Position_PullDown =4;
         public static final double Lift_Position_unfolding = 30;
-        public static final double Lift_Position_ForDeliveryKick = 270;
+        public static final double Lift_Position_ForDeliveryKick = 290;//270;
         public static final double Lift_Position_CenterAndTrap = 340;
         public static final double Lift_Position_Edge = 340;
 
@@ -222,11 +222,11 @@ public class Constants {
         public static final double lifterSlewRate = 0.1;
 
         //PickupArm 
-        public static final double maxValue_PickupArm = 46.1;
+        public static final double maxValue_PickupArm = 47.3;
         public static final double minValue_PickupArm = 0;
         public static final double PickupZero = 0;
         public static final double PickupPassing = 0;
-        public static final double PickupFloorPickup = 46.025;
+        public static final double PickupFloorPickup = 47.025;
         public static final double PickupSourcePickup = 13.0;
         public static final double PickupVertical = 16.0;
         

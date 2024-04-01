@@ -50,7 +50,7 @@ public class MoveDTiltToPosition extends Command{
   double TimeoutSeconds = 10.0;
 
   double AutonSettleTimeAtCorrectTilt = 0.0;
-  double autonTolerance = Constants.DeliveryHead.TiltsetpointTolerance*3;
+  double autonTolerance = Constants.DeliveryHead.TiltsetpointTolerance*2.5;
 
   boolean ReadyTofire = false;
 

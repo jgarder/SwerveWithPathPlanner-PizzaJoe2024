@@ -35,7 +35,7 @@ public class ShootDeliveryHold extends Command{
   }
 
   double TimeoutSeconds = 1;
-   double MinTimeoutSeconds = .125;//.15;
+   double MinTimeoutSeconds = .15;//.125;//.15;
   @Override
   public boolean isFinished() {
     if(m_Timer.get() > TimeoutSeconds){
