@@ -22,7 +22,7 @@ public class TunerConstants {
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
     private static final Slot0Configs driveGains = new Slot0Configs()
-        .withKP(5.5).withKI(0).withKD(0)//3.0
+        .withKP(1.9).withKI(0).withKD(0)//3.0 voltage //2.0 torque current FOC
         .withKS(0).withKV(0).withKA(0);
 
     // The closed-loop output type to use for the steer motors;
@@ -43,10 +43,10 @@ public class TunerConstants {
     // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
     // This may need to be tuned to your individual robot
     private static final double kCoupleRatio = 3.5;
-
-    private static final double kDriveGearRatio = 8.14;//7.363636364;//brody changed from 6.75;
+    private static final double kSDSmk4iL1 =  (50.0 / 14.0) * (19.0 / 25.0) * (45.0 / 15.0); // 8.14 = first stage 14 driving teeth - 50 driven teeth , 2nd stage 25:19, 3rd 15:45
+    private static final double kDriveGearRatio = kSDSmk4iL1;///8.14;//7.363636364;//brody changed from 6.75;
     private static final double kSteerGearRatio = 15.42857143;
-    private static final double kWheelRadiusInches = 1.925;//1.992;//1.929;//2.167; // Estimated at first, then fudge-factored to make odom match record
+    private static final double kWheelRadiusInches = 1.95;//1.992;//1.929;//2.167; // Estimated at first, then fudge-factored to make odom match record
 
     private static final boolean kSteerMotorReversed = true;
     private static final boolean kInvertLeftSide = false;

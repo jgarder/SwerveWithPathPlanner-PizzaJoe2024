@@ -1,5 +1,51 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="DeliveryTiltInTarget " type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="1188" y="149"/>
+		<width>111</width>
+		<height>24</height>
+	</widget>
+	<widget field="islowerWithinRange" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="1188" y="196"/>
+		<width>109</width>
+		<height>21</height>
+	</widget>
+	<widget field="isUpperWithinRange" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="1188" y="174"/>
+		<width>111</width>
+		<height>21</height>
+	</widget>
+	<widget field="isRotInTarget" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="1187" y="127"/>
+		<width>81</width>
+		<height>21</height>
+	</widget>
+	<widget field="IsYInTarget" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="1187" y="104"/>
+		<width>71</width>
+		<height>21</height>
+	</widget>
+	<widget field="IsXInTarget" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.BooleanBox">
+		<location x="1187" y="81"/>
+		<width>70</width>
+		<height>21</height>
+	</widget>
+	<widget field="Upper ShooterSetPoint RPM" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="326" y="510"/>
+	</widget>
+	<widget field="Upper Shooter D Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="354" y="483"/>
+	</widget>
+	<widget field="Upper Shooter I Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="356" y="459"/>
+	</widget>
+	<widget field="Upper Shooter P Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="354" y="436"/>
+	</widget>
+	<widget field="Passing-RPM" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="983" y="346"/>
+		<property name="Background" value="255.102.255.255"/>
+	</widget>
 	<widget field="jl" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1500" y="374"/>
 	</widget>
@@ -16,11 +62,11 @@
 		<location x="1270" y="648"/>
 	</widget>
 	<widget field="TrapFloorRPM" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="592" y="368"/>
+		<location x="592" y="386"/>
 		<property name="Background" value="0.204.204.255"/>
 	</widget>
 	<widget field="TrapFloorTilt" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="599" y="346"/>
+		<location x="599" y="364"/>
 		<property name="Background" value="0.204.204.255"/>
 	</widget>
 	<widget field="RZ_Offset" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
@@ -99,15 +145,6 @@
 	<widget field="AlignXY P Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1262" y="563"/>
 	</widget>
-	<widget field="IsXInTarget" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1171" y="93"/>
-	</widget>
-	<widget field="IsYInTarget" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1173" y="114"/>
-	</widget>
-	<widget field="isRotInTarget" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1163" y="136"/>
-	</widget>
 	<widget field="PoseTran" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1307" y="434"/>
 	</widget>
@@ -121,7 +158,7 @@
 		<location x="1321" y="367"/>
 	</widget>
 	<widget field="Bypass Limelight" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.CheckBox">
-		<location x="1216" y="68"/>
+		<location x="647" y="80"/>
 	</widget>
 	<widget field="IndexStage" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="619" y="54"/>
@@ -134,12 +171,6 @@
 	</widget>
 	<widget field="PoseWPIBLueX" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1430" y="289"/>
-	</widget>
-	<widget field="islowerWithinRange" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="951" y="203"/>
-	</widget>
-	<widget field="isUpperWithinRange" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="947" y="182"/>
 	</widget>
 	<widget field="LL TargetID" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1446" y="268"/>
@@ -380,8 +411,8 @@
 		<location x="789" y="490"/>
 	</widget>
 	<widget field="DeliveryTilt PID Encoder Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="904" y="222"/>
-		<width>210</width>
+		<location x="735" y="322"/>
+		<width>240</width>
 		<property name="Background" value="0.204.0.255"/>
 	</widget>
 	<widget field="DeliveryTilt Motor Temp" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
@@ -409,11 +440,11 @@
 		<location x="808" y="426"/>
 	</widget>
 	<widget field="Lower Shooter Rpm" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1133" y="201"/>
+		<location x="959" y="202"/>
 		<width>149</width>
 	</widget>
 	<widget field="Upper Shooter Rpm" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1133" y="180"/>
+		<location x="958" y="180"/>
 		<width>146</width>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.MjpgStreamViewerImpl">
@@ -470,4 +501,5 @@
 	<hidden field="Module 0"/>
 	<hidden field="VelocY"/>
 	<hidden field="Module 1"/>
+	<hidden field="DeliveryTilt DTiltInTarget "/>
 </xml>

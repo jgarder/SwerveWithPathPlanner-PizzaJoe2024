@@ -83,7 +83,7 @@ public class AlignSpeakerTest extends Command {
     XAxis = Xaxis;
     YAxis =  Yaxis;
     drivetrainManager=dtm;
-  
+    SmartDashboard.putNumber("Passing-RPM", Constants.DeliveryHead.PassingRPM);
         //addRequirements(m_DeliveryHolder);
     }
     
@@ -118,10 +118,16 @@ public class AlignSpeakerTest extends Command {
     ///////////////
     DTilt.resetSettleTimer();
     SetTarget();
+    
   }
    double tid = 0;
+   
   @Override
   public void execute() {
+    //
+    double latestRpm = SmartDashboard.getNumber("Passing-RPM", Constants.DeliveryHead.PassingRPM);
+    if(Constants.DeliveryHead.PassingRPM != latestRpm){Constants.DeliveryHead.PassingRPM = latestRpm;}
+    ///
     tid = LimelightHelpers.getFiducialID("limelight");
     //update current pose
     CurrentPose = drivetrainManager.drivetrain.getState().Pose;
@@ -130,8 +136,8 @@ public class AlignSpeakerTest extends Command {
     if(!CurrentAlliance.isPresent()){return;}
     SetTarget();
     // get offsets of current pose from target pose
-    
     UpdateOffsetsFromTarget();
+    
     //
     //distance check
     ///
@@ -160,6 +166,7 @@ public class AlignSpeakerTest extends Command {
       SmartDashboard.putNumber("TiltAddPossible", TiltAddPossible);
       SmartDashboard.putNumber("TiltAdded", TiltAdded);
       seeIdColor();
+      UpdateOffsetsFromTarget();
       PrepShot();
     }
     else if(currentPercentOfMaxDistance >= MidDistance & currentPercentOfMaxDistance < 1.0)
@@ -173,6 +180,7 @@ public class AlignSpeakerTest extends Command {
       SmartDashboard.putNumber("TiltAddPossible", TiltAddPossible);
       SmartDashboard.putNumber("TiltAdded", TiltAdded);
       seeIdColor();
+      UpdateOffsetsFromTarget();
       PrepShot();
     }
     else if(currentPercentOfMaxDistance >= 1.0)
@@ -185,8 +193,9 @@ public class AlignSpeakerTest extends Command {
       {
             SetPassingTarget();
             totaltilt = TiltForPassing;
-            TotalRpm = RPMatShortestDistance;
+            TotalRpm = Constants.DeliveryHead.PassingRPM;
             m_candleSubsystem.GreenLights();
+            UpdateOffsetsFromTarget();
             PrepShot();
       }
       else
@@ -351,8 +360,9 @@ public class AlignSpeakerTest extends Command {
 
         ///RPM SPOOLer
         RPMReadyTofire = Dshooter.getRPMReadyTofire();
+        boolean isHeadTilted = DTilt.atSetpoint(Constants.DeliveryHead.TiltsetpointTolerance,Constants.DeliveryHead.TiltSettleTimeAtPosition);
         ///
-        if(RotationInRange && RPMReadyTofire && DTilt.atSetpoint(Constants.DeliveryHead.TiltsetpointTolerance,Constants.DeliveryHead.TiltSettleTimeAtPosition)) //currentPercentOfMaxDistance < 100.0  &&
+        if(RotationInRange && RPMReadyTofire && isHeadTilted) //currentPercentOfMaxDistance < 100.0  &&
         {
           if(timesgood > goodneeded)
           {

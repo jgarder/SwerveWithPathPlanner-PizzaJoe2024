@@ -84,8 +84,8 @@ public class DeliveryTilt extends SubsystemBase {
         SmartDashboard.putNumber(MotorName + " P Gain", Constants.DeliveryHead.kP_Tilter);
         SmartDashboard.putNumber(MotorName + " I Gain", Constants.DeliveryHead.kI_Tilter);
         SmartDashboard.putNumber(MotorName + " D Gain", Constants.DeliveryHead.kD_Tilter);
-        SmartDashboard.putNumber(MotorName + " I Zone", kIz);
-        SmartDashboard.putNumber(MotorName + " Feed Forward", kFF);
+        //SmartDashboard.putNumber(MotorName + " I Zone", kIz);
+        //SmartDashboard.putNumber(MotorName + " Feed Forward", kFF);
 
         //SmartDashboard.putNumber(MotorName + " MMAcceleration", Acceleration);
        // SmartDashboard.putNumber(MotorName + " MMCruiseVelocity", CruiseVelocity);
@@ -147,7 +147,7 @@ public class DeliveryTilt extends SubsystemBase {
        * GetVelocity() returns the velocity of the encoder in units of RPM
        */
       CurrentEncoderVelocity = Motor_Controller.getVelocity().getValueAsDouble();
-      SmartDashboard.putNumber(MotorName + " RPM", CurrentEncoderVelocity*60);
+      //SmartDashboard.putNumber(MotorName + " RPM", CurrentEncoderVelocity*60);
       
       SmartDashboard.putNumber(MotorName + " PID output",Motor_Controller.getClosedLoopOutput().getValueAsDouble());
       SmartDashboard.putNumber(MotorName + " setpoint ",  WantedEncoderValue);
@@ -227,8 +227,8 @@ public class DeliveryTilt extends SubsystemBase {
       configs.Slot1.kI = Constants.DeliveryHead.kI_Tilter;//0;
       configs.Slot1.kD = Constants.DeliveryHead.kD_Tilter;//2; // A change of 1 rotation per second results in 2 amps output
       // Peak output of 130 amps
-      configs.TorqueCurrent.PeakForwardTorqueCurrent = 30;
-      configs.TorqueCurrent.PeakReverseTorqueCurrent = -30;
+      configs.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+      configs.TorqueCurrent.PeakReverseTorqueCurrent = -40;
       
       configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
@@ -236,7 +236,7 @@ public class DeliveryTilt extends SubsystemBase {
       configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.DeliveryHead.Tilt_maxValue;
       configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.DeliveryHead.Tilt_minValue-5;
       
-      configs.withFeedback(AbsoluteEncoderFeedbackConfig.withFeedbackRotorOffset(0));
+      configs.withFeedback(AbsoluteEncoderFeedbackConfig);//.withFeedbackRotorOffset(0)
       //configs.withFeedback(new FeedbackConfigs().withFeedbackRotorOffset(0));//commented as a test is this interfering with the other feedback config. 
 
       SetConfigToMotor();
@@ -356,11 +356,13 @@ public class DeliveryTilt extends SubsystemBase {
 
           if (Constants.isWithinAmount(CurrentEncoderValue, WantedEncoderValue, TiltTolerance)) {
             if(m_SettleTimer.get() > SettleTime){
+              SmartDashboard.putBoolean(MotorName + "InTarget ",  true);
               return true;
             }
           } else {
             resetSettleTimer();
           }
+          SmartDashboard.putBoolean(MotorName + "InTarget ",  false);
           return false; 
       }
       public boolean isMotorOvertemp()

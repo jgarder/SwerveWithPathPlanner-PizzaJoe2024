@@ -62,6 +62,7 @@ public class Constants {
   public static class TargetLocations
   {
     public static double SpeakerAimOffset = Units.inchesToMeters(14);
+    public static double SpeakerPassAimOffset = Units.inchesToMeters(14);
     public static class Red
     {
        public static final double Xspeed = -1.0;//used to invert results with -1 or 1;
@@ -69,7 +70,7 @@ public class Constants {
        public static final double rotationspeed = 1.0;//used to invert results with -1 or 1;
 
       public static final Pose2d SpeakerCenterTagLocation = new Pose2d(Units.inchesToMeters(652.73),Units.inchesToMeters(218.42), Rotation2d.fromDegrees(180));//we shoot to the right of the opening!
-      public static final Pose2d PassingLocation = SpeakerCenterTagLocation;
+      public static final Pose2d PassingLocation = new Pose2d(Units.inchesToMeters(652.73),Units.inchesToMeters(218.42-Constants.TargetLocations.SpeakerPassAimOffset), Rotation2d.fromDegrees(180));
       public static final Pose2d SpeakerCenter = new Pose2d(15.00, 5.5-.2, Rotation2d.fromDegrees(0));
 
       public static final Pose2d SourceRight = new Pose2d(.60, 1.197, Rotation2d.fromDegrees(-120));//#9
@@ -95,7 +96,7 @@ public class Constants {
        public static final double rotationspeed = 1.0;//used to invert results with -1 or 1;
 
       public static final Pose2d SpeakerCenterTagLocation = new Pose2d(Units.inchesToMeters(-1.5),Units.inchesToMeters(218.42), Rotation2d.fromDegrees(0));//we shoot to the right of the opening!
-      public static final Pose2d PassingLocation = SpeakerCenterTagLocation;
+      public static final Pose2d PassingLocation = new Pose2d(Units.inchesToMeters(-1.5),Units.inchesToMeters(218.42+Constants.TargetLocations.SpeakerPassAimOffset), Rotation2d.fromDegrees(0));
 
       public static final Pose2d SpeakerCenter = new Pose2d(1.5, 5.5+.1, Rotation2d.fromDegrees(180));//BC-CALI:1.38,5.48,177
 
@@ -226,7 +227,7 @@ public class Constants {
         public static final double minValue_PickupArm = 0;
         public static final double PickupZero = 0;
         public static final double PickupPassing = 0;
-        public static final double PickupFloorPickup = 47.025;
+        public static final double PickupFloorPickup = 47.25;
         public static final double PickupSourcePickup = 13.0;
         public static final double PickupVertical = 16.0;
         
@@ -258,7 +259,7 @@ public class Constants {
       public static  double kD_Tilter = 55.00;//50.0;//40.0;//3.000000;
       //Old conversion factor 0.0146428571428571
       public static final double TiltGearRatio = 80.0;
-      public static final double AbsoluteEncoderOffset = 0.399903;//0.396973;
+      public static final double AbsoluteEncoderOffset = 0.401856;//0.396973;
       public static double TiltsetpointTolerance = 0.005;//0.02928;//2.0;
       public static double TiltSettleTimeAtPosition = .1;
       public static final double Tilt_minValue = 0;
@@ -274,9 +275,9 @@ public class Constants {
       public static final double Tilt_Position_TrapLiftUpSHOOT = 0.34;//0.3807;//26;
       public static  double Tilt_Position_TrapFloorShoot = 0.1025;//7.0;
 
-      public static  double Tilt_Position_Speaker_Closest = 0.08630;//0.08610;//7.85;//7.84;//7.6;//10.15;//12.9;//11.25;//10.75;//8.5;//11.5;//7.2;
-      public static  double Tilt_Position_Speaker_Mid = 0.1345;//0.13260;//11.4;//11.2;//10.9;//14.25;
-      public static  double Tilt_Position_Speaker_Furthest = 0.1790;//0.17790;//14.27;//17.2;//19.75;//17.3;//15.75;//14.75;
+      public static  double Tilt_Position_Speaker_Closest = 0.08700;//0.08610;//7.85;//7.84;//7.6;//10.15;//12.9;//11.25;//10.75;//8.5;//11.5;//7.2;
+      public static  double Tilt_Position_Speaker_Mid = 0.13750;//0.13260;//11.4;//11.2;//10.9;//14.25;
+      public static  double Tilt_Position_Speaker_Furthest = 0.18150;//0.17790;//14.27;//17.2;//19.75;//17.3;//15.75;//14.75;
 
       //public static  double Tilt_Position_Speaker_Podium = 0.16;//12.5;//10.85;
       public static final double Tilt_Position_Amp = 0.3407; //25.0;//28;
@@ -294,6 +295,7 @@ public class Constants {
       public static final double ShooterRpmSpeakerPodium = 5250;//5500;//5650;
       public static final double ShooterRpmAmp = 1500;
       public static final double ShooterRpmHumanSource = -1550;//-2250;//-1550;//-500;
+      public static double PassingRPM = 4500;
     }
     
     public static class AllianceAprilTags{
