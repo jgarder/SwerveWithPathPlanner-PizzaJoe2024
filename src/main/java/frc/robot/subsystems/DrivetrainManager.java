@@ -68,7 +68,18 @@ public class DrivetrainManager extends SubsystemBase{
             .withVelocityY(speedLimiterX.calculate(-joystick.getLeftX()) * (MaxSpeed*PizzaManager.speedMulti)) // Drive left with negative X (left)
             .withRotationalRate(speedLimiterRotation.calculate(-joystick.getRightX()) * (MaxAngularRate*PizzaManager.RotationMulti)) // Drive counterclockwise with negative X (left)
         ).ignoringDisable(true));
+      joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
         //////////////////////////////////
+
+        //  //////////////////THIS IS ROBOT CENTRIC TESTING MODE////////////////////
+        // drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
+        // drivetrain.applyRequest(() -> RobotCentricdrive.withVelocityX(speedLimiterY.calculate(-joystick.getLeftY()) * (MaxSpeed*PizzaManager.speedMulti)) // Drive forward with
+        //                                                                                    // negative Y (forward)
+        //     .withVelocityY(speedLimiterX.calculate(-joystick.getLeftX()) * (0*PizzaManager.speedMulti)) // Drive left with negative X (left)
+        //     .withRotationalRate(speedLimiterRotation.calculate(-joystick.getRightX()) * (0*PizzaManager.RotationMulti)) // Drive counterclockwise with negative X (left)
+        // ).ignoringDisable(true));
+        // joystick.start().onTrue(drivetrain.runOnce(() -> PizzaManager.LimelightTelemetryUpdateRequested = !PizzaManager.LimelightTelemetryUpdateRequested));
+        // //////////////////////////////////
 
         //stuff below should be tested when drivetrain is complete    
         //joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
@@ -78,8 +89,8 @@ public class DrivetrainManager extends SubsystemBase{
         //joystick.pov(0).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.5).withVelocityY(0)));
         //joystick.pov(180).whileTrue(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
         
-        // reset the field-centric heading on left bumper press
-        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
+        // reset the field-centric heading on start press
+        //joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
         // if (Utils.isSimulation()) {
         //   drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));

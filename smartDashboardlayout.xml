@@ -108,9 +108,6 @@
 	<widget field="AlignRotShot I Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1296" y="731"/>
 	</widget>
-	<widget field="DeliveryTilt RPM" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="826" y="791"/>
-	</widget>
 	<widget field="DeliveryTilt Furthest Setpoint" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="751" y="388"/>
 	</widget>
@@ -423,12 +420,6 @@
 		<location x="584" y="229"/>
 		<width>127</width>
 	</widget>
-	<widget field="DeliveryTilt Feed Forward" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="791" y="783"/>
-	</widget>
-	<widget field="DeliveryTilt I Zone" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="801" y="780"/>
-	</widget>
 	<widget field="DeliveryTilt D Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="808" y="469"/>
 	</widget>
@@ -496,10 +487,13 @@
 <live-window>
 </live-window>
 	<hidden field="VelocX"/>
+	<hidden field="DeliveryTilt RPM"/>
 	<hidden field="Module 2"/>
 	<hidden field="Module 3"/>
 	<hidden field="Module 0"/>
 	<hidden field="VelocY"/>
 	<hidden field="Module 1"/>
+	<hidden field="DeliveryTilt I Zone"/>
+	<hidden field="DeliveryTilt Feed Forward"/>
 	<hidden field="DeliveryTilt DTiltInTarget "/>
 </xml>

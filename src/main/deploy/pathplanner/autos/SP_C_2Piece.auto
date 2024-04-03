@@ -91,6 +91,19 @@
               }
             ]
           }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "backupStageCenter"
+                }
+              }
+            ]
+          }
         }
       ]
     }

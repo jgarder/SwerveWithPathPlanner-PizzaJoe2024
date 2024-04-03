@@ -185,10 +185,11 @@ public class AlignSpeakerTest extends Command {
     }
     else if(currentPercentOfMaxDistance >= 1.0)
     {
-      double blueLineX = 1.91;//5.84;
-      double redLineX = 14.6;//10.9;
-      double currentX = CurrentPose.getX();
+      double blueLineX = 5.0;//1.91;//5.84;
+      double redLineX = 11.5;//14.6;//10.9;
       double TiltForPassing = 0.1200;
+      double currentX = CurrentPose.getX();
+      
       if (currentX > blueLineX & currentX < redLineX)
       {
             SetPassingTarget();
@@ -237,22 +238,22 @@ public class AlignSpeakerTest extends Command {
   private void SetTarget() {
     if(!CurrentAlliance.isPresent()){return;}
     if (CurrentAlliance.get() == Alliance.Red) {
-      LimelightHelpers.setPriorityTagID("limelight", 4);
+      LimelightHelpers.setPriorityTagID("limelight", Constants.AllianceAprilTags.Red.SpeakerCenter);
       TargetPose = Constants.TargetLocations.Red.SpeakerCenterTagLocation;
     }
     else{
-      LimelightHelpers.setPriorityTagID("limelight", 7);
+      LimelightHelpers.setPriorityTagID("limelight", Constants.AllianceAprilTags.Blue.SpeakerCenter);
       TargetPose = Constants.TargetLocations.Blue.SpeakerCenterTagLocation;
     }
   }
   private void SetPassingTarget() {
     if(!CurrentAlliance.isPresent()){return;}
     if (CurrentAlliance.get() == Alliance.Red) {
-      LimelightHelpers.setPriorityTagID("limelight", 4);
+      LimelightHelpers.setPriorityTagID("limelight", Constants.AllianceAprilTags.Red.SpeakerCenter);
       TargetPose = Constants.TargetLocations.Red.PassingLocation;
     }
     else{
-      LimelightHelpers.setPriorityTagID("limelight", 7);
+      LimelightHelpers.setPriorityTagID("limelight", Constants.AllianceAprilTags.Blue.SpeakerCenter);
       TargetPose = Constants.TargetLocations.Blue.PassingLocation;
     }
   }
@@ -262,7 +263,7 @@ public class AlignSpeakerTest extends Command {
 
 
   private void seeIdColor() {
-    if(tid != 4 & tid !=7)
+    if(tid != Constants.AllianceAprilTags.Red.SpeakerCenter & tid !=Constants.AllianceAprilTags.Blue.SpeakerCenter)
     {
       m_candleSubsystem.YellowLights();
       //return;
@@ -352,17 +353,29 @@ public class AlignSpeakerTest extends Command {
     super.end(interrupted);
   }
 
+  public double maxChassisSpeedToFireMps = 0.5;//meters per second (the units our chassis uses)
+  private boolean IsXInTarget() {
+    return Math.abs(drivetrainManager.drivetrain.getState().speeds.vxMetersPerSecond) < maxChassisSpeedToFireMps;
+  }
+
+  private boolean IsYInTarget() {
+    return Math.abs(drivetrainManager.drivetrain.getState().speeds.vyMetersPerSecond) < maxChassisSpeedToFireMps;
+  }
   
   @Override
   public boolean isFinished() {
         
         RotationInRange = Constants.isRotInTarget(PoseOffset.getRotation(),MaxRotationOffset);//RZoffsetFromSetpoint < MaxRotationOffset;//.01
-
+        boolean isXspeedInTarget = IsXInTarget();
+        boolean isYspeedInTarget = IsYInTarget();
+        boolean isChassisSpeedInTarget = isXspeedInTarget & isYspeedInTarget;
+        SmartDashboard.putBoolean("IsYInTarget", isYspeedInTarget);
+        SmartDashboard.putBoolean("IsXInTarget", isXspeedInTarget);
         ///RPM SPOOLer
         RPMReadyTofire = Dshooter.getRPMReadyTofire();
         boolean isHeadTilted = DTilt.atSetpoint(Constants.DeliveryHead.TiltsetpointTolerance,Constants.DeliveryHead.TiltSettleTimeAtPosition);
         ///
-        if(RotationInRange && RPMReadyTofire && isHeadTilted) //currentPercentOfMaxDistance < 100.0  &&
+        if(RotationInRange && RPMReadyTofire && isHeadTilted && isChassisSpeedInTarget) //currentPercentOfMaxDistance < 100.0  &&
         {
           if(timesgood > goodneeded)
           {

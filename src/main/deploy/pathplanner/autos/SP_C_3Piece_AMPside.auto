@@ -14,13 +14,13 @@
         {
           "type": "named",
           "data": {
-            "name": "C_CatchAndIndexNote"
+            "name": "ZeroDTilt"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.25
+            "waitTime": 0.05
           }
         },
         {
@@ -150,6 +150,12 @@
                 "type": "named",
                 "data": {
                   "name": "AlignAndShootCenterSpeaker"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "backupStageCenter"
                 }
               }
             ]
