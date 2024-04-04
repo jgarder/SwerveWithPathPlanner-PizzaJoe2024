@@ -139,7 +139,7 @@ public class RobotContainer {
 
   
   
- public double intakePostRollSeconds = 0.1;//.4;//0.175;//this is added to auton time :(
+ public double intakePostRollSeconds = 0.15;//.4;//0.175;//this is added to auton time :(
   public Command C_PickupPizzaFromFloorWithoutWashing()
   {
     return //new RunDeliveryHoldIntake(deliveryHolder).alongWith(
