@@ -62,7 +62,7 @@ public class Constants {
   public static class TargetLocations
   {
     public static double SpeakerAimOffset = Units.inchesToMeters(14);
-    public static double SpeakerPassAimOffset = Units.inchesToMeters(14);
+    public static double SpeakerPassAimOffset = Units.inchesToMeters(20);
     public static class Red
     {
        public static final double Xspeed = -1.0;//used to invert results with -1 or 1;
@@ -295,7 +295,7 @@ public class Constants {
       public static final double ShooterRpmSpeakerPodium = 5250;//5500;//5650;
       public static final double ShooterRpmAmp = 1500;
       public static final double ShooterRpmHumanSource = -1550;//-2250;//-1550;//-500;
-      public static double PassingRPM = 4500;
+      public static double PassingRPM = 4400;
     }
     
     public static class AllianceAprilTags{
