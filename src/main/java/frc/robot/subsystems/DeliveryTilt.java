@@ -62,7 +62,7 @@ public class DeliveryTilt extends SubsystemBase {
       /* Start at position 0, no feed forward, use slot 1 */
     private final PositionTorqueCurrentFOC m_torquePosition = new PositionTorqueCurrentFOC(0, 0, 0, 1, false, false, false);
     
-    private final MotionMagicTorqueCurrentFOC m_MMtorquePosition = new MotionMagicTorqueCurrentFOC(0, 0, 1, false, false, false);
+    //private final MotionMagicTorqueCurrentFOC m_MMtorquePosition = new MotionMagicTorqueCurrentFOC(0, 0, 1, false, false, false);
 
     /* Keep a neutral out so we can disable the motor */
     private final NeutralOut m_brake = new NeutralOut();
@@ -273,14 +273,14 @@ public class DeliveryTilt extends SubsystemBase {
         Motor_Controller.setControl(m_torquePosition.withPosition(WantedEncoderValue));
         //MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
       }
-      public void setsHOTSetpointToPosition(double position)
-      {
-        //enable();
-        WantedEncoderValue = position;
-        Motor_Controller.setControl(m_MMtorquePosition.withPosition(WantedEncoderValue));
-        //Motor_Controller.setControl(m_torquePosition.withPosition(WantedEncoderValue));
-        //MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
-      }
+      // public void setsHOTSetpointToPosition(double position)
+      // {
+      //   //enable();
+      //   WantedEncoderValue = position;
+      //   Motor_Controller.setControl(m_MMtorquePosition.withPosition(WantedEncoderValue));
+      //   //Motor_Controller.setControl(m_torquePosition.withPosition(WantedEncoderValue));
+      //   //MotorControllerPid.setReference(WantedEncoderValue, CANSparkBase.ControlType.kPosition);
+      // }
 
       public void setSetpointZero() {
         //enable();

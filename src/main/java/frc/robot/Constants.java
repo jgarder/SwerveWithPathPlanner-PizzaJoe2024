@@ -33,11 +33,11 @@ public class Constants {
 
   public static class ChassisPid
   {
-    public static final double k_PoseX_P = .4;//.5;//1.20;
+    public static final double k_PoseX_P = .5;//.5;//1.20;
     public static final double k_PoseX_I = .0000005;//0.000001;//0.02;
     public static final double k_PoseX_D = .06;//0.15;//0.0020;
 
-    public static final double k_PoseY_P = .4;//.5;//1.20;
+    public static final double k_PoseY_P = .5;//.5;//1.20;
     public static final double k_PoseY_I = .0000005;//0.000001;//0.02;
     public static final double k_PoseY_D = .06;//0.15;//0.002; 
 
@@ -79,9 +79,9 @@ public class Constants {
 
       public static final Pose2d Amp = new Pose2d(14.74, 7.59, Rotation2d.fromDegrees(90));//#5
 
-      public static final Pose2d ClimbChainStageAmpSIDE = new Pose2d(12.1, 4.80, Rotation2d.fromDegrees(-120));//(Red stage Right)
-      public static final Pose2d ClimbChainStageSourceSIDE = new Pose2d(12.14, 3.25, Rotation2d.fromDegrees(120));//(Red stage left)
-      public static final Pose2d ClimbChainStageCenterSIDE = new Pose2d(10.79, 4.00, Rotation2d.fromDegrees(0));//(Red stage Middle)
+      public static final Pose2d ClimbChainStageAmpSIDE = new Pose2d(12.1, 4.80, Rotation2d.fromDegrees(-120));//(Red stage Right)//12
+      public static final Pose2d ClimbChainStageSourceSIDE = new Pose2d(12.12, 3.31, Rotation2d.fromDegrees(120));//(Red stage left)//11
+      public static final Pose2d ClimbChainStageCenterSIDE = new Pose2d(10.75, 4.00, Rotation2d.fromDegrees(0));//(Red stage Middle)//13
 
       
       public static final Pose2d TrapFloorStageAmpSide = new Pose2d(12.27, 5.07, Rotation2d.fromDegrees(-120));//12
@@ -106,9 +106,9 @@ public class Constants {
 
       public static final Pose2d Amp = new Pose2d(1.84, 7.59, Rotation2d.fromDegrees(90));//#6
 
-      public static final Pose2d ClimbChainStageAmpSIDE = new Pose2d(4.39, 4.80, Rotation2d.fromDegrees(-60));//(blue stage left)
-      public static final Pose2d ClimbChainStageSourceSIDE = new Pose2d(4.45, 3.25, Rotation2d.fromDegrees(60));//(blue stage Right)
-      public static final Pose2d ClimbChainStageCenterSIDE = new Pose2d(5.75, 4.09, Rotation2d.fromDegrees(180));//(blue stage Middle)
+      public static final Pose2d ClimbChainStageCenterSIDE = new Pose2d(5.75, 4.09, Rotation2d.fromDegrees(180));//(blue stage Middle)//14
+      public static final Pose2d ClimbChainStageAmpSIDE = new Pose2d(4.39, 4.80, Rotation2d.fromDegrees(-60));//(blue stage left)//15
+      public static final Pose2d ClimbChainStageSourceSIDE = new Pose2d(4.45, 3.25, Rotation2d.fromDegrees(60));//(blue stage Right)//16
 
       public static final Pose2d TrapFloorStageCenterSide = new Pose2d(6.10, 4.00, Rotation2d.fromDegrees(-180));//14
       public static final Pose2d TrapFloorStageAmpSide = new Pose2d(4.11, 4.97, Rotation2d.fromDegrees(-60));//15
@@ -127,7 +127,7 @@ public class Constants {
     public static final int LowerShooterCanID = 7;
     public static final int DeliveryIntakeCanBusID = 5;
     public static final int ChainLifterCanBusID = 6;
-    public static final int Lift_CanBusID = 10;
+    public static final int DeliveryLift_CanBusID = 10;
     public static final int Tilt_CanBusID = 9;
     public static final int Tilt_ABSOCANCODER_CanBusID = 12;
 
@@ -194,15 +194,15 @@ public class Constants {
     public static class ChainLifter
     {
         public static final double Lift_minValue = 0;
-        public static final double Lift_maxValue = 346;//430;
+        public static final double Lift_maxValue = 272;//346;//430;
         
 
         public static final double Lift_Position_Zero = 0;
-        public static final double Lift_Position_PullDown =4;
-        public static final double Lift_Position_unfolding = 30;
-        public static final double Lift_Position_ForDeliveryKick = 290;//270;
-        public static final double Lift_Position_CenterAndTrap = 340;
-        public static final double Lift_Position_Edge = 340;
+        public static final double Lift_Position_PullDown = 3.2;//4;
+        public static final double Lift_Position_unfolding = 24;//30;
+        public static final double Lift_Position_ForDeliveryKick = 232;//127;//290;//270;
+        public static final double Lift_Position_CenterAndTrap = 272;//340;
+        public static final double Lift_Position_Edge = 272;//340;
 
 
     }
@@ -265,8 +265,8 @@ public class Constants {
       public static final double Tilt_minValue = 0;
       public static final double Tilt_maxValue = .410;//28;
       
-      public static final double Tilt_Position_Zero = 0;
-      public static final double Tilt_Position_Park = 0.00366;//.25;
+      public static final double Tilt_Position_Zero = 0.01;
+      public static final double Tilt_Position_Park = 0.13;//.25;
       public static final double Tilt_Position_Passing = 0.0732;//5;
       public static final double Tilt_Position_TrapLift = 0.0292;//2;//7.75;
       public static final double Tilt_Position_TrapDodge = 0.0878;//6;//7.75;
@@ -275,9 +275,9 @@ public class Constants {
       public static final double Tilt_Position_TrapLiftUpSHOOT = 0.34;//0.3807;//26;
       public static  double Tilt_Position_TrapFloorShoot = 0.1025;//7.0;
 
-      public static  double Tilt_Position_Speaker_Closest = 0.08700;//0.08610;//7.85;//7.84;//7.6;//10.15;//12.9;//11.25;//10.75;//8.5;//11.5;//7.2;
-      public static  double Tilt_Position_Speaker_Mid = 0.13750;//0.13260;//11.4;//11.2;//10.9;//14.25;
-      public static  double Tilt_Position_Speaker_Furthest = 0.18150;//0.17790;//14.27;//17.2;//19.75;//17.3;//15.75;//14.75;
+      public static  double Tilt_Position_Speaker_Closest = 0.08790;//0.08610;//7.85;//7.84;//7.6;//10.15;//12.9;//11.25;//10.75;//8.5;//11.5;//7.2;
+      public static  double Tilt_Position_Speaker_Mid = 0.140;//0.13260;//11.4;//11.2;//10.9;//14.25;
+      public static  double Tilt_Position_Speaker_Furthest = 0.18160;//0.17790;//14.27;//17.2;//19.75;//17.3;//15.75;//14.75;
 
       //public static  double Tilt_Position_Speaker_Podium = 0.16;//12.5;//10.85;
       public static final double Tilt_Position_Amp = 0.3407; //25.0;//28;
@@ -285,7 +285,9 @@ public class Constants {
       //public static final double Tilt_Position_TrapStart = 0.1669;//11;
       //public static final double Tilt_Position_Trap = 0.1669;//12;
       public static final double Tilt_Position_HumanSource = 0.20;//0.2342;//16;//12;
-      
+      public static final double Tilt_Position_HumanSourceLow = 0.194;//0.2342;//16;//12;
+
+      /////////// Shooter RPMS ////////////
       public static final double maxRPM = 6250;
       public static final double ShooterRpmOff = 0;
       public static final double ShooterRpmSpeakerKnownClose = 4550;//5650;

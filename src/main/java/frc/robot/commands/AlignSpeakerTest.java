@@ -23,8 +23,8 @@ import frc.robot.subsystems.DrivetrainManager;
 public class AlignSpeakerTest extends Command {
       
 
-  double kP = 0.017;
-  double kI = .000000001;
+  double kP = 0.012;//0.017;
+  double kI = .0000000001;
   double kD = 0.002;
 
   DrivetrainManager drivetrainManager;
@@ -196,6 +196,7 @@ public class AlignSpeakerTest extends Command {
             totaltilt = TiltForPassing;
             TotalRpm = Constants.DeliveryHead.PassingRPM;
             m_candleSubsystem.GreenLights();
+            passing = true;
             UpdateOffsetsFromTarget();
             PrepShot();
       }
@@ -207,7 +208,7 @@ public class AlignSpeakerTest extends Command {
             //return;
       }
 
-      
+      passing = false;
     }
     
     //// 
@@ -223,7 +224,7 @@ public class AlignSpeakerTest extends Command {
 
 
 
-
+    public boolean passing = false;
 
   private void PrepShot() {
     DTilt.setSetpointToPosition(totaltilt);
@@ -326,8 +327,10 @@ public class AlignSpeakerTest extends Command {
   private void drive() {
 
     var RZAdjust = AlignRZController.calculate(PoseOffset.getRotation().getDegrees()) + (Math.signum(AlignRZController.calculate(PoseOffset.getRotation().getDegrees()))*min_RZ_command);
-
-      if(Constants.isRotInTarget(PoseOffset.getRotation(),MaxRotationOffset)) {RZAdjust = 0;}
+      
+    //if(passing & Constants.isRotInTarget(PoseOffset.getRotation(),MaxRotationOffset*1.5)) {RZAdjust = 0;}
+      if(Constants.isRotInTarget(PoseOffset.getRotation(),MaxRotationOffset)) {RZAdjust = 0;}//!passing & 
+      
 
       var xSpeed = MathUtil.applyDeadband(XAxis.getAsDouble(),0.08);
       var ySpeed = MathUtil.applyDeadband(YAxis.getAsDouble(),0.08);

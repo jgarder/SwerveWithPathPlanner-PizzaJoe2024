@@ -34,17 +34,20 @@ public class TunerConstants {
 
     // The stator current at which the wheels start to slip;
     // This needs to be tuned to your individual robot
-    private static final double kSlipCurrentA = 44;//60?//30;//30.0;
+    private static final double kSlipCurrentA = 60;//44;//60?//30;//30.0;
 
     // Theoretical free speed (m/s) at 12v applied output;
     // This needs to be tuned to your individual robot
-    public static final double kSpeedAt12VoltsMps = 4.572;//5.0;//6.0;//5.0;
+    public static final double kSpeedAt12VoltsMps = 4.3281; //4.572;//5.0;//6.0;//5.0;
 
     // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
     // This may need to be tuned to your individual robot
     private static final double kCoupleRatio = 3.5;
+    //SDS Mk4i Gear Levels 
+    private static final double kSDSmk4iL175 =  (50.0 / 16.0) * (19.0 / 25.0) * (45.0 / 15.0); // 7.36 = first stage 16 driving teeth - 50 driven teeth , 2nd stage 25:19, 3rd 15:45
     private static final double kSDSmk4iL1 =  (50.0 / 14.0) * (19.0 / 25.0) * (45.0 / 15.0); // 8.14 = first stage 14 driving teeth - 50 driven teeth , 2nd stage 25:19, 3rd 15:45
-    private static final double kDriveGearRatio = kSDSmk4iL1;///8.14;//7.363636364;//brody changed from 6.75;
+    //
+    private static final double kDriveGearRatio = kSDSmk4iL175;///8.14;//7.363636364;//brody changed from 6.75;
     private static final double kSteerGearRatio = 15.42857143;
     private static final double kWheelRadiusInches = 1.996;//1.9965;//1.992;//1.929;//2.167; // Estimated at first, then fudge-factored to make odom match record
 

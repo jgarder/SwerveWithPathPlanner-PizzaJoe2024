@@ -99,6 +99,8 @@ public class AlignSourceCMD extends Command {
     AlignXController.setSetpoint(TargetPose.getX());
     AlignPoseYController.setSetpoint(TargetPose.getY());
     AlignRZController.setSetpoint(0); // we feed an offset to our controller and attempt to get to 0; HACK FIX?.
+    SmartDashboard.putNumber(Alignxyname + " Go-X", TargetPose.getX());
+    SmartDashboard.putNumber(Alignxyname + " Go-Y", TargetPose.getY());
   }
   /////////////////////////////////////////////END TARGET SETUP 
 

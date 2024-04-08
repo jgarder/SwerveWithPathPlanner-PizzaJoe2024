@@ -8,6 +8,7 @@ import javax.naming.spi.DirStateFactory.Result;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,11 +26,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    // Starts recording to data log
+    DataLogManager.start();
+    
     //enableLiveWindowInTest(true);
     m_robotContainer = new RobotContainer();
 
     m_robotContainer.drivetrainManager.drivetrain.getDaqThread().setThreadPriority(99);
-  
+
+    
   }
   @Override
   public void robotPeriodic() {

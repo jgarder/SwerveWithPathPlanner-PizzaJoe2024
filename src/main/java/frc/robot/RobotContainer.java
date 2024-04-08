@@ -15,6 +15,7 @@ import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -97,6 +98,7 @@ public class RobotContainer {
   public static class PizzaManager{
     public static double speedMulti = 1.0;
     public static double RotationMulti = .45;
+    public static boolean HeadParked = false;
     public static boolean HasTiltBeenZeroed = false;
     public static boolean LimelightTelemetryUpdateRequested = true;
     public static boolean LimeLightBypassed = false;
@@ -224,16 +226,18 @@ public class RobotContainer {
     return new InstantCommand(()->{ deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerKnownClose);});
   }
   public double safeLifterPosition = 10;
+  public double debouncetime = .1;
+  public Timer debouncetimer = new Timer();
   public Command C_TiltGotoPark()
   {
-    return new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Passing, deliveryTilt)
-    .unless(()->deliveryLifter.CurrentLiftEncoderValue < safeLifterPosition || deliveryTilt.CurrentEncoderValue <= Constants.DeliveryHead.Tilt_Position_Passing)
-    .andThen(new WaitCommand(20)
+    return new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_Park, deliveryTilt).alongWith(new InstantCommand(()->{debouncetimer.restart();}))
+    .until(()->deliveryLifter.CurrentLiftEncoderValue < safeLifterPosition | deliveryTilt.CurrentEncoderValue <= Constants.DeliveryHead.Tilt_Position_Park)
+    .andThen(new WaitCommand(8)
     .until(()->deliveryLifter.CurrentLiftEncoderValue < safeLifterPosition))
     .andThen(
       new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Zero);},deliveryTilt), 
-      new WaitCommand(.05),
-    new InstantCommand(()->{deliveryTilt.disableatpark();},deliveryTilt)
+      new WaitCommand(1.00)
+    ,new InstantCommand(()->{deliveryTilt.disableatpark();},deliveryTilt)
     );
   }
   public double CloseSpeakerShotAddedTiltFromClosestPossibleShot = 0.01;
@@ -269,8 +273,8 @@ public class RobotContainer {
   private ParallelCommandGroup MoveIntoSourcePosition()
   {
      return new ParallelCommandGroup(
-      new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_HumanSource,deliveryLifter),
-      new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_HumanSource, deliveryTilt),
+      //new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_HumanSource,deliveryLifter),
+      new MoveDTiltToPosition(Constants.DeliveryHead.Tilt_Position_HumanSourceLow, deliveryTilt),
       new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmHumanSource),
       new InstantCommand(()->{deliveryHolder.RequestIndex();}),
       new InstantCommand(()->{PizzaManager.pizzaStage = PizzaTracker.intaking;})
@@ -535,7 +539,7 @@ public Command AlignWhereverShootSpeaker()
 }
 
 public double trapindexmovement = 50;//80;
-public double shooterIndexMovement = 1.55;
+public double shooterIndexMovement = 1.1;//1.55;
 
   public void configureTrapButtons()
   {
@@ -579,8 +583,9 @@ public double shooterIndexMovement = 1.55;
               )
           
       .andThen(new WaitCommand(.25),
-      new InstantCommand(()->{deliveryHolder.RequestIndex(PizzaTracker.intaking);}),
+      new InstantCommand(()->{deliveryHolder.RequestIndex(PizzaTracker.intaking); PizzaManager.TrapShotOverIndexed = false;}),
       new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmHumanSource/2)
+       
       )
       .andThen(new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupFloorPickup, pickuparm))
       .andThen(new InstantCommand(()->{deliveryLifter.setSetpoint(Constants.DeliveryHead.Lift_Position_Trap);},deliveryLifter))
@@ -623,7 +628,12 @@ public double shooterIndexMovement = 1.55;
       new MoveDLifterToPosition(Constants.DeliveryHead.Lift_Position_TrapShoot, deliveryLifter),
       new MovePickupToPosition(Constants.PizzaFloorPickupHead.PickupFloorPickup, pickuparm)
     )
-    .andThen(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose)),new WaitCommand(.2),new ShootDeliveryHold(deliveryHolder))//new ShootDeliveryHold(deliveryHolder))
+    .andThen(
+      new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerClose)),
+      new WaitCommand(.2),
+      new ShootDeliveryHold(deliveryHolder),
+      new InstantCommand(()->{ChainLift.disableatpark();})
+      )//new ShootDeliveryHold(deliveryHolder))
     
     )
     .onFalse(new InstantCommand(()->deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmOff)).andThen(new InstantCommand(()->{deliveryHolder.requestingIndex = false; deliveryHolder.SetToWantedDutyCycle(0);}))

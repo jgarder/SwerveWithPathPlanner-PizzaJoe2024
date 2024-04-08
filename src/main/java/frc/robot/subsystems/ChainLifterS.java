@@ -32,8 +32,8 @@ public class ChainLifterS extends SubsystemBase {
     double kMaxOutput = 1; 
     double kMinOutput = -1;
 
-    double kP_lifter = 6.000;//0.0400;
-    double kI_lifter = 0.000004;
+    double kP_lifter = 7.0;//6.000;//0.0400;
+    double kI_lifter = 0.000004;//0.000004;
     double kD_lifter = 0.200001;
 
     double kFF = 0.00;
