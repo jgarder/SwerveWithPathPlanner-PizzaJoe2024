@@ -36,36 +36,167 @@ public class Robot extends TimedRobot {
 
     
   }
+  double maxrotationalVelocityForLLUpdate = 80;
   @Override
   public void robotPeriodic() {
    
     CommandScheduler.getInstance().run(); 
-    if (UseLimelight & PizzaManager.LimelightTelemetryUpdateRequested) { 
-           
+    if (UseLimelight & PizzaManager.LimelightTelemetryUpdateRequested) 
+    { 
+      double rotationalvelocity = m_robotContainer.drivetrainManager.drivetrain.getPigeon2().getAngularVelocityZWorld().getValueAsDouble();  
+      SmartDashboard.putNumber("rotationalvelocity", rotationalvelocity);
+      //Results lastResult = LimelightHelpers.getLatestResults(Constants.LimelightName).targetingResults;
 
-      Results lastResult = LimelightHelpers.getLatestResults(Constants.LimelightName).targetingResults;
-
-      Pose2d llPose = lastResult.getBotPose2d_wpiBlue();
-      double tl = lastResult.latency_pipeline;//LimelightHelpers.getLatency_Pipeline(Constants.LimelightName);
-      double cl = lastResult.latency_capture;//LimelightHelpers.getLatency_Capture(Constants.LimelightName);
-      double jl = lastResult.latency_jsonParse;
+      //Pose2d llPose = lastResult.getBotPose2d_wpiBlue();
+      //double tl = lastResult.latency_pipeline;//LimelightHelpers.getLatency_Pipeline(Constants.LimelightName);
+      //double cl = lastResult.latency_capture;//LimelightHelpers.getLatency_Capture(Constants.LimelightName);
+      //double jl = lastResult.latency_jsonParse;
       // SmartDashboard.putNumber("tl", tl);
       // SmartDashboard.putNumber("cl", cl);
       // SmartDashboard.putNumber("jl", jl);
       ///
-      LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
-      if(limelightMeasurement.tagCount >= 2)
-      {
-        //m_robotContainer.drivetrainManager.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-        m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(
-            limelightMeasurement.pose,
-            limelightMeasurement.timestampSeconds);
-            return;//we have a good pose estimate dont do the other pose estimate. 
-      }
+      // LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.LimelightName);
+      // LimelightHelpers.PoseEstimate limelightMeasurementFront = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.LimelightFrontName);
+      // if(limelightMeasurementFront.tagCount >= 1)
+      // {
+      //   //m_robotContainer.drivetrainManager.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+      //   m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(
+      //       limelightMeasurementFront.pose,
+      //       limelightMeasurementFront.timestampSeconds);
+      //       return;//we have a good pose estimate dont do the other pose estimate. 
+      // }
+      // else if(limelightMeasurement.tagCount >= 2)
+      // {
+      //   //m_robotContainer.drivetrainManager.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+      //   m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(
+      //       limelightMeasurement.pose,
+      //       limelightMeasurement.timestampSeconds);
+      //       return;//we have a good pose estimate dont do the other pose estimate. 
+      // }
       //
-      if (lastResult.valid) {
-        m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(llPose, Timer.getFPGATimestamp() - (tl/1000.0) - (cl/1000.0)- (jl/1000.0));
+      // if (lastResult.valid) {
+      //   m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(llPose, Timer.getFPGATimestamp() - (tl/1000.0) - (cl/1000.0)- (jl/1000.0));
+      // }
+      ////CAMERA UP
+      boolean useMegaTag2 = false; //set to false to use MegaTag1
+      boolean doRejectUpdate = false;
+      if(useMegaTag2 == false)
+      {
+        LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+        
+        if(mt1.tagCount == 1 && mt1.rawFiducials.length == 1)
+        {
+          if(mt1.rawFiducials[0].ambiguity > .7)
+          {
+            doRejectUpdate = true;
+          }
+          if(mt1.rawFiducials[0].distToCamera > 3)
+          {
+            doRejectUpdate = true;
+          }
+        }
+        if(mt1.tagCount == 0)
+        {
+          doRejectUpdate = true;
+        }
+        if(Math.abs(rotationalvelocity) > maxrotationalVelocityForLLUpdate) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+        {
+          doRejectUpdate = true;
+        }
+
+        if(!doRejectUpdate)
+        {
+          //m_robotContainer.drivetrainManager.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
+          m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(
+              mt1.pose,
+              mt1.timestampSeconds);
+              return;//only 1 sample per robot periodic
+        }
       }
+      else if (useMegaTag2 == true)
+      {
+        
+
+        //TODO SET ORIENTATION --> LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        if(Math.abs(rotationalvelocity) > maxrotationalVelocityForLLUpdate) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+        {
+          doRejectUpdate = true;
+        }
+        if(mt2.tagCount == 0)
+        {
+          doRejectUpdate = true;
+        }
+        if(!doRejectUpdate)
+        {
+          //m_robotContainer.drivetrainManager.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+          m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(
+              mt2.pose,
+              mt2.timestampSeconds);
+              return;//only 1 sample per robot periodic
+        }
+      }
+      ///////////
+      ////CAMERA Front
+      boolean useMegaTag2Front = false; //set to false to use MegaTag1
+      boolean doRejectUpdateFront = false;
+      if(useMegaTag2Front == false)
+      {
+        LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.LimelightFrontName);
+        
+        if(mt1.tagCount == 1 && mt1.rawFiducials.length == 1)
+        {
+          if(mt1.rawFiducials[0].ambiguity > .7)
+          {
+            doRejectUpdateFront = true;
+          }
+          if(mt1.rawFiducials[0].distToCamera > 3)
+          {
+            doRejectUpdateFront = true;
+          }
+        }
+        if(mt1.tagCount == 0)
+        {
+          doRejectUpdateFront = true;
+        }
+        if(Math.abs(rotationalvelocity) > maxrotationalVelocityForLLUpdate) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+        {
+          doRejectUpdateFront = true;
+        }
+
+        if(!doRejectUpdateFront)
+        {
+          //m_robotContainer.drivetrainManager.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
+          m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(
+              mt1.pose,
+              mt1.timestampSeconds);
+              return;//only 1 sample per robot periodic
+        }
+      }
+      else if (useMegaTag2Front == true)
+      {
+        
+
+        //TODO SET ORIENTATION --> LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.LimelightFrontName);
+        if(Math.abs(rotationalvelocity) > maxrotationalVelocityForLLUpdate) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+        {
+          doRejectUpdateFront = true;
+        }
+        if(mt2.tagCount == 0)
+        {
+          doRejectUpdateFront = true;
+        }
+        if(!doRejectUpdateFront)
+        {
+          //m_robotContainer.drivetrainManager.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+          m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(
+              mt2.pose,
+              mt2.timestampSeconds);
+              return;//only 1 sample per robot periodic
+        }
+      }
+      ///////////
     }
   }
 

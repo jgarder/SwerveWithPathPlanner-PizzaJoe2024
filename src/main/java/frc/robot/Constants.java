@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Constants {
   public static final String LimelightName = "limelight";
+  public static final String LimelightFrontName = "limelight-front";
 
     /*
 	 * Talon FX has 2048 units per revolution
@@ -259,7 +260,7 @@ public class Constants {
       public static  double kD_Tilter = 55.00;//50.0;//40.0;//3.000000;
       //Old conversion factor 0.0146428571428571
       public static final double TiltGearRatio = 80.0;
-      public static final double AbsoluteEncoderOffset = 0.401856;//0.396973;
+      public static final double AbsoluteEncoderOffset = -0.26108253125;//0.396973;
       public static double TiltsetpointTolerance = 0.005;//0.02928;//2.0;
       public static double TiltSettleTimeAtPosition = .1;
       public static final double Tilt_minValue = 0;
@@ -275,9 +276,9 @@ public class Constants {
       public static final double Tilt_Position_TrapLiftUpSHOOT = 0.34;//0.3807;//26;
       public static  double Tilt_Position_TrapFloorShoot = 0.1025;//7.0;
 
-      public static  double Tilt_Position_Speaker_Closest = 0.08790;//0.08610;//7.85;//7.84;//7.6;//10.15;//12.9;//11.25;//10.75;//8.5;//11.5;//7.2;
-      public static  double Tilt_Position_Speaker_Mid = 0.140;//0.13260;//11.4;//11.2;//10.9;//14.25;
-      public static  double Tilt_Position_Speaker_Furthest = 0.18160;//0.17790;//14.27;//17.2;//19.75;//17.3;//15.75;//14.75;
+      public static  double Tilt_Position_Speaker_Closest = 0.08790;//0.08790;//0.08610;//7.85;//7.84;//7.6;//10.15;//12.9;//11.25;//10.75;//8.5;//11.5;//7.2;
+      public static  double Tilt_Position_Speaker_Mid = 0.1407;//0.13260;//11.4;//11.2;//10.9;//14.25;
+      public static  double Tilt_Position_Speaker_Furthest = 0.1930;//0.17790;//14.27;//17.2;//19.75;//17.3;//15.75;//14.75;
 
       //public static  double Tilt_Position_Speaker_Podium = 0.16;//12.5;//10.85;
       public static final double Tilt_Position_Amp = 0.3407; //25.0;//28;

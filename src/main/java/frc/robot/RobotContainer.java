@@ -284,7 +284,7 @@ public class RobotContainer {
   private SequentialCommandGroup HumanSourcePickup() {
     return MoveIntoSourcePosition()
     .andThen(
-      new FlashRainbowLights(m_candleSubsystem, 20)
+      new FlashGreenLights(m_candleSubsystem, 20)
       //new WaitCommand(20)
       ).until(isNoteInDeliveryHolderboolSup)
     .andThen(

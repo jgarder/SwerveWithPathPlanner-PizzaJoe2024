@@ -53,10 +53,15 @@ public class Limelight3Subsystem extends SubsystemBase {
     {
     SmartDashboard.putNumber("PoseWPIBLueX", wpiblue[0]);
     SmartDashboard.putNumber("PoseWPIBLuey", wpiblue[1]);
-    //SmartDashboard.putNumber("PoseWPIBLuez", wpiblue[2]);
-    //SmartDashboard.putNumber("PoseWPIBLueYaw", wpiblue[3]);
-    //SmartDashboard.putNumber("PoseWPIBLuePitch", wpiblue[4]);
     SmartDashboard.putNumber("PoseWPIBLueRoll", wpiblue[5]);
+    }
+
+    var wpiblue2 = LimelightHelpers.getBotPose_wpiBlue(Constants.LimelightFrontName);
+    if(wpiblue2 != null && wpiblue2.length >= 6)
+    {
+    SmartDashboard.putNumber("FrontPoseWPIBLueX", wpiblue2[0]);
+    SmartDashboard.putNumber("FrontPoseWPIBLuey", wpiblue2[1]);
+    SmartDashboard.putNumber("FrontPoseWPIBLueRoll", wpiblue2[5]);
     }
 
     //SmartDashboard.putNumber("PoseWPIBLueLatency", botpose_wpiblueNTE.getDoubleArray(new double[6])[6]);

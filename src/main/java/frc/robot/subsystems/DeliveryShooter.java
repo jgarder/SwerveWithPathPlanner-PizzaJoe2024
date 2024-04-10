@@ -160,11 +160,11 @@ public class DeliveryShooter extends SubsystemBase {
       m_SettleTimer.start();
     }
     double SettleTimeAtCorrectRPM = .05;
-    double RPMpercentageTolerance = 4;
+    public double RPMpercentageTolerance = 4;
     private final Timer m_SettleTimer = new Timer();
-    public boolean getRPMReadyTofire() {
-      boolean isUpperWithinRange = Constants.isWithinPercentage(CurrentEncoderVelocity, LastSetRPM, RPMpercentageTolerance);
-      boolean islowerWithinRange = Constants.isWithinPercentage(CurrentEncoderVelocity_LowS, LastSetRPM, RPMpercentageTolerance);
+    public boolean getRPMReadyTofire(double RpmTolerance) {
+      boolean isUpperWithinRange = Constants.isWithinPercentage(CurrentEncoderVelocity, LastSetRPM, RpmTolerance);
+      boolean islowerWithinRange = Constants.isWithinPercentage(CurrentEncoderVelocity_LowS, LastSetRPM, RpmTolerance);
       SmartDashboard.putBoolean("isUpperWithinRange", isUpperWithinRange);
       SmartDashboard.putBoolean("islowerWithinRange", islowerWithinRange);
       boolean ReadyTofire = false;
@@ -181,7 +181,9 @@ public class DeliveryShooter extends SubsystemBase {
       }
       return ReadyTofire;
     }
-
+    public boolean getRPMReadyTofire() {
+      return getRPMReadyTofire(RPMpercentageTolerance);
+    }
     public void getEncoderData()
     {
       OutputCurrent = m_motor.getTorqueCurrent().getValueAsDouble();
