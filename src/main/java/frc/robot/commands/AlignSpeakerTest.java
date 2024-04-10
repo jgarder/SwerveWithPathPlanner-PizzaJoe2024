@@ -176,7 +176,7 @@ private final Timer m_TimerToShoot = new Timer();
       SmartDashboard.putNumber("TiltAddPossible", TiltAddPossible);
       SmartDashboard.putNumber("TiltAdded", TiltAdded);
       MaxRotationOffset = kMaxRotationOffset;
-      RPMpercentageTolerance = kRpmtolerance;
+      RPMpercentageTolerance = kRpmtolerance*1.5;
       passing = false;
       seeIdColor();
       UpdateOffsetsFromTarget();
@@ -194,7 +194,7 @@ private final Timer m_TimerToShoot = new Timer();
       SmartDashboard.putNumber("TiltAddPossible", TiltAddPossible);
       SmartDashboard.putNumber("TiltAdded", TiltAdded);
       MaxRotationOffset = kMaxRotationOffset; 
-      RPMpercentageTolerance = kRpmtolerance;
+      RPMpercentageTolerance = kRpmtolerance*0.9;
       passing = false;
       seeIdColor();
       UpdateOffsetsFromTarget();
@@ -269,22 +269,22 @@ private final Timer m_TimerToShoot = new Timer();
   private void SetTarget() {
     if(!CurrentAlliance.isPresent()){return;}
     if (CurrentAlliance.get() == Alliance.Red) {
-      LimelightHelpers.setPriorityTagID("limelight", Constants.AllianceAprilTags.Red.SpeakerCenter);
+      LimelightHelpers.setPriorityTagID(Constants.LimelightName, Constants.AllianceAprilTags.Red.SpeakerCenter);
       TargetPose = Constants.TargetLocations.Red.SpeakerCenterTagLocation;
     }
     else{
-      LimelightHelpers.setPriorityTagID("limelight", Constants.AllianceAprilTags.Blue.SpeakerCenter);
+      LimelightHelpers.setPriorityTagID(Constants.LimelightName, Constants.AllianceAprilTags.Blue.SpeakerCenter);
       TargetPose = Constants.TargetLocations.Blue.SpeakerCenterTagLocation;
     }
   }
   private void SetPassingTarget() {
     if(!CurrentAlliance.isPresent()){return;}
     if (CurrentAlliance.get() == Alliance.Red) {
-      LimelightHelpers.setPriorityTagID("limelight", Constants.AllianceAprilTags.Red.SpeakerCenter);
+      LimelightHelpers.setPriorityTagID(Constants.LimelightName, Constants.AllianceAprilTags.Red.SpeakerCenter);
       TargetPose = Constants.TargetLocations.Red.PassingLocation;
     }
     else{
-      LimelightHelpers.setPriorityTagID("limelight", Constants.AllianceAprilTags.Blue.SpeakerCenter);
+      LimelightHelpers.setPriorityTagID(Constants.LimelightName, Constants.AllianceAprilTags.Blue.SpeakerCenter);
       TargetPose = Constants.TargetLocations.Blue.PassingLocation;
     }
   }
@@ -383,7 +383,7 @@ private final Timer m_TimerToShoot = new Timer();
     // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    LimelightHelpers.setPriorityTagID("limelight", -1); 
+    LimelightHelpers.setPriorityTagID(Constants.LimelightName, -1); 
     super.end(interrupted);
   }
 

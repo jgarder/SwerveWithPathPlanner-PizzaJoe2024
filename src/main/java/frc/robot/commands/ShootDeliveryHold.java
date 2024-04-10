@@ -12,8 +12,9 @@ public class ShootDeliveryHold extends Command{
         m_DeliveryHolder = deliveryHolder;
         addRequirements(m_DeliveryHolder);
     }
-     public ShootDeliveryHold(DeliveryHolder deliveryHolder,double ForSeconds){
+     public ShootDeliveryHold(DeliveryHolder deliveryHolder,double ForSeconds,double mintimeout){
       TimeoutSeconds=ForSeconds;
+      MinTimeoutSeconds = mintimeout;
         m_DeliveryHolder = deliveryHolder;
         addRequirements(m_DeliveryHolder);
     }

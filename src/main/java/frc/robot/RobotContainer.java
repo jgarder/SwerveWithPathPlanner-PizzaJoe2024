@@ -410,7 +410,8 @@ public class RobotContainer {
               new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmAmp,25)
               )
               .andThen( 
-                (new ShootDeliveryHold(deliveryHolder,.5)),
+                (new ShootDeliveryHold(deliveryHolder,.5,.5)),//DUMP MIN TIMEOUT ! ->this is the dump time so we dont flick a note back
+                //new WaitCommand(.05),//old dump timeout
                 new InstantCommand(()->{m_candleSubsystem.StrobeBlueLights();},m_candleSubsystem),
               C_ParkDeliveryHead()
               //.onlyIf(()->PizzaManager.NoteInDeliveryHolder)
