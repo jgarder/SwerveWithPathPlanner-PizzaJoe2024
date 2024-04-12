@@ -9,8 +9,10 @@ import javax.naming.spi.DirStateFactory.Result;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -36,7 +38,7 @@ public class Robot extends TimedRobot {
 
     
   }
-  double maxrotationalVelocityForLLUpdate = 80;
+  double maxrotationalVelocityForLLUpdate = 100;//80;
   @Override
   public void robotPeriodic() {
    
@@ -78,6 +80,8 @@ public class Robot extends TimedRobot {
       //   m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(llPose, Timer.getFPGATimestamp() - (tl/1000.0) - (cl/1000.0)- (jl/1000.0));
       // }
       ///////
+      ///////
+
       ////CAMERA Front
       boolean useMegaTag2Front = false; //set to false to use MegaTag1
       boolean doRejectUpdateFront = false;
@@ -117,9 +121,7 @@ public class Robot extends TimedRobot {
       else if (useMegaTag2Front == true)
       {
         
-
-        //TODO SET ORIENTATION --> LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Constants.LimelightFrontName);
+        LimelightHelpers.PoseEstimate mt2 = getMt2WpiBlue(Constants.LimelightFrontName);
         if(Math.abs(rotationalvelocity) > maxrotationalVelocityForLLUpdate) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
         {
           doRejectUpdateFront = true;
@@ -143,7 +145,7 @@ public class Robot extends TimedRobot {
       boolean doRejectUpdate = false;
       if(useMegaTag2 == false)
       {
-        LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+        LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.LimelightName);
         
         if(mt1.tagCount == 1 && mt1.rawFiducials.length == 1)
         {
@@ -178,8 +180,7 @@ public class Robot extends TimedRobot {
       {
         
 
-        //TODO SET ORIENTATION --> LimelightHelpers.SetRobotOrientation("limelight", m_poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        LimelightHelpers.PoseEstimate mt2 = getMt2WpiBlue(Constants.LimelightName);
         if(Math.abs(rotationalvelocity) > maxrotationalVelocityForLLUpdate) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
         {
           doRejectUpdate = true;
@@ -201,6 +202,26 @@ public class Robot extends TimedRobot {
     
       ///////
     }
+  }
+
+  private LimelightHelpers.PoseEstimate getMt2WpiBlue(String Thislimelightname) {
+    Pose2d robotorientation = m_robotContainer.drivetrainManager.drivetrain.getState().Pose;
+    LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Thislimelightname);
+    double degreesRotation = m_robotContainer.drivetrainManager.drivetrain.getPigeon2().getAngle();//180;//;robotorientation.getRotation().getDegrees();
+    // if (mt1.tagCount >=1) {
+    //   degreesRotation = mt1.pose.getRotation().getDegrees();
+       LimelightHelpers.SetRobotOrientation(Thislimelightname, degreesRotation, 0, 0, 0, 0, 0);
+    // }
+    // if (DriverStation.getAlliance().isPresent()) {
+    //   if (DriverStation.getAlliance().get() == Alliance.Red) {
+    //     degreesRotation = 0;
+    //   }
+    //   else   degreesRotation = 180;
+    // }
+    
+    SmartDashboard.putNumber("OrientationPidgeon2", degreesRotation);
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(Thislimelightname);
+    return mt2;
   }
 
   @Override

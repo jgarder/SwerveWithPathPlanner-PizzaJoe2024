@@ -185,7 +185,8 @@ public class DeliveryTilt extends SubsystemBase {
      //if((Accel2 != Acceleration)) { configs.MotionMagic.MotionMagicAcceleration = Accel2; Acceleration = Accel2; SetConfigToMotor(); }
      // if((Cruise2 != CruiseVelocity)) { configs.MotionMagic.MotionMagicCruiseVelocity = Cruise2; CruiseVelocity = Cruise2; SetConfigToMotor(); }
      // if((Jerk2 != Jerk)) { configs.MotionMagic.MotionMagicJerk = Jerk2; Jerk = Jerk2; SetConfigToMotor(); }
-
+      
+     disableWhenParked();
     }
 
     public void SetSpeed(double thisspeed) {
@@ -307,12 +308,21 @@ public class DeliveryTilt extends SubsystemBase {
         //Motor_Controller.setControl(m_MMtorquePosition.withPosition(WantedEncoderValue));
         Motor_Controller.setControl(m_torquePosition.withPosition(WantedEncoderValue));
       }
-
+      /// if we are parked and our head is parked, disable the motors. 
+      public void disableWhenParked()
+      {
+        boolean AreweTryingToPark = (WantedEncoderValue <= Constants.DeliveryHead.Tilt_Position_ParkPosIdle);
+        boolean AreWeParked = atSetpoint(Constants.DeliveryHead.TiltsetpointTolerance*2, .5);
+        if(AreweTryingToPark && AreWeParked)
+        {
+          disableatpark();
+        }
+      }
 
       //public boolean HasNote = false;
       public void disableatpark()
       {
-        setSetpointToPosition(0);//CurrentEncoderValue
+        //setSetpointToPosition(0);//CurrentEncoderValue
         //Motor_Controller.stopMotor();
         Motor_Controller.setControl(m_brake);//we press into our hysterisis on powerup. so without this the tilt motor always runs trying to go to the bottom. 
       }

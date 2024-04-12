@@ -24,7 +24,7 @@ public class WaitForIndexCMD extends Command{
   public void execute() {
   }
 
-  double PickupTimeoutSeoncds = 1;
+  double PickupTimeoutSeoncds = 4;
   //double forcedruntime = .25;
   @Override
   public boolean isFinished() {

@@ -65,7 +65,7 @@ import com.ctre.phoenix.led.TwinkleOffAnimation.TwinkleOffPercent;
 
 public class CANdleSystem extends SubsystemBase {
     double speed = 0.2;
-    double brightness = 0.5;
+    double brightness = 1.0;
     private final int LEDS_PER_ANIMATION = 250;
     private final CANdle m_candle = new CANdle(Constants.CANBus.CANdleCanBusID, Constants.CANBus.kRIOCANbusName);
     private int m_candleChannel = 0;
@@ -99,7 +99,7 @@ public class CANdleSystem extends SubsystemBase {
         configAll.statusLedOffWhenActive = true;
         configAll.disableWhenLOS = false;
         configAll.stripType = LEDStripType.GRB;
-        configAll.brightnessScalar = 0.1;
+        configAll.brightnessScalar = 1.0;
         configAll.vBatOutputMode = VBatOutputMode.Modulated;
         m_candle.configAllSettings(configAll, 100);
         clearAnimation();
@@ -252,6 +252,7 @@ public class CANdleSystem extends SubsystemBase {
         }
         
         if (PizzaManager.RequestTrapLights) {
+            clearAnimation();
             FlickerObviousLights();
             PizzaManager.RequestTrapLights = false;
         }
@@ -278,33 +279,33 @@ public class CANdleSystem extends SubsystemBase {
         m_toAnimate = null;
         m_candle.clearAnimation(0);
         //clearAnimation();
-        m_candle.setLEDs(0, 0, 0, 0, 0, LEDS_PER_ANIMATION + 8);
+        //m_candle.setLEDs(0, 0, 0, 0, 0, LEDS_PER_ANIMATION + 8);
     
     }
     public void GreenLights()
     {
-        clearAnimation();
+        //clearAnimation();
         m_candle.setLEDs(0, 255, 0, 0, 0, LEDS_PER_ANIMATION + 8);
     
     }
     public void RedLights()
     {
-        clearAnimation();
+        //clearAnimation();
         m_candle.setLEDs(255, 0, 0, 0, 8, LEDS_PER_ANIMATION + 8);
     }
     public void YellowLights()
     {
-        clearAnimation();
+        //clearAnimation();
         m_candle.setLEDs(255, 255, 0, 0, 8, LEDS_PER_ANIMATION + 8);
     }
     public void BlueLights()
     {
-        clearAnimation();
+        //clearAnimation();
         m_candle.setLEDs(0, 0, 255, 0, 8, LEDS_PER_ANIMATION + 8);
     }
     public void WhiteLights()
     {
-        clearAnimation();
+        //clearAnimation();
         m_candle.setLEDs(255, 255, 255, 0, 8, LEDS_PER_ANIMATION + 8);
     }
 
@@ -344,7 +345,7 @@ public class CANdleSystem extends SubsystemBase {
     }
     public void RainbowRoadLights()
     {
-        m_toAnimate = new RainbowAnimation(1, 0.7, LEDS_PER_ANIMATION, m_animDirection, m_candleChannel * LEDS_PER_ANIMATION + 8);
+        m_toAnimate = new RainbowAnimation(1, 1.0, LEDS_PER_ANIMATION, m_animDirection, m_candleChannel * LEDS_PER_ANIMATION + 8);
     }
     public void FlickerObviousLights()
     {
@@ -358,5 +359,33 @@ public class CANdleSystem extends SubsystemBase {
         //m_toAnimate = new ColorFlowAnimation(255, 0, 255, 255, 1.0, LEDS_PER_ANIMATION, Direction.Forward, m_candleChannel * LEDS_PER_ANIMATION + 8);
 
     }
+    int startuplights = 150;
+    public void StartupLights()
+    {
+        var  m_toAnimate0 = new TwinkleAnimation(255, 40, 0, 0, 1.0, LEDS_PER_ANIMATION, TwinklePercent.Percent42, m_candleChannel * LEDS_PER_ANIMATION + 8);
+    //  m_toAnimate = new TwinkleOffAnimation(255, 0, 255, 255, 3.0, LEDS_PER_ANIMATION, TwinkleOffPercent.Percent76, m_candleChannel * LEDS_PER_ANIMATION + 8);
+        var m_toAnimate1 = new LarsonAnimation(0, 0, 255, 0, .1, LEDS_PER_ANIMATION, BounceMode.Front, 7, 100);
+         var m_toAnimate2 = new LarsonAnimation(0, 0, 255, 0, .2, LEDS_PER_ANIMATION, BounceMode.Front, 7, 0);
+        var m_toAnimate3 = new LarsonAnimation(255, 40, 0, 0, .3, LEDS_PER_ANIMATION, BounceMode.Front, 7, 110);
+         var m_toAnimate4 = new LarsonAnimation(0, 0, 255, 0, .4, LEDS_PER_ANIMATION, BounceMode.Front, 7, 20);
+        var m_toAnimate5 = new LarsonAnimation(255, 40, 0, 0, .5, LEDS_PER_ANIMATION, BounceMode.Front, 7, 130);
+         var m_toAnimate6 = new LarsonAnimation(0, 0, 255, 0, .5, LEDS_PER_ANIMATION, BounceMode.Front, 7, 40);
+        var m_toAnimate7 = new LarsonAnimation(255, 40, 0, 0, .6, LEDS_PER_ANIMATION, BounceMode.Front, 7, 150);
+         var m_toAnimate8 = new LarsonAnimation(0, 0, 255, 0, .7, LEDS_PER_ANIMATION, BounceMode.Front, 7, 60);
+        var m_toAnimate9 = new LarsonAnimation(255, 40, 0, 0, .8, LEDS_PER_ANIMATION, BounceMode.Front, 7, 170);
 
+        m_candle.animate(m_toAnimate0, 0);
+        m_candle.animate(m_toAnimate1, 1);
+        m_candle.animate(m_toAnimate2, 2);
+        m_candle.animate(m_toAnimate3, 3);
+        m_candle.animate(m_toAnimate4, 4);
+        m_candle.animate(m_toAnimate5, 5);
+        m_candle.animate(m_toAnimate6, 6);
+        m_candle.animate(m_toAnimate7, 7);
+        m_candle.animate(m_toAnimate8, 8);
+        m_candle.animate(m_toAnimate9, 9);
+
+        //m_toAnimate = new ColorFlowAnimation(255, 0, 255, 255, 1.0, LEDS_PER_ANIMATION, Direction.Forward, m_candleChannel * LEDS_PER_ANIMATION + 8);
+
+    }
 }

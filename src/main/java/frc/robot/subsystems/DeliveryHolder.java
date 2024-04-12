@@ -12,9 +12,13 @@ import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.PizzaManager;
 import frc.robot.RobotContainer.PizzaManager.PizzaTracker;
 
@@ -42,9 +46,13 @@ public class DeliveryHolder extends SubsystemBase {
     private final SparkPIDController MotorControllerPid = Motor_Controller.getPIDController();
     public final SparkLimitSwitch m_forwardLimit = Motor_Controller.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
     public DeliveryShooter ThisShooter;
-    public DeliveryHolder(DeliveryShooter thisShooter)
+    PickupSpinner ThisPickup;
+    RobotContainer ThisMainBrain;
+    public DeliveryHolder(DeliveryShooter thisShooter,PickupSpinner thisPickup,RobotContainer MainBrain)
     {
+      ThisMainBrain = MainBrain;
       ThisShooter = thisShooter;
+      ThisPickup = thisPickup;
         //super(new PIDController(Constants.PickupHead.kP_lifter, Constants.PickupHead.kI_lifter, Constants.PickupHead.kD_lifter));//super class, must setup PID first
         //even though the default should be 0, lets tell the PID to goto 0 which is our starting position.
 
@@ -121,10 +129,10 @@ public class DeliveryHolder extends SubsystemBase {
         //MotorControllerPid.setReference(0, CANSparkBase.ControlType.kPosition);
         SetToWantedDutyCycle(IdleDutyCycle);
         PizzaManager.NoteInDeliveryHolder = true;
-        if(PizzaManager.pizzaStage == PizzaTracker.passed)//if we are first getting this note from the pass
+        if(PizzaManager.pizzaStage == PizzaTracker.passing)//if we are first getting this note from the pass //PizzaManager.pizzaStage == PizzaTracker.passed | 
           {
               PizzaManager.pizzaStage = PizzaTracker.indexNeeded;//then we need to index it
-              
+              ThisPickup.stopSpinner();
           }
         else if(PizzaManager.pizzaStage == PizzaTracker.NoteOutDexed)//if we are receiving from an outindex
           {
@@ -153,18 +161,19 @@ public class DeliveryHolder extends SubsystemBase {
       SmartDashboard.putString("IndexStage","Requested");
       pickedupNote = false;
       outDexingTimer.restart();
+      noteRepassingTimer.restart();
     }
     public void RequestIndex(PizzaManager.PizzaTracker stage)
     {
-      m_Timer.reset();
-      m_Timer.start();
-      requestingIndex = true;
-      SmartDashboard.putString("IndexStage","Requested");
-      PizzaManager.pizzaStage =stage;
-      pickedupNote = false;
-      outDexingTimer.restart();
+      RequestIndex();
+      PizzaManager.pizzaStage = stage;
     }
+
     boolean pickedupNote = false;
+
+    public Timer noteRepassingTimer = new Timer();
+    public double secondsToRePass = 1.0;
+    public double secondsToStopRePassing = 4.0;
     public void indexNote()
     {
       
@@ -175,13 +184,21 @@ public class DeliveryHolder extends SubsystemBase {
          return;
        } 
         if (requestingIndex) {
-          if(PizzaManager.pizzaStage == PizzaTracker.passed)
+          if(PizzaManager.pizzaStage == PizzaTracker.passing)
           {
             //System.out.println("intaking");
             SmartDashboard.putString("IndexStage","Intaking");
-              IntakeRuntoHoldCommand(40,false);
-              outDexingTimer.restart();
+            IntakeRuntoHoldCommand(40,false);//start the intake from the pass
+            RepassIfPossible();
+            outDexingTimer.restart();//reset outdexing timer
           }
+          // if(PizzaManager.pizzaStage == PizzaTracker.passed)
+          // {
+          //   //System.out.println("intaking");
+          //   SmartDashboard.putString("IndexStage","Intaking");
+          //     IntakeRuntoHoldCommand(40,false);
+          //     outDexingTimer.restart();
+          // }
           else if(PizzaManager.pizzaStage == PizzaTracker.indexNeeded)
           {
             m_forwardLimit.enableLimitSwitch(false);
@@ -222,6 +239,29 @@ public class DeliveryHolder extends SubsystemBase {
           }
         }
         else{}
+    }
+
+    private void RepassIfPossible() {
+      //if we pass a certain amount of time lets try something else
+      if (noteRepassingTimer.get() > secondsToRePass) 
+      {
+        System.out.println("Repassing");
+        //noteRepassingTimer.stop();
+        //noteRepassingTimer.reset();
+        //run intake again
+        
+        if(ThisPickup.IsNoteInPickup())
+        {
+          ThisPickup.ReleaseNote();//ThisMainBrain.C_passNoteFromIntakeToDeliveryHolder().asProxy().schedule();
+          noteRepassingTimer.restart();
+        }
+        else
+        {
+          ThisPickup.RunPickup();
+        }
+        //var newcommand = new SequentialCommandGroup(new InstantCommand(()->{ThisPickup.RunPickup();}).repeatedly().until(()->ThisPickup.IsNoteInPickup())).andThen(ThisMainBrain.C_passNoteFromIntakeToDeliveryHolder());
+        //newcommand.schedule();
+      }
     }
     public Timer outDexingTimer = new Timer();
     public double indexBacklash = 1.5;//1.0;

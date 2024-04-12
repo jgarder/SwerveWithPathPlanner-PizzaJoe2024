@@ -203,8 +203,8 @@ private final Timer m_TimerToShoot = new Timer();
     }
     else if(currentPercentOfMaxDistance >= 1.0)
     {
-      double blueLineX = 1.91;//5.0;field//1.91;Test#//5.84;
-      double redLineX = 14.6;//11.5;field//14.6;Test#//10.9;
+      double blueLineX = 5.0;//5.0;field//1.91;Test#//5.84;
+      double redLineX = 11.5;//11.5;field//14.6;Test#//10.9;
       double TiltForPassing = 0.1200;
       double currentX = CurrentPose.getX();
       

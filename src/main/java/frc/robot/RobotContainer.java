@@ -86,7 +86,7 @@ public class RobotContainer {
   public final DeliveryTilt deliveryTilt = new DeliveryTilt();
   public final DeliveryShooter deliveryShooter = new DeliveryShooter();
   public final DrivetrainManager drivetrainManager = new DrivetrainManager(joystick);
-  public final DeliveryHolder deliveryHolder = new DeliveryHolder(deliveryShooter);
+  public final DeliveryHolder deliveryHolder = new DeliveryHolder(deliveryShooter,pickupSpinner,this);
   public final ChainLifterS ChainLift = new ChainLifterS();
   public final Limelight3Subsystem LL3 = new Limelight3Subsystem();
   private final CANdleSystem m_candleSubsystem = new CANdleSystem();
@@ -197,7 +197,7 @@ public class RobotContainer {
   public Command C_CatchAndIndexNote()
   {
      return new InstantCommand(()->{deliveryHolder.RequestIndex();})
-     .alongWith(new InstantCommand(()->{PizzaManager.pizzaStage = PizzaTracker.passed;})
+     .alongWith(new InstantCommand(()->{PizzaManager.pizzaStage = PizzaTracker.passing;})
      );
       // return new SequentialCommandGroup(
       //   new RunDeliveryHoldIntake(deliveryHolder,false,40).withInterruptBehavior(InterruptionBehavior.kCancelIncoming),
@@ -225,8 +225,8 @@ public class RobotContainer {
   {
     return new InstantCommand(()->{ deliveryShooter.SetShootSpeed(Constants.DeliveryHead.ShooterRpmSpeakerKnownClose);});
   }
-  public double safeLifterPosition = 10;
-  public double debouncetime = .1;
+  public double safeLifterPosition = Constants.DeliveryHead.Lift_Position_ParkingPos;
+  //public double debouncetime = .1;
   public Timer debouncetimer = new Timer();
   public Command C_TiltGotoPark()
   {
@@ -235,9 +235,9 @@ public class RobotContainer {
     .andThen(new WaitCommand(8)
     .until(()->deliveryLifter.CurrentLiftEncoderValue < safeLifterPosition))
     .andThen(
-      new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Zero);},deliveryTilt), 
-      new WaitCommand(1.00)
-    ,new InstantCommand(()->{deliveryTilt.disableatpark();},deliveryTilt)
+      new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Zero);},deliveryTilt)//, 
+      //new WaitCommand(1.00)//,
+    //new InstantCommand(()->{deliveryTilt.disableatpark();},deliveryTilt)
     );
   }
   public double CloseSpeakerShotAddedTiltFromClosestPossibleShot = 0.01;
@@ -356,7 +356,7 @@ public class RobotContainer {
     joystick.back().onTrue(new InstantCommand(()->{PizzaManager.AltControlModeEnabled = !PizzaManager.AltControlModeEnabled;}));
     
     
-    joystick.a().onTrue(C_CatchAndIndexNote()).onFalse(new InstantCommand(()-> {m_candleSubsystem.StrobeWhiteLights();}));
+    joystick.a().onTrue(C_CatchAndIndexNote());//.onFalse(new InstantCommand(()-> {m_candleSubsystem.StrobeWhiteLights();}));strobe should be a command so it ends. 
     //joystick.b().onTrue(new ShootDeliveryHold(deliveryHolder));
     joystick.b().onTrue(new InstantCommand(()->{SmartDashboard.putBoolean(SDashBoardH.LimelightbypassName, true);})).onFalse(new InstantCommand(()->{SmartDashboard.putBoolean(SDashBoardH.LimelightbypassName, false);}));
     joystick.x().and(joystick.rightTrigger().negate()).onTrue(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner).andThen(new RunDeliveryHoldIntake(deliveryHolder,false,40)))
@@ -540,7 +540,7 @@ public Command AlignWhereverShootSpeaker()
 }
 
 public double trapindexmovement = 50;//80;
-public double shooterIndexMovement = 1.1;//1.55;
+public double shooterIndexMovement = 1.2;//1.55;
 
   public void configureTrapButtons()
   {
@@ -654,7 +654,7 @@ public double shooterIndexMovement = 1.1;//1.55;
     PizzaManager.IsOvenPickUpRunning = joystick.rightTrigger(.1);
 
     configureBindings();
-
+    m_candleSubsystem.StartupLights();
   }
 
   private void BuildAutos() {
@@ -664,6 +664,7 @@ public double shooterIndexMovement = 1.1;//1.55;
       NamedCommands.registerCommand("print hello", Commands.print("hello"));
       NamedCommands.registerCommand("AlignAndShootCenterSpeaker", AlignAndShootCenterSpeaker());
       NamedCommands.registerCommand("C_CatchAndIndexNote", C_CatchAndIndexNote());
+     // NamedCommands.registerCommand("WaitForIndex", new WaitForIndexCMD(deliveryHolder));
       NamedCommands.registerCommand("PickupRoutine", PickupRoutine());
       NamedCommands.registerCommand("ReadyShootPreEmptive", ReadyShootPreEmptive());
       NamedCommands.registerCommand("JustShootIt",   JustShootIt());

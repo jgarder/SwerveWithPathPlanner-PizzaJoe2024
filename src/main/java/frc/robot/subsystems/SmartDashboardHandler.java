@@ -96,6 +96,19 @@ RobotContainer thisrobot;
         //System.out.printf("-ShooterRpmTrapFloor : " + Constants.DeliveryHead.ShooterRpmTrapFloor);
     }
     
+    private boolean isbatteryVoltageLow = false;
+    private double LowBatteryVoltageWarning = 12.0;
+    private double LastMeasuredBatteryVoltage = 9999999.9999;
+    public void TestBatteryReplace()
+    {
+      if(LastMeasuredBatteryVoltage >= LowBatteryVoltageWarning)
+      {
+        SmartDashboard.putBoolean("VoltageOK", true);
+      }
+      else{
+         SmartDashboard.putBoolean("VoltageOK", false);
+      }
+    }
     private static final int NUM_PDH_CHANNELS =24;
     private double maxcurrent = 0.0;
   public double lowestVoltage = 48.00;
@@ -103,12 +116,13 @@ RobotContainer thisrobot;
      /**
      * Get the input voltage of the PDH and display it on Shuffleboard.
      */
-    double Voltage = thisrobot.m_pdh.getVoltage();
-    if (Voltage < lowestVoltage){
-      lowestVoltage = Voltage;
+    LastMeasuredBatteryVoltage = thisrobot.m_pdh.getVoltage();
+    if (LastMeasuredBatteryVoltage < lowestVoltage){
+      lowestVoltage = LastMeasuredBatteryVoltage;
     }
-    SmartDashboard.putNumber("Voltage", Voltage);
+    SmartDashboard.putNumber("Voltage", LastMeasuredBatteryVoltage);
     SmartDashboard.putNumber("Lowest Voltage", lowestVoltage);
+    TestBatteryReplace();
     /**
      * Get the total current of the PDH and display it on Shuffleboard. This will
      * be to the nearest even number.

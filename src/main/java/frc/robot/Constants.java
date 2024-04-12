@@ -246,6 +246,7 @@ public class Constants {
       
 
       public static final double Lift_Position_Zero = 0;
+      public static final double Lift_Position_ParkingPos = 10;
       public static final double Lift_Position_Passing = 15;
       public static final double Lift_Position_Speaker = 0;
       public static final double Lift_Position_Amp = 70;//50;
@@ -257,7 +258,7 @@ public class Constants {
       //TILT
       public static  double kP_Tilter = 650.00;//750.00;//850.0;//750.0;//650.0;//20.0000;
       public static  double kI_Tilter = 1500.00;//1390.0;//1190.0;//190.0;//60.000000;
-      public static  double kD_Tilter = 55.00;//50.0;//40.0;//3.000000;
+      public static  double kD_Tilter = 60.0;//55.00;//50.0;//40.0;//3.000000;
       //Old conversion factor 0.0146428571428571
       public static final double TiltGearRatio = 80.0;
       public static final double AbsoluteEncoderOffset = -0.22836753125;//0.396973;
@@ -267,6 +268,7 @@ public class Constants {
       public static final double Tilt_maxValue = .410;//28;
       
       public static final double Tilt_Position_Zero = 0.01;
+      public static final double Tilt_Position_ParkPosIdle = 0.02; 
       public static final double Tilt_Position_Park = 0.13;//.25;
       public static final double Tilt_Position_Passing = 0.0732;//5;
       public static final double Tilt_Position_TrapLift = 0.0292;//2;//7.75;
