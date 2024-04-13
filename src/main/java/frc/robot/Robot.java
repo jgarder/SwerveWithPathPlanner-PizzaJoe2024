@@ -25,12 +25,11 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
 
   private final boolean UseLimelight = true;
-
+  private final boolean UseFrontLimelight = true;
   @Override
   public void robotInit() {
     // Starts recording to data log
     DataLogManager.start();
-    
     //enableLiveWindowInTest(true);
     m_robotContainer = new RobotContainer();
 
@@ -83,60 +82,63 @@ public class Robot extends TimedRobot {
       ///////
 
       ////CAMERA Front
-      boolean useMegaTag2Front = false; //set to false to use MegaTag1
-      boolean doRejectUpdateFront = false;
-      if(useMegaTag2Front == false)
+      if(UseFrontLimelight)
       {
-        LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.LimelightFrontName);
-        
-        if(mt1.tagCount == 1 && mt1.rawFiducials.length == 1)
+        boolean useMegaTag2Front = false; //set to false to use MegaTag1
+        boolean doRejectUpdateFront = false;
+        if(useMegaTag2Front == false)
         {
-          if(mt1.rawFiducials[0].ambiguity > .7)
+          LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(Constants.LimelightFrontName);
+          
+          if(mt1.tagCount == 1 && mt1.rawFiducials.length == 1)
+          {
+            if(mt1.rawFiducials[0].ambiguity > .7)
+            {
+              doRejectUpdateFront = true;
+            }
+            if(mt1.rawFiducials[0].distToCamera > 3)
+            {
+              doRejectUpdateFront = true;
+            }
+          }
+          if(mt1.tagCount == 0)
           {
             doRejectUpdateFront = true;
           }
-          if(mt1.rawFiducials[0].distToCamera > 3)
+          if(Math.abs(rotationalvelocity) > maxrotationalVelocityForLLUpdate) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
           {
             doRejectUpdateFront = true;
           }
-        }
-        if(mt1.tagCount == 0)
-        {
-          doRejectUpdateFront = true;
-        }
-        if(Math.abs(rotationalvelocity) > maxrotationalVelocityForLLUpdate) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
-        {
-          doRejectUpdateFront = true;
-        }
 
-        if(!doRejectUpdateFront)
-        {
-          //m_robotContainer.drivetrainManager.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
-          m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(
-              mt1.pose,
-              mt1.timestampSeconds);
-              return;//only 1 sample per robot periodic
+          if(!doRejectUpdateFront)
+          {
+            //m_robotContainer.drivetrainManager.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
+            m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(
+                mt1.pose,
+                mt1.timestampSeconds);
+                return;//only 1 sample per robot periodic
+          }
         }
-      }
-      else if (useMegaTag2Front == true)
-      {
-        
-        LimelightHelpers.PoseEstimate mt2 = getMt2WpiBlue(Constants.LimelightFrontName);
-        if(Math.abs(rotationalvelocity) > maxrotationalVelocityForLLUpdate) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+        else if (useMegaTag2Front == true)
         {
-          doRejectUpdateFront = true;
-        }
-        if(mt2.tagCount == 0)
-        {
-          doRejectUpdateFront = true;
-        }
-        if(!doRejectUpdateFront)
-        {
-          //m_robotContainer.drivetrainManager.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
-          m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(
-              mt2.pose,
-              mt2.timestampSeconds);
-              return;//only 1 sample per robot periodic
+          
+          LimelightHelpers.PoseEstimate mt2 = getMt2WpiBlue(Constants.LimelightFrontName);
+          if(Math.abs(rotationalvelocity) > maxrotationalVelocityForLLUpdate) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+          {
+            doRejectUpdateFront = true;
+          }
+          if(mt2.tagCount == 0)
+          {
+            doRejectUpdateFront = true;
+          }
+          if(!doRejectUpdateFront)
+          {
+            //m_robotContainer.drivetrainManager.drivetrain.setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+            m_robotContainer.drivetrainManager.drivetrain.addVisionMeasurement(
+                mt2.pose,
+                mt2.timestampSeconds);
+                return;//only 1 sample per robot periodic
+          }
         }
       }
       ///////////

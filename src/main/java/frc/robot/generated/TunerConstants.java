@@ -49,7 +49,7 @@ public class TunerConstants {
     //
     private static final double kDriveGearRatio = kSDSmk4iL175;///8.14;//7.363636364;//brody changed from 6.75;
     private static final double kSteerGearRatio = 15.42857143;
-    private static final double kWheelRadiusInches = 1.996;//1.9965;//1.992;//1.929;//2.167; // Estimated at first, then fudge-factored to make odom match record
+    private static final double kWheelRadiusInches = 1.95;//known colsons -> 1.996;//1.9965;//1.992;//1.929;//2.167; // Estimated at first, then fudge-factored to make odom match record
 
     private static final boolean kSteerMotorReversed = true;
     private static final boolean kInvertLeftSide = false;
