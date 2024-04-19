@@ -195,15 +195,15 @@ public class Constants {
     public static class ChainLifter
     {
         public static final double Lift_minValue = 0;
-        public static final double Lift_maxValue = 272;//346;//430;
+        public static final double Lift_maxValue = 285;//346;//430;
         
 
         public static final double Lift_Position_Zero = 0;
         public static final double Lift_Position_PullDown = 3.2;//4;
         public static final double Lift_Position_unfolding = 24;//30;
-        public static final double Lift_Position_ForDeliveryKick = 232;//127;//290;//270;
-        public static final double Lift_Position_CenterAndTrap = 272;//340;
-        public static final double Lift_Position_Edge = 272;//340;
+        public static final double Lift_Position_ForDeliveryKick = 235;//127;//290;//270;
+        public static final double Lift_Position_CenterAndTrap = 283;//340;
+        public static final double Lift_Position_Edge = 283;//340;
 
 
     }
@@ -276,11 +276,11 @@ public class Constants {
       public static final double Tilt_Position_TrapLiftHitHook = 0.1780;//0.2196;//15;//17;//7.75;
       public static final double Tilt_Position_TrapLiftUp = 0.100;//0.1281;//8.75;
       public static final double Tilt_Position_TrapLiftUpSHOOT = 0.34;//0.3807;//26;
-      public static  double Tilt_Position_TrapFloorShoot = 0.905;//0.1025;//7.0;
+      public static  double Tilt_Position_TrapFloorShoot = 0.073;//0.905;//0.1025;//7.0;
 
-      public static  double Tilt_Position_Speaker_Closest = 0.08880;//0.08790;//0.08610;//7.85;//7.84;//7.6;//10.15;//12.9;//11.25;//10.75;//8.5;//11.5;//7.2;
-      public static  double Tilt_Position_Speaker_Mid = 0.14070;//0.13260;//11.4;//11.2;//10.9;//14.25;
-      public static  double Tilt_Position_Speaker_Furthest = 0.19350;//0.17790;//14.27;//17.2;//19.75;//17.3;//15.75;//14.75;
+      public static  double Tilt_Position_Speaker_Closest = 0.0890;//0.08790;//0.08610;//7.85;//7.84;//7.6;//10.15;//12.9;//11.25;//10.75;//8.5;//11.5;//7.2;
+      public static  double Tilt_Position_Speaker_Mid = 0.14110;//0.13260;//11.4;//11.2;//10.9;//14.25;
+      public static  double Tilt_Position_Speaker_Furthest = 0.19320;//0.17790;//14.27;//17.2;//19.75;//17.3;//15.75;//14.75;
 
       //public static  double Tilt_Position_Speaker_Podium = 0.16;//12.5;//10.85;
       public static final double Tilt_Position_Amp = 0.3007; //25.0;//28;

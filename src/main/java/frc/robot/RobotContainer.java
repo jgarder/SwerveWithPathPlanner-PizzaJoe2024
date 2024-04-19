@@ -270,6 +270,13 @@ public class RobotContainer {
     //   .alongWith(new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_Speaker_Closest);},deliveryTilt),
     //new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmSpeakerClose));
   }
+  private ParallelCommandGroup ActivateHotIntake()
+  {
+   return new ParallelCommandGroup(
+     new InstantCommand(()->{deliveryHolder.RequestIndex();}),
+      new InstantCommand(()->{PizzaManager.pizzaStage = PizzaTracker.intaking;})
+      );
+  }
   private ParallelCommandGroup MoveIntoSourcePosition()
   {
      return new ParallelCommandGroup(
@@ -356,10 +363,19 @@ public class RobotContainer {
     joystick.back().onTrue(new InstantCommand(()->{PizzaManager.AltControlModeEnabled = !PizzaManager.AltControlModeEnabled;}));
     
     
-    joystick.a().onTrue(C_CatchAndIndexNote());//.onFalse(new InstantCommand(()-> {m_candleSubsystem.StrobeWhiteLights();}));strobe should be a command so it ends. 
+    joystick.a().onTrue(ActivateHotIntake());//.onFalse(new InstantCommand(()-> {m_candleSubsystem.StrobeWhiteLights();}));strobe should be a command so it ends. 
     //joystick.b().onTrue(new ShootDeliveryHold(deliveryHolder));
-    joystick.b().onTrue(new InstantCommand(()->{SmartDashboard.putBoolean(SDashBoardH.LimelightbypassName, true);})).onFalse(new InstantCommand(()->{SmartDashboard.putBoolean(SDashBoardH.LimelightbypassName, false);}));
-    joystick.x().and(joystick.rightTrigger().negate()).onTrue(new InstantCommand(()->{pickupSpinner.ReleaseNote();},pickupSpinner).andThen(new RunDeliveryHoldIntake(deliveryHolder,false,40)))
+    //cancel limelight when not in trap mode 
+    joystick.b().and(()->!PizzaManager.AltControlModeEnabled).onTrue(new InstantCommand(()->{SmartDashboard.putBoolean(SDashBoardH.LimelightbypassName, true);})).onFalse(new InstantCommand(()->{SmartDashboard.putBoolean(SDashBoardH.LimelightbypassName, false);}));
+    //When in Trap mode we need the option to attemp an overindex again
+    joystick.b().and(()->PizzaManager.AltControlModeEnabled).onTrue(
+      new InstantCommand(()->{deliveryHolder.m_forwardLimit.enableLimitSwitch(false);
+      deliveryHolder.MovePosition(trapindexmovement/2);
+      deliveryShooter.MovePosition(shooterIndexMovement/2, true);
+      PizzaManager.TrapShotOverIndexed = true;})
+            
+    );
+    joystick.x().and(joystick.rightTrigger().negate()).onTrue(new InstantCommand(()->{deliveryHolder.forceCancelIndex(); pickupSpinner.ReleaseNote();},pickupSpinner).andThen(new RunDeliveryHoldIntake(deliveryHolder,false,40)))
     .onFalse(new InstantCommand(()->{pickupSpinner.stopSpinner();},pickupSpinner));// (pickuparm.runonce(() -> {pickuparm.setSetpointFloorPickup();}));
     joystick.y().and(joystick.rightTrigger().negate()).whileTrue(new InstantCommand(()->{pickupSpinner.RunPickup();}).repeatedly()).onFalse(new InstantCommand(()->{pickupSpinner.stopSpinner();},pickupSpinner)); //.until(()->{pickupSpinner.m_forwardLimit.isPressed();})
     //joystick.y().onTrue(C_PickupPizzaFromFloorWithoutWashing());
@@ -539,8 +555,8 @@ public Command AlignWhereverShootSpeaker()
         );
 }
 
-public double trapindexmovement = 50;//80;
-public double shooterIndexMovement = 1.2;//1.55;
+public double trapindexmovement = 60;//80;
+public double shooterIndexMovement = 1.15;//1.55;
 
   public void configureTrapButtons()
   {
@@ -556,7 +572,7 @@ public double shooterIndexMovement = 1.2;//1.55;
       )
     )
     .andThen(
-      new InstantCommand(()->{PizzaManager.TrapShotOverIndexed = false;}),
+      //new InstantCommand(()->{PizzaManager.TrapShotOverIndexed = false;}),
       new InstantCommand(()->{deliveryHolder.RequestIndex(PizzaTracker.intaking);}),
       new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmHumanSource/2)
       
@@ -579,12 +595,13 @@ public double shooterIndexMovement = 1.2;//1.55;
       .alongWith(
           new SequentialCommandGroup(
               new WaitCommand(.75), 
-              new InstantCommand(()->{deliveryHolder.MovePosition(-trapindexmovement);}),
+              //new InstantCommand(()->{deliveryHolder.MovePosition(-trapindexmovement);}),
+              ActivateHotIntake(),
               new InstantCommand(()->{deliveryTilt.setSetpointToPosition(Constants.DeliveryHead.Tilt_Position_TrapLiftUp);})
               )
           
       .andThen(new WaitCommand(.25),
-      new InstantCommand(()->{deliveryHolder.RequestIndex(PizzaTracker.intaking); PizzaManager.TrapShotOverIndexed = false;}),
+      new InstantCommand(()->{deliveryHolder.RequestIndex(PizzaTracker.intaking); }), //PizzaManager.TrapShotOverIndexed = false;
       new SpoolPizzaDeliveryToRPM(deliveryShooter, Constants.DeliveryHead.ShooterRpmHumanSource/2)
        
       )

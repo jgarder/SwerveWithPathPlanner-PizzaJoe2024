@@ -236,6 +236,7 @@ public class DeliveryHolder extends SubsystemBase {
             //System.out.println("Now indexed");
             SmartDashboard.putString("IndexStage","Indexed");
             requestingIndex = false;
+            PizzaManager.TrapShotOverIndexed = false;
           }
         }
         else{}
