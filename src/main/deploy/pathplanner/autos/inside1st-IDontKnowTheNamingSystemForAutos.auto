@@ -36,7 +36,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Straight line Backup_FarOut"
+                  "pathName": "Backup_FarOut2ndsource"
                 }
               },
               {
@@ -68,7 +68,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SP_SCE_Backup_FarOut_Return"
+                  "pathName": "insidesource return"
                 }
               },
               {
@@ -89,7 +89,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Backup_FarOut2ndsource"
+            "pathName": "Straight line Backup_FarOut"
           }
         }
       ]

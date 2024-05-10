@@ -97,7 +97,7 @@ public class Constants {
        public static final double rotationspeed = 1.0;//used to invert results with -1 or 1;
 
       public static final Pose2d SpeakerCenterTagLocation = new Pose2d(Units.inchesToMeters(-1.5),Units.inchesToMeters(218.42), Rotation2d.fromDegrees(0));//we shoot to the right of the opening!
-      public static final Pose2d PassingLocation = new Pose2d(Units.inchesToMeters(-1.5),Units.inchesToMeters(218.42+Constants.TargetLocations.SpeakerPassAimOffset), Rotation2d.fromDegrees(0));
+      public static final Pose2d PassingLocation = new Pose2d(Units.inchesToMeters(-1.5),Units.inchesToMeters(218.42+(Constants.TargetLocations.SpeakerPassAimOffset*2)), Rotation2d.fromDegrees(0));
 
       public static final Pose2d SpeakerCenter = new Pose2d(1.5, 5.5+.1, Rotation2d.fromDegrees(180));//BC-CALI:1.38,5.48,177
 
