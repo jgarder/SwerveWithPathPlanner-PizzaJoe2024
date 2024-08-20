@@ -666,7 +666,7 @@ public double shooterIndexMovement = 1.15;//1.55;
     //
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto choices", autoChooser);
-    //SmartDashboard.setPersistent("Auto choices");
+    SmartDashboard.setPersistent("Auto choices");
     //
     PizzaManager.IsOvenPickUpRunning = joystick.rightTrigger(.1);
 

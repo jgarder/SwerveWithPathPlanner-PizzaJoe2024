@@ -240,6 +240,7 @@ public class Robot extends TimedRobot {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     m_Timer.reset();
     m_Timer.start();
+    System.out.println("RUNNING AUTON : " + m_autonomousCommand.getName());
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
