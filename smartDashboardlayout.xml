@@ -522,6 +522,30 @@
 	<widget field="DeliveryTilt AbsoPos" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="1118" y="223"/>
 	</widget>
+	<widget field="extendingNeo P Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="495" y="588"/>
+	</widget>
+	<widget field="rotatingfalcon D Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="308" y="525"/>
+	</widget>
+	<widget field="VoltageOK" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="179" y="462"/>
+	</widget>
+	<widget field="movingintake D Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="308" y="21"/>
+	</widget>
+	<widget field="rotatingfalcon P Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="308" y="0"/>
+	</widget>
+	<widget field="rotatingfalcon I Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="126"/>
+	</widget>
+	<widget field="extendingNeo CurrentPosition" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="84"/>
+	</widget>
+	<widget field="movingintake P Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="42"/>
+	</widget>
 </dashboard>
 <live-window>
 </live-window>

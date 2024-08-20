@@ -666,7 +666,7 @@ public double shooterIndexMovement = 1.15;//1.55;
     //
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto choices", autoChooser);
-    SmartDashboard.setPersistent("Auto choices");
+    //SmartDashboard.setPersistent("Auto choices");
     //
     PizzaManager.IsOvenPickUpRunning = joystick.rightTrigger(.1);
 
@@ -682,7 +682,7 @@ public double shooterIndexMovement = 1.15;//1.55;
       NamedCommands.registerCommand("AlignAndShootCenterSpeaker", AlignAndShootCenterSpeaker());
       NamedCommands.registerCommand("C_CatchAndIndexNote", C_CatchAndIndexNote());
      // NamedCommands.registerCommand("WaitForIndex", new WaitForIndexCMD(deliveryHolder));
-      NamedCommands.registerCommand("PickupRoutine", PickupRoutine());
+      NamedCommands.registerCommand("PickupRoutine", PickupRoutine().withTimeout(3));
       NamedCommands.registerCommand("ReadyShootPreEmptive", ReadyShootPreEmptive());
       NamedCommands.registerCommand("JustShootIt",   JustShootIt());
       NamedCommands.registerCommand("AlignWhereverShootSpeaker",   AlignWhereverShootSpeaker());

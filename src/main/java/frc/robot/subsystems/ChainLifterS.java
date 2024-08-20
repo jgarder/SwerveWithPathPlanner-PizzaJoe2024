@@ -71,9 +71,9 @@ public class ChainLifterS extends SubsystemBase {
       configs.Slot1.kP = kP_lifter; // An error of 1 rotations results in 40 amps output
       configs.Slot1.kI = kI_lifter;
       configs.Slot1.kD = kD_lifter; // A change of 1 rotation per second results in 2 amps output
-      // Peak output of 130 amps
-      configs.TorqueCurrent.PeakForwardTorqueCurrent = 40;
-      configs.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+      
+      configs.TorqueCurrent.PeakForwardTorqueCurrent = 400;
+      configs.TorqueCurrent.PeakReverseTorqueCurrent = -400;
       
       configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
       configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;

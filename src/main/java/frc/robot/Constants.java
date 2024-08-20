@@ -195,15 +195,15 @@ public class Constants {
     public static class ChainLifter
     {
         public static final double Lift_minValue = 0;
-        public static final double Lift_maxValue = 285;//346;//430;
+        public static final double Lift_maxValue = 214.6;//285;//346;//430;
         
 
         public static final double Lift_Position_Zero = 0;
-        public static final double Lift_Position_PullDown = 3.2;//4;
-        public static final double Lift_Position_unfolding = 24;//30;
-        public static final double Lift_Position_ForDeliveryKick = 235;//127;//290;//270;
-        public static final double Lift_Position_CenterAndTrap = 283;//340;
-        public static final double Lift_Position_Edge = 283;//340;
+        public static final double Lift_Position_PullDown = 0.0;//3.2;//4;
+        public static final double Lift_Position_unfolding = 20;//24;//30;
+        public static final double Lift_Position_ForDeliveryKick = 175;//235;//127;//290;//270;
+        public static final double Lift_Position_CenterAndTrap = 214;//283;//340;
+        public static final double Lift_Position_Edge = 214;//283;//340;
 
 
     }
@@ -256,7 +256,7 @@ public class Constants {
       public static final double Lift_Position_TrapShoot = 140;
 
       //TILT
-      public static  double kP_Tilter = 650.00;//750.00;//850.0;//750.0;//650.0;//20.0000;
+      public static  double  kP_Tilter = 650.00;//750.00;//850.0;//750.0;//650.0;//20.0000;
       public static  double kI_Tilter = 1500.00;//1390.0;//1190.0;//190.0;//60.000000;
       public static  double kD_Tilter = 60.0;//55.00;//50.0;//40.0;//3.000000;
       //Old conversion factor 0.0146428571428571
